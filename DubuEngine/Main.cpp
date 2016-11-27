@@ -1,4 +1,3 @@
-//#pragma comment(linker, "/STACK:16777216")
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define recv_s(Socket,DataPtr,Size,Other) recv( (Socket), (char *)(DataPtr), (Size), (Other))
 #define send_s(Socket,DataPtr,Size,Other) send( (Socket), (char *)(DataPtr), (Size), (Other)) 
@@ -33,7 +32,7 @@
 #include "InputHandler.h"
 #include "Interfaces.h"
 #include "DEText.h"
-#include <vector>
+#include "Debug.h"
 #include <array>
 using namespace std;
 
@@ -72,6 +71,7 @@ int main(){
 
 	// Register event functions
 	RegisterCameraEvents(TimerEvents, MouseEvents, KeyboardEvents);
+	RegisterDebugEvents(TimerEvents, MouseEvents, KeyboardEvents);
 
 	// Initiate allegro addons, registed mouse, keyboard, etc.
 	al_init_primitives_addon();

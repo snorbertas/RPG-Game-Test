@@ -1,7 +1,7 @@
 #pragma once
 
 #define MAX_BODY_SPRITES 1
-#define MAX_TILE_SPRITES 1
+#define MAX_TILE_SPRITES 41
 #define MAX_ICON_SPRITES 1
 #define MAX_MISC_SPRITES 6
 #define MAX_BACKGROUND_SPRITES 2
