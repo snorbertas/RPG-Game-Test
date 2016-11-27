@@ -24,9 +24,6 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Chat.cpp" />
-    <ClCompile Include="Debug.cpp">
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="DEText.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameHandler.cpp" />
@@ -34,7 +31,6 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Interfaces.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Map.cpp" />
     <ClCompile Include="MenuHandler.cpp" />
     <ClCompile Include="MenuRenderer.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
@@ -46,13 +42,9 @@
       <SubType>Header</SubType>
     </ClInclude>
     <ClInclude Include="Chat.h" />
-    <ClInclude Include="Debug.h">
-      <SubType>Header</SubType>
-    </ClInclude>
     <ClInclude Include="DEEvents.h" />
     <ClInclude Include="DEText.h" />
     <ClInclude Include="DEDefinitions.h" />
-    <ClInclude Include="Map.h" />
     <ClInclude Include="_EngineConfig.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameHandler.h" />
