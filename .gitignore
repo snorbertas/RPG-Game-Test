@@ -1,5 +1,6 @@
 #db files
 *.VC.db
+*.VC.opendb
 
 # Windows image file caches
 Thumbs.db
