@@ -8,8 +8,8 @@
 *.log
 *.tlog
 *.exe
-DubuEngine/Debug/
-DubuEngineServer/Debug/
+DubuEngine/Debug
+DubuEngineServer/Debug
 Debug/allegro_acodec-debug-5.2.dll
 Debug/allegro_audio-debug-5.2.dll
 Debug/allegro_color-debug-5.2.dll
@@ -21,10 +21,9 @@ Debug/allegro_ttf-debug-5.2.dll
 Debug/allegro-debug-5.2.dll
 Debug/settings.ini
 Debug/DubuEngineClient.ilk
-.vs/
+*.vcxproj
 *.filters
 *.user
-*.suo
 
 # NuGet packages
 packages
