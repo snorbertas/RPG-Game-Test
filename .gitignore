@@ -8,6 +8,7 @@
 *.log
 *.tlog
 *.exe
+.vs/
 DubuEngine/Debug
 DubuEngineServer/Debug
 Debug/allegro_acodec-debug-5.2.dll
