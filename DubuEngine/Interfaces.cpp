@@ -203,6 +203,8 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					if (g->connected) {
 						DrawText(font[2], 255, 0, 255, 0, 30, ALLEGRO_ALIGN_LEFT, "Ping: %i", g->ping);
 					}
+					DrawText(font[2], 255, 255, 0, 0, 45, ALLEGRO_ALIGN_LEFT, "Map Seed: %i", g->map.seed);
+					DrawText(font[2], 255, 255, 10, 0, 60, ALLEGRO_ALIGN_LEFT, "Render Mode: %i", g->map.render_mode);
 					break;
 				}
 				case 7:

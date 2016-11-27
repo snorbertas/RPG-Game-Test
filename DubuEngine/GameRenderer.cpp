@@ -15,4 +15,5 @@
 
 void RenderGame(Game* g, SpriteStruct* csprites, ALLEGRO_FONT** font){
 	//
+	g->map.Render(g, csprites);
 }
