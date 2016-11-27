@@ -23,7 +23,6 @@ Debug/settings.ini
 Debug/DubuEngineClient.ilk
 *.vcxproj
 *.filters
-*.user
 
 # NuGet packages
 packages
