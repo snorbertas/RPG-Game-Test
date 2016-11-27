@@ -21,8 +21,7 @@ Debug/allegro_ttf-debug-5.2.dll
 Debug/allegro-debug-5.2.dll
 Debug/settings.ini
 Debug/DubuEngineClient.ilk
-DubuEngine/DubuEngine.vcxproj
-DubuEngine/DubuEngine.vcxproj.filters
+*.filters
 
 # NuGet packages
 packages
