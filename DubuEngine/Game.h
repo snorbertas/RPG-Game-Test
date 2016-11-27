@@ -10,6 +10,7 @@
 #include "Chat.h"
 #include "Camera.h"
 #include "Player.h"
+#include "Map.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -107,8 +108,8 @@
 			bool remake_display;				// If true, the display will be recreated next tick
 			int s_x = 1280;						// Scale to x
 			int s_y = 720;						// Scale to y
-			int BWIDTH = 1600;					// Base width
-			int BHEIGHT = 900;					// Base height
+			int BWIDTH = 1280;					// Base width
+			int BHEIGHT = 720;					// Base height
 			int scene;							// Scene ID
 			float intro_a = 255;				// Intro alpha
 			bool done;							// If true, the main loop will exit and exit program
@@ -130,5 +131,6 @@
 			Interface* Interfaces;				// Pointer to array of interfaces
 			Menu menu;							// Menu object
 			Keys keys;							// Keys struct, holds the information on some input
-			Player pl;
+			Player pl;							// Player
+			Map map = Map(0);					// Map
 	};
