@@ -59,7 +59,16 @@ void Map::GenerateMapWithBaseBiome() {
 	/* 
 		ATTEMPT TO MAKE RANDOM SHAPES
 	*/
-	GenerateRandomShape(zone, Biome_Water, 1, 1, 20, 20);
+	for (int x = 0; x < MAP_SIZE_X / 30; x++) {
+		for (int y = 0; y < MAP_SIZE_Y / 30; y++) {
+			GenerateRandomShape(zone, (Biome)(rand() % 3 + 1),
+				x * 20,
+				y * 20,
+				20, 20);
+		}
+	}
+	//GenerateRandomShape(zone, Biome_Water, 1, 1, 20, 20);
+	//GenerateRandomShape(zone, Biome_Water, 1, 1, 20, 20);
 
 	// Sort out sprites for all biomes (will make separate function)
 	SortSpritesFromZone(zone);
@@ -74,8 +83,8 @@ void Map::GenerateRandomShape(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x, 
 	int start_x;
 	int start_y;
 	while (!start_chosen) {
-		start_x = x + 1 + (rand() % (w - 2));
-		start_y = y + 1 + (rand() % (h - 2));
+		start_x = x + 1 + (rand() % (w - 3));
+		start_y = y + 1 + (rand() % (h - 3));
 		if (touch_only == Biome_None || zone[start_x][start_y] != touch_only) start_chosen = true;
 	}
 
@@ -103,6 +112,8 @@ void Map::GenerateRandomShape(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x, 
 				if (i == Left) cur_x -= 2;
 				if (i == Right) cur_x += 2;
 
+				cout << i << endl;
+
 				// Draw the square from top of cur
 				zone[cur_x][cur_y] = new_biome;
 				zone[cur_x + 1][cur_y] = new_biome;
@@ -110,54 +121,38 @@ void Map::GenerateRandomShape(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x, 
 				zone[cur_x + 1][cur_y + 1] = new_biome;
 
 				// Random fill horizontally
-				int left = rand() % (cur_x - x);
-				int right = rand() % (w - cur_x + 1);
-				while (left > 0) {
-					zone[cur_x - left][cur_y] = new_biome;
-					zone[cur_x - left][cur_y + 1] = new_biome;
-					left--;
-				}
-				while (right > 0) {
-					zone[cur_x + right][cur_y] = new_biome;
-					zone[cur_x + right][cur_y + 1] = new_biome;
-					right--;
+				if (i == Top || i == Bottom) {
+					int left = rand() % ((cur_x - x) + 1);
+					int right = rand() % ((w - cur_x + 1));
+					while (left > 0) {
+						zone[cur_x - left][cur_y] = new_biome;
+						zone[cur_x - left][cur_y + 1] = new_biome;
+						left--;
+					}
+					while (right > 0) {
+						zone[cur_x + right][cur_y] = new_biome;
+						zone[cur_x + right][cur_y + 1] = new_biome;
+						right--;
+					}
+				} else {
+					/*int bottom = rand() % ((cur_y - y) + 1);
+					int top = rand() % ((h - cur_y + 1));
+					while (bottom > 0) {
+						zone[cur_x - bottom][cur_y] = new_biome;
+						zone[cur_x - bottom][cur_y + 1] = new_biome;
+						bottom--;
+					}
+					while (top > 0) {
+						zone[cur_x + top][cur_y] = new_biome;
+						zone[cur_x + top][cur_y + 1] = new_biome;
+						top--;
+					}*/
 				}
 			} else {
 				writing_cross = false;
 			}
 		}
 	}
-
-	/*// Go down
-	cur_x = start_x;
-	cur_y = start_y;
-	writing_cross = true;
-	while (writing_cross) {
-		if (cur_y < y + h - 1) {
-			cur_y += 2;
-			// Draw the square from top of cur
-			zone[cur_x][cur_y] = new_biome;
-			zone[cur_x + 1][cur_y] = new_biome;
-			zone[cur_x][cur_y + 1] = new_biome;
-			zone[cur_x + 1][cur_y + 1] = new_biome;
-
-			// Random fill horizontally
-			int left = rand() % (cur_x - x);
-			int right = rand() % (w - cur_x + 1);
-			while (left > 0) {
-				zone[cur_x - left][cur_y] = new_biome;
-				zone[cur_x - left][cur_y + 1] = new_biome;
-				left--;
-			}
-			while (right > 0) {
-				zone[cur_x + right][cur_y] = new_biome;
-				zone[cur_x + right][cur_y + 1] = new_biome;
-				right--;
-			}
-		} else {
-			writing_cross = false;
-		}
-	}*/
 }
 
 void Map::GenerateRandom(int alg) {
