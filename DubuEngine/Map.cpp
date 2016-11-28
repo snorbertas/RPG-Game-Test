@@ -9,7 +9,7 @@ void Map::GenerateRandom(int alg) {
 
 	switch (alg) {
 	case 0:
-		// Generation mode 1 (Literal random)
+		// Generation mode A (Literal random)
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
 				tile[x][y] = rand() % 41;
@@ -17,10 +17,10 @@ void Map::GenerateRandom(int alg) {
 		}
 		break;
 	case 1:
-		// Generation mode 2
+		// Generation mode B
 		break;
 	case 2:
-		// Generation mode 3
+		// Generation mode C
 		// In this generation mode I will take a few steps
 		/* =================================================*/
 		/*	STEP 1: Choose default (global) biome
