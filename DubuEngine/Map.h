@@ -38,7 +38,7 @@ enum BlockLocation {
 *		Example: If you want the top-right corner sprite for grass
 *		GetSpriteID(Biome_Grass, BLoc_TR); (will return sprite ID 2)
 */
-	int GetTileSprite(Biome biome, int location);
+	int GetTileSprite(Biome biome, BlockLocation location);
 
 // Map Class
 class Map {

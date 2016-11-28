@@ -18,7 +18,7 @@ void Map::GenerateRandom(int alg) {
 		// Generation mode B
 		break;
 	case 2:
-		// Generation mode C
+		// Generation mode C (I think I will put this in separate functions lmao)
 		// In this generation mode I will take a few steps
 		/* =================================================*/
 		/*	STEP 1: Choose default (global) biome
@@ -60,35 +60,49 @@ void Map::GenerateRandom(int alg) {
 		int biome_x = 5;
 		int biome_y = 5;
 
-		// Write this biome's zone
-		/*for (int i = 0; i < biome_w; i++) {
-			for (int j = 0; j < biome_h; j++) {
-				zone[biome_x + i][biome_y + j] = first_biome;
-			}
-		}*/
 		for (int x = biome_x; x < (biome_x + biome_w); x++) {
 			for (int y = biome_y; y < (biome_y + biome_h); y++) {
 				zone[x][y] = first_biome;
 			}
 		}
 
-		// Sort out sprites for all biomes
+		// Sort out sprites for all biomes (will make separate function)
 		/*	This will loop trough each zone block from top to bottom,
 			then slowly moving right. We will choose a sprite depending on
 			the relationship of that block between other blocks around it.
 		*/
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				int temp_sprite = GetTileSprite(zone[x][y], BLoc_C);
-				if (y == 0) {
-					// Top edge of map
-					if (x == 0) {
-						// Top left corner of map
-						// We will not check the blocks above and on left
+				BlockLocation loc = BLoc_C;
 
+				// Block Above
+				if (y != 0) {
+					if (zone[x][y - 1] != zone[x][y]) {
+						// There's no block above me so I must be BLoc_T*
+						loc = BLoc_T;
+						// Which BLocT* am I?
+						if (x != 0) {
+							if (zone[x - 1][y] != zone[x][y]) {
+								// There's no block on my left, I must be BLoc_TL
+								loc = BLoc_TL;
+							}
+						}
+						if (x < MAP_SIZE_X) {
+							if (zone[x + 1][y] != zone[x][y]) {
+								// There's no block on my right, I must be BLoc_TR
+								loc = BLoc_TR;
+							}
+						}
+						/* Note: unconnected blocks by either side aren't meant to exist
+						   due to spritesheet not allowing that sort of connection.
+						   Maybe improve this later? */
 					}
 				}
-				tile[x][y] = temp_sprite;
+
+				// Block Bellow
+
+				// Update the sprite id for that tile
+				tile[x][y] = GetTileSprite(zone[x][y], loc);
 			}
 		}
 		break;
@@ -114,7 +128,7 @@ void Map::Render(Game* g, SpriteStruct* sprites) {
 	}
 }
 
-int GetTileSprite(Biome biome, int location) {
+int GetTileSprite(Biome biome, BlockLocation location) {
 	switch (biome) {
 	case Biome_Grass:
 		if (location >= 0 && location <= 4) {
