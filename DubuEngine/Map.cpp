@@ -9,25 +9,18 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	}
 	for (int j = 1; j < MAP_SIZE_Y; ++j) {
 		tile[0][j] = TilesInfo::GetAppropriateTile(-1, tile[0][j - 1]);
-		bool badTileFlag = false;
+		int badTile = -1;
 		for (int i = 1; i < MAP_SIZE_X; ++i) {
-			tile[i][j] = TilesInfo::GetAppropriateTile(tile[i - 1][j], tile[i][j - 1]);
+			if (i != 0)
+				tile[i][j] = TilesInfo::GetAppropriateTile(tile[i - 1][j], tile[i][j - 1], badTile);
+			else
+				tile[i][j] = TilesInfo::GetAppropriateTile(-1, tile[i][j - 1], badTile);
 			if (tile[i][j] == -1) {
 				tile[i][j] = 4;
-				if (!badTileFlag) {
-					badTileFlag = true;
-					tile[i - 1][j] = TilesInfo::GetAppropriateTile(tile[i - 2][j], tile[i - 1][j - 1], tile[i - 1][j]);
-					if (tile[i - 1][j] == -1) {
-						tile[i - 1][j] = 4;
-						return ;
-					} else {
-						--i;
-					}
-				} else {
-					return ;
-				}
+				badTile = tile[i - 1][j];
+				i -= 2;
 			} else {
-				badTileFlag = false;
+				badTile = -1;
 			}
 		}
 	}
@@ -42,7 +35,7 @@ void Map::GenerateRandom(int alg) {
 		// Generation mode A (Literal random)
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				tile[x][y] = rand() % 41;
+				tile[x][y] = rand() % MAX_TILE_SPRITES;
 			}
 		}
 		break;
