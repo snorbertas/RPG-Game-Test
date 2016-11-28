@@ -71,6 +71,14 @@ void Map::GenerateRandom(int alg) {
 			then slowly moving right. We will choose a sprite depending on
 			the relationship of that block between other blocks around it.
 		*/
+
+		/*	NOTE: I KNOW HOW TO MAKE THIS MORE EFFICIENT (reduce conditions),
+			WILL FIX THIS AFTER MY BREAK */
+
+		/*	NOTE#2: From my observations it seems the sprites are designed to have
+			Ground as base, then Grass on top and then Water on top of Grass.
+		*/
+
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
 				BlockLocation loc = BLoc_C;
@@ -78,18 +86,18 @@ void Map::GenerateRandom(int alg) {
 				// Block Above
 				if (y != 0) {
 					if (zone[x][y - 1] != zone[x][y]) {
-						// There's no block above me so I must be BLoc_T*
+						// There's no common block above me so I must be BLoc_T*
 						loc = BLoc_T;
 						// Which BLocT* am I?
 						if (x != 0) {
 							if (zone[x - 1][y] != zone[x][y]) {
-								// There's no block on my left, I must be BLoc_TL
+								// There's no commom block on my left, I must be BLoc_TL
 								loc = BLoc_TL;
 							}
 						}
 						if (x < MAP_SIZE_X) {
 							if (zone[x + 1][y] != zone[x][y]) {
-								// There's no block on my right, I must be BLoc_TR
+								// There's no common block on my right, I must be BLoc_TR
 								loc = BLoc_TR;
 							}
 						}
@@ -100,6 +108,36 @@ void Map::GenerateRandom(int alg) {
 				}
 
 				// Block Bellow
+				if (y < MAP_SIZE_Y) {
+					if (zone[x][y + 1] != zone[x][y]) {
+						// There's no common block bellow me so I must be BLoc_B*
+						loc = BLoc_B;
+						// Which BLocB* am I?
+						if (x != 0) {
+							if (zone[x - 1][y] != zone[x][y]) {
+								// There's no common block on my left, I must be BLoc_BL
+								loc = BLoc_BL;
+							}
+						}
+						if (x < MAP_SIZE_X) {
+							if (zone[x + 1][y] != zone[x][y]) {
+								// There's no common block on my left, I must be BLoc_BR
+								loc = BLoc_BR;
+							}
+						}
+					}
+				}
+
+				// Block on Left
+				if (x != 0) {
+					/* This is where I wanna rewrite all of my if-statements to store
+					   the results in booleans:
+
+						bool CommonTop, CommonBottom, CommonLeft, CommonRight;
+						
+						Mistakes were made, break time~, will fix it when Im back~
+					*/
+				}
 
 				// Update the sprite id for that tile
 				tile[x][y] = GetTileSprite(zone[x][y], loc);
