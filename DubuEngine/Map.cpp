@@ -216,18 +216,10 @@ int GetTileSprite(Biome biome, BlockLocation location) {
 		}
 		break;
 	}
-
-	// Todo: There are more "corner" sprites? Will figure out later
-	// (I think they're for tiny 2x2 biomes, hmm, we'll see)
-	// Update: I found the use for them but idk how to describe in words
 	return 0;
 }
 
 bool IsCommonTo(Biome center, Biome edge) {
-	// Note:
-	//	- Grass is Common to Water
-	//	- Ground is Common to Grass
-	//	- Grass is Common to Ground
 	if (center == edge) return true;
 	switch (center) {
 	case Biome_Grass:
