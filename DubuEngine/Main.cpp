@@ -219,7 +219,7 @@ void RecreateDisplay() {
 		al_set_display_icon(display, sprites.img_sprite[SPRITE_ICON]);
 		al_set_window_title(display, ENGINE_VERSION);
 
-		timer = al_create_timer(1.0 / 120);
+		timer = al_create_timer(1.0 / TPS);
 		event_queue = al_create_event_queue();
 		al_register_event_source(event_queue, al_get_keyboard_event_source());
 		al_register_event_source(event_queue, al_get_mouse_event_source());
@@ -324,8 +324,18 @@ void MainLoop() {
 			g.pos_y = (int)((r_y)*ev.mouse.y);
 			if (ev.mouse.dz > 0) {
 				// Scroll down
+				if (g.scene == 1) {
+					if (g.BWIDTH > 1024) {
+						g.BWIDTH -= 16 * 4;
+						g.BHEIGHT -= 9 * 4;
+					}
+				}
 			} else if (ev.mouse.dz < 0) {
 				// Scroll up
+				if (g.scene == 1) {
+					g.BWIDTH += 16 * 4;
+					g.BHEIGHT += 9 * 4;
+				}
 			}
 		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 			for (int i = 0; i < MAX_EVENT_FUNCTIONS; i++) {
