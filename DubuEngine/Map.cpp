@@ -50,7 +50,7 @@ void Map::GenerateRandom(int alg) {
 
 		// Create biome zones
 		// To try lets do 1 rectangle biome first
-		Biome first_biome = Biome_Water;
+		Biome first_biome = Biome_Grass;
 		/*int biome_w = rand() % MAP_SIZE_X;
 		int biome_h = rand() % MAP_SIZE_Y;
 		int biome_x = rand() % MAP_SIZE_X - biome_w;
@@ -79,27 +79,90 @@ void Map::GenerateRandom(int alg) {
 				bool CommonBottom = false;
 				bool CommonLeft = false;
 				bool CommonRight = false;
+				// Fill Corners
+				bool CommonTopLeft = false;
+				bool CommonTopRight = false;
+				bool CommonBottomLeft = false;
+				bool CommonBottomRight = false;
 
 				// Check common blocks
 				if (y != 0) {
 					if (zone[x][y - 1] == zone[x][y])
 						CommonTop = true;
+					if (zone[x][y] == Biome_Grass &&
+						zone[x][y - 1] == Biome_Water)
+						CommonTop = true;
+				} else {
+					CommonTop = true;
 				}
 				if (y < MAP_SIZE_Y) {
 					if (zone[x][y + 1] == zone[x][y])
 						CommonBottom = true;
+					if (zone[x][y] == Biome_Grass &&
+						zone[x][y + 1] == Biome_Water)
+						CommonBottom = true;
+				} else {
+					CommonBottom = true;
 				}
 				if (x != 0) {
 					if (zone[x - 1][y] == zone[x][y])
 						CommonLeft = true;
+					if (zone[x][y] == Biome_Grass &&
+						zone[x - 1][y] == Biome_Water)
+						CommonLeft = true;
+				} else {
+					CommonLeft = true;
 				}
 				if (x < MAP_SIZE_X) {
 					if (zone[x + 1][y] == zone[x][y])
 						CommonRight = true;
+					if (zone[x][y] == Biome_Grass &&
+						zone[x + 1][y] == Biome_Water)
+						CommonRight = true;
+				} else {
+					CommonRight = true;
+				}
+
+				// Corner fills
+				if (x != 0 && y != 0) {
+					if (zone[x - 1][y - 1] == zone[x][y])
+						CommonTopLeft = true;
+				} else {
+					CommonTopLeft = true;
+				}
+				if (x < MAP_SIZE_X && y != 0) {
+					if (zone[x + 1][y - 1] == zone[x][y])
+						CommonTopRight = true;
+				} else {
+					CommonTopRight = true;
+				}
+				if (x != 0 && y < MAP_SIZE_Y) {
+					if (zone[x - 1][y + 1] == zone[x][y])
+						CommonBottomLeft = true;
+				} else {
+					CommonBottomLeft = true;
+				}
+				if (x < MAP_SIZE_X && y < MAP_SIZE_Y) {
+					if (zone[x + 1][y + 1] == zone[x][y])
+						CommonBottomRight = true;
+				} else {
+					CommonBottomRight = true;
 				}
 
 				// Choose the block location
-				if (!CommonTop) {
+				if (!CommonTopLeft && CommonTop && CommonLeft) {
+					if(zone[x][y] == Biome_Ground)
+						loc = BCor_TL;
+				} else if (!CommonTopRight && CommonTop && CommonRight) {
+					if (zone[x][y] == Biome_Ground)
+						loc = BCor_TR;
+				} else if (!CommonBottomLeft && CommonBottom && CommonLeft) {
+					if (zone[x][y] == Biome_Ground)
+						loc = BCor_BL;
+				} else if (!CommonBottomRight && CommonBottom && CommonRight) {
+					if (zone[x][y] == Biome_Ground)
+						loc = BCor_BR;
+				} else if (!CommonTop) {
 					loc = BLoc_T;
 					if (!CommonLeft)
 						loc = BLoc_TL;
@@ -148,23 +211,23 @@ void Map::Render(Game* g, SpriteStruct* sprites) {
 int GetTileSprite(Biome biome, BlockLocation location) {
 	switch (biome) {
 	case Biome_Grass:
-		if (location >= 0 && location <= 4) {
-			return location - 1;
-		} else if (location == 5) {
+		if (location >= BLoc_TL && location <= BLoc_L) {
+			return location - BLoc_TL;
+		} else if (location == BLoc_C) {
 			// There are 3 different center sprites for grass
 			// Pick at random
-			return (rand() % 3) + 4;
-		} else if (location <= 9) {
-			return location + 1;
+			return (rand() % 3) + BLoc_L;
+		} else if (location <= BCor_TL) {
+			return location + BLoc_TL + 3;
 		}
 		break;
 	case Biome_Ground:
-		if (location >= 0 && location <= 9) {
+		if (location >= BLoc_TL && location <= BCor_TL) {
 			return location + 14;
 		}
 		break;
 	case Biome_Water:
-		if (location >= 0 && location <= 9) {
+		if (location >= BLoc_TL && location <= BCor_TL) {
 			return location + 27;
 		}
 		break;

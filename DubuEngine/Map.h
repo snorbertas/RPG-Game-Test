@@ -8,14 +8,14 @@ enum Biome {
 	Biome_Water
 };
 
-/* Block locations 1 - 9
+/* Block locations
+Loc	=	Location
+Cor	=	Corner/Fill
 ERR	=	Error
 T	=	Top
 B	=	Bottom
 L	=	Left
-R	=	Right
-First comes the vertical location T/B
-Then the horizontal L/R */
+R	=	Right */
 enum BlockLocation {
 	BLoc_ERR,
 	BLoc_TL,
@@ -26,7 +26,11 @@ enum BlockLocation {
 	BLoc_R,
 	BLoc_BL,
 	BLoc_B,
-	BLoc_BR
+	BLoc_BR,
+	BCor_BR,
+	BCor_BL,
+	BCor_TR,
+	BCor_TL
 };
 
 /* =========================== GetSpriteTile ===========================
