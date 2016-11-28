@@ -55,8 +55,8 @@ void Map::GenerateRandom(int alg) {
 		int biome_h = rand() % MAP_SIZE_Y;
 		int biome_x = rand() % MAP_SIZE_X - biome_w;
 		int biome_y = rand() % MAP_SIZE_Y - biome_h;*/
-		int biome_w = 10;
-		int biome_h = 10;
+		int biome_w = 1;
+		int biome_h = 1;
 		int biome_x = 5;
 		int biome_y = 5;
 
