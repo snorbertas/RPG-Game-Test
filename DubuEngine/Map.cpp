@@ -1,10 +1,8 @@
 #include "Game.h"
 #include "ScaledDraw.h"
 
-enum Biome {Biome_Grass, Biome_Ground, Biome_Water};
-
 void Map::GenerateRandom(int alg) {
-	// Generation code
+	// Seed
 	srand(seed);
 
 	switch (alg) {
@@ -37,10 +35,60 @@ void Map::GenerateRandom(int alg) {
 				corners. */
 		/* =================================================*/
 		// This generation mode will use render mode 0 (Literal)
+		render_mode = 0;
 
+		// Choose base biome and create a virtual zone
+		Biome base = (Biome)(rand() % 3);
+		Biome zone[MAP_SIZE_X][MAP_SIZE_Y];
+
+		// Fill virtual zone with base biome
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				tile[x][y] = GetSpriteTile(Biome_Grass, 5);
+				zone[x][y] = base;
+			}
+		}
+
+		// Create biome zones
+		// To try lets do 1 rectangle biome first
+		Biome first_biome = Biome_Water;
+		/*int biome_w = rand() % MAP_SIZE_X;
+		int biome_h = rand() % MAP_SIZE_Y;
+		int biome_x = rand() % MAP_SIZE_X - biome_w;
+		int biome_y = rand() % MAP_SIZE_Y - biome_h;*/
+		int biome_w = 10;
+		int biome_h = 10;
+		int biome_x = 5;
+		int biome_y = 5;
+
+		// Write this biome's zone
+		/*for (int i = 0; i < biome_w; i++) {
+			for (int j = 0; j < biome_h; j++) {
+				zone[biome_x + i][biome_y + j] = first_biome;
+			}
+		}*/
+		for (int x = biome_x; x < (biome_x + biome_w); x++) {
+			for (int y = biome_y; y < (biome_y + biome_h); y++) {
+				zone[x][y] = first_biome;
+			}
+		}
+
+		// Sort out sprites for all biomes
+		/*	This will loop trough each zone block from top to bottom,
+			then slowly moving right. We will choose a sprite depending on
+			the relationship of that block between other blocks around it.
+		*/
+		for (int x = 0; x < MAP_SIZE_X; x++) {
+			for (int y = 0; y < MAP_SIZE_Y; y++) {
+				int temp_sprite = GetTileSprite(zone[x][y], BLoc_C);
+				if (y == 0) {
+					// Top edge of map
+					if (x == 0) {
+						// Top left corner of map
+						// We will not check the blocks above and on left
+
+					}
+				}
+				tile[x][y] = temp_sprite;
 			}
 		}
 		break;
@@ -66,8 +114,8 @@ void Map::Render(Game* g, SpriteStruct* sprites) {
 	}
 }
 
-int GetSpriteTile(int biome_id, int location) {
-	switch (biome_id) {
+int GetTileSprite(Biome biome, int location) {
+	switch (biome) {
 	case Biome_Grass:
 		if (location >= 0 && location <= 4) {
 			return location - 1;

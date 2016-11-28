@@ -1,13 +1,52 @@
 #pragma once
 
-#define TILE_DEFAULT 4
+// Biomes
+enum Biome {
+	Biome_None,
+	Biome_Grass,
+	Biome_Ground,
+	Biome_Water
+};
 
+/* Block locations 1 - 9
+ERR	=	Error
+T	=	Top
+B	=	Bottom
+L	=	Left
+R	=	Right
+First comes the vertical location T/B
+Then the horizontal L/R */
+enum BlockLocation {
+	BLoc_ERR,
+	BLoc_TL,
+	BLoc_T,
+	BLoc_TR,
+	BLoc_L,
+	BLoc_C,
+	BLoc_R,
+	BLoc_BL,
+	BLoc_B,
+	BLoc_BR
+};
+
+/* =========================== GetSpriteTile ===========================
+*		Returns the sprite ID for a desired tile.
+*			Locations:
+*			[1]	[2]	[3]
+*			[4]	[5]	[6]
+*			[7]	[8]	[9]
+*		Example: If you want the top-right corner sprite for grass
+*		GetSpriteID(Biome_Grass, BLoc_TR); (will return sprite ID 2)
+*/
+	int GetTileSprite(Biome biome, int location);
+
+// Map Class
 class Map {
 public:
 	Map(int s) : seed(s) {
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				tile[x][y] = TILE_DEFAULT;
+				tile[x][y] = GetTileSprite(Biome_Grass, BLoc_C);
 			}
 		}
 
@@ -25,14 +64,3 @@ public:
 	int seed;							// Seed for random generation
 	int render_mode = 0;
 };
-
-/* =========================== GetSpriteTile ===========================
-*		Returns the sprite ID for a desired tile.
-*			Locations:
-*			[1]	[2]	[3]
-*			[4]	[5]	[6]
-*			[7]	[8]	[9]
-*		Example: If you want the top-right corner sprite for grass
-*		GetSpriteID(Biome_Grass, 3); (will return 2)
-*/
-int GetSpriteTile(int biome_id, int location);
