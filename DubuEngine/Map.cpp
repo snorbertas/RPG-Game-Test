@@ -26,6 +26,140 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	}
 }
 
+void Map::GenerateMapWithBaseBiome() {
+	// In this generation mode I will take a few steps
+	/* =================================================*/
+	/*	STEP 1: Choose default (global) biome
+	This will be the base biome of our map.
+	ex.: Water could represent an ocean or huge lake,
+	thus the next biomes created are like "islands".
+
+	STEP 2: Create the biome zones
+	Biomes will have different shapes and sizes.
+
+	STEP 3: Sort out the sprites.
+	This will choose which sprites should be rendered to
+	suit the biome blocks. It'll careful analyze edges and
+	corners. */
+	/* =================================================*/
+	// This generation mode will use render mode 0 (Literal)
+	render_mode = 0;
+
+	// Choose base biome and create a virtual zone
+	Biome base = (Biome)(rand() % 3 + 1);
+	Biome zone[MAP_SIZE_X][MAP_SIZE_Y];
+
+	// Fill virtual zone with base biome
+	for (int x = 0; x < MAP_SIZE_X; x++) {
+		for (int y = 0; y < MAP_SIZE_Y; y++) {
+			zone[x][y] = base;
+		}
+	}
+
+	/* 
+		ATTEMPT TO MAKE RANDOM SHAPES
+	*/
+	GenerateRandomShape(zone, Biome_Water, 1, 1, 20, 20);
+
+	// Sort out sprites for all biomes (will make separate function)
+	SortSpritesFromZone(zone);
+}
+
+void Map::GenerateRandomShape(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x, int y, int w, int h, Biome touch_only) {
+	// x, y are the start position
+	// w, h are width and height of the rectangle to generate the shape within
+
+	// Choose the starting point
+	bool start_chosen = false;
+	int start_x;
+	int start_y;
+	while (!start_chosen) {
+		start_x = x + 1 + (rand() % (w - 2));
+		start_y = y + 1 + (rand() % (h - 2));
+		if (touch_only == Biome_None || zone[start_x][start_y] != touch_only) start_chosen = true;
+	}
+
+	// Write our start
+	zone[start_x][start_y] = new_biome;
+	zone[start_x + 1][start_y] = new_biome;
+	zone[start_x][start_y + 1] = new_biome;
+	zone[start_x + 1][start_y + 1] = new_biome;
+
+	enum Direction {Top, Bottom, Left, Right, Dir_Members};
+	Direction dir = Top;
+
+	// Random Cross Algorythm
+	for (int i = Top; i < Dir_Members; i++) {
+		int cur_x = start_x;
+		int cur_y = start_y;
+		bool writing_cross = true;
+		while (writing_cross) {
+			if ((i == Top && cur_y > y + 1) ||
+				(i == Bottom && cur_y < y + h - 1) ||
+				(i == Left && cur_x > x + 1) ||
+				(i == Right && cur_x < x + w - 1)) {
+				if (i == Top) cur_y -= 2;
+				if (i == Bottom) cur_y += 2;
+				if (i == Left) cur_x -= 2;
+				if (i == Right) cur_x += 2;
+
+				// Draw the square from top of cur
+				zone[cur_x][cur_y] = new_biome;
+				zone[cur_x + 1][cur_y] = new_biome;
+				zone[cur_x][cur_y + 1] = new_biome;
+				zone[cur_x + 1][cur_y + 1] = new_biome;
+
+				// Random fill horizontally
+				int left = rand() % (cur_x - x);
+				int right = rand() % (w - cur_x + 1);
+				while (left > 0) {
+					zone[cur_x - left][cur_y] = new_biome;
+					zone[cur_x - left][cur_y + 1] = new_biome;
+					left--;
+				}
+				while (right > 0) {
+					zone[cur_x + right][cur_y] = new_biome;
+					zone[cur_x + right][cur_y + 1] = new_biome;
+					right--;
+				}
+			} else {
+				writing_cross = false;
+			}
+		}
+	}
+
+	/*// Go down
+	cur_x = start_x;
+	cur_y = start_y;
+	writing_cross = true;
+	while (writing_cross) {
+		if (cur_y < y + h - 1) {
+			cur_y += 2;
+			// Draw the square from top of cur
+			zone[cur_x][cur_y] = new_biome;
+			zone[cur_x + 1][cur_y] = new_biome;
+			zone[cur_x][cur_y + 1] = new_biome;
+			zone[cur_x + 1][cur_y + 1] = new_biome;
+
+			// Random fill horizontally
+			int left = rand() % (cur_x - x);
+			int right = rand() % (w - cur_x + 1);
+			while (left > 0) {
+				zone[cur_x - left][cur_y] = new_biome;
+				zone[cur_x - left][cur_y + 1] = new_biome;
+				left--;
+			}
+			while (right > 0) {
+				zone[cur_x + right][cur_y] = new_biome;
+				zone[cur_x + right][cur_y + 1] = new_biome;
+				right--;
+			}
+		} else {
+			writing_cross = false;
+		}
+	}*/
+}
+
 void Map::GenerateRandom(int alg) {
 	// Seed
 	srand(seed);
@@ -35,165 +169,17 @@ void Map::GenerateRandom(int alg) {
 		// Generation mode A (Literal random)
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				tile[x][y] = rand() % MAX_TILE_SPRITES;
+				tile[x][y] = rand() % 41;
 			}
 		}
 		break;
 	case 1:
+		// Generation mode B
 		GenerateRandomMapWithAppropriateNeighbours();
 		break;
 	case 2:
-		// Generation mode C (I think I will put this in separate functions lmao)
-		// In this generation mode I will take a few steps
-		/* =================================================*/
-		/*	STEP 1: Choose default (global) biome
-				This will be the base biome of our map.
-				ex.: Water could represent an ocean or huge lake,
-				thus the next biomes created are like "islands".
-
-			STEP 2: Create the biome zones
-				Biomes will have different shapes and sizes.
-
-			STEP 3: Sort out the sprites.
-				This will choose which sprites should be rendered to
-				suit the biome blocks. It'll careful analyze edges and
-				corners. */
-		/* =================================================*/
-		// This generation mode will use render mode 0 (Literal)
-		render_mode = 0;
-
-		// Choose base biome and create a virtual zone
-		Biome base = (Biome)(rand() % 3 + 1);
-		Biome zone[MAP_SIZE_X][MAP_SIZE_Y];
-
-		// Fill virtual zone with base biome
-		for (int x = 0; x < MAP_SIZE_X; x++) {
-			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				zone[x][y] = base;
-			}
-		}
-
-		// Create biome zones
-		// To try lets do 1 rectangle biome first
-		Biome first_biome = Biome_Grass;
-		/*int biome_w = rand() % MAP_SIZE_X;
-		int biome_h = rand() % MAP_SIZE_Y;
-		int biome_x = rand() % MAP_SIZE_X - biome_w;
-		int biome_y = rand() % MAP_SIZE_Y - biome_h;*/
-		int biome_w = 1;
-		int biome_h = 1;
-		int biome_x = 5;
-		int biome_y = 5;
-
-		for (int x = biome_x; x < (biome_x + biome_w); x++) {
-			for (int y = biome_y; y < (biome_y + biome_h); y++) {
-				zone[x][y] = first_biome;
-			}
-		}
-
-		// Sort out sprites for all biomes (will make separate function)
-		/*	This will loop trough each zone block from top to bottom,
-			then slowly moving right. We will choose a sprite depending on
-			the relationship of that block between other blocks around it.
-		*/
-
-		for (int x = 0; x < MAP_SIZE_X; x++) {
-			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				BlockLocation loc = BLoc_C;
-				bool CommonTop = false;
-				bool CommonBottom = false;
-				bool CommonLeft = false;
-				bool CommonRight = false;
-				// Fill Corners
-				bool CommonTopLeft = false;
-				bool CommonTopRight = false;
-				bool CommonBottomLeft = false;
-				bool CommonBottomRight = false;
-
-				// Check common blocks
-				if (y != 0) {
-					if(IsCommonTo(zone[x][y], zone[x][y - 1]))
-						CommonTop = true;
-				} else {
-					CommonTop = true;
-				}
-				if (y < MAP_SIZE_Y) {
-					if (IsCommonTo(zone[x][y], zone[x][y + 1]))
-						CommonBottom = true;
-				} else {
-					CommonBottom = true;
-				}
-				if (x != 0) {
-					if (IsCommonTo(zone[x][y], zone[x - 1][y]))
-						CommonLeft = true;
-				} else {
-					CommonLeft = true;
-				}
-				if (x < MAP_SIZE_X) {
-					if (IsCommonTo(zone[x][y], zone[x + 1][y]))
-						CommonRight = true;
-				} else {
-					CommonRight = true;
-				}
-
-				// Corner fills
-				if (x != 0 && y != 0) {
-					if (IsCommonTo(zone[x][y], zone[x - 1][y - 1]))
-						CommonTopLeft = true;
-				} else {
-					CommonTopLeft = true;
-				}
-				if (x < MAP_SIZE_X && y != 0) {
-					if (IsCommonTo(zone[x][y], zone[x + 1][y - 1]))
-						CommonTopRight = true;
-				} else {
-					CommonTopRight = true;
-				}
-				if (x != 0 && y < MAP_SIZE_Y) {
-					if (IsCommonTo(zone[x][y], zone[x - 1][y + 1]))
-						CommonBottomLeft = true;
-				} else {
-					CommonBottomLeft = true;
-				}
-				if (x < MAP_SIZE_X && y < MAP_SIZE_Y) {
-					if (IsCommonTo(zone[x][y], zone[x + 1][y + 1]))
-						CommonBottomRight = true;
-				} else {
-					CommonBottomRight = true;
-				}
-
-				// Choose the block location
-				if (!CommonTopLeft && CommonTop && CommonLeft) {
-						loc = BCor_TL;
-				} else if (!CommonTopRight && CommonTop && CommonRight) {
-						loc = BCor_TR;
-				} else if (!CommonBottomLeft && CommonBottom && CommonLeft) {
-						loc = BCor_BL;
-				} else if (!CommonBottomRight && CommonBottom && CommonRight) {
-						loc = BCor_BR;
-				} else if (!CommonTop) {
-					loc = BLoc_T;
-					if (!CommonLeft)
-						loc = BLoc_TL;
-					if (!CommonRight)
-						loc = BLoc_TR;
-				} else if (!CommonBottom) {
-					loc = BLoc_B;
-					if (!CommonLeft)
-						loc = BLoc_BL;
-					if (!CommonRight)
-						loc = BLoc_BR;
-				} else {
-					if (!CommonLeft)
-						loc = BLoc_L;
-					if (!CommonRight)
-						loc = BLoc_R;
-				}
-
-				// Update the sprite id for that tile
-				tile[x][y] = GetTileSprite(zone[x][y], loc);
-			}
-		}
+		// Generation mode C
+		GenerateMapWithBaseBiome();
 		break;
 	}
 }
@@ -253,4 +239,108 @@ bool IsCommonTo(Biome center, Biome edge) {
 		break;
 	}
 	return false;
+}
+
+void Map::SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]) {
+	/*	This will loop trough each zone block from top to bottom,
+		then slowly moving right. We will choose a sprite depending on
+		the relationship of that block between other blocks around it.
+	*/
+	for (int x = 0; x < MAP_SIZE_X; x++) {
+		for (int y = 0; y < MAP_SIZE_Y; y++) {
+			BlockLocation loc = BLoc_C;
+			bool CommonTop = false;
+			bool CommonBottom = false;
+			bool CommonLeft = false;
+			bool CommonRight = false;
+			// Fill Corners
+			bool CommonTopLeft = false;
+			bool CommonTopRight = false;
+			bool CommonBottomLeft = false;
+			bool CommonBottomRight = false;
+
+			// Check common blocks
+			if (y != 0) {
+				if(IsCommonTo(zone[x][y], zone[x][y - 1]))
+					CommonTop = true;
+			} else {
+				CommonTop = true;
+			}
+			if (y < MAP_SIZE_Y) {
+				if (IsCommonTo(zone[x][y], zone[x][y + 1]))
+					CommonBottom = true;
+			} else {
+				CommonBottom = true;
+			}
+			if (x != 0) {
+				if (IsCommonTo(zone[x][y], zone[x - 1][y]))
+					CommonLeft = true;
+			} else {
+				CommonLeft = true;
+			}
+			if (x < MAP_SIZE_X) {
+				if (IsCommonTo(zone[x][y], zone[x + 1][y]))
+					CommonRight = true;
+			} else {
+				CommonRight = true;
+			}
+
+			// Corner fills
+			if (x != 0 && y != 0) {
+				if (IsCommonTo(zone[x][y], zone[x - 1][y - 1]))
+					CommonTopLeft = true;
+			} else {
+				CommonTopLeft = true;
+			}
+			if (x < MAP_SIZE_X && y != 0) {
+				if (IsCommonTo(zone[x][y], zone[x + 1][y - 1]))
+					CommonTopRight = true;
+			} else {
+				CommonTopRight = true;
+			}
+			if (x != 0 && y < MAP_SIZE_Y) {
+				if (IsCommonTo(zone[x][y], zone[x - 1][y + 1]))
+					CommonBottomLeft = true;
+			} else {
+				CommonBottomLeft = true;
+			}
+			if (x < MAP_SIZE_X && y < MAP_SIZE_Y) {
+				if (IsCommonTo(zone[x][y], zone[x + 1][y + 1]))
+					CommonBottomRight = true;
+			} else {
+				CommonBottomRight = true;
+			}
+
+			// Choose the block location
+			if (!CommonTopLeft && CommonTop && CommonLeft) {
+					loc = BCor_TL;
+			} else if (!CommonTopRight && CommonTop && CommonRight) {
+					loc = BCor_TR;
+			} else if (!CommonBottomLeft && CommonBottom && CommonLeft) {
+					loc = BCor_BL;
+			} else if (!CommonBottomRight && CommonBottom && CommonRight) {
+					loc = BCor_BR;
+			} else if (!CommonTop) {
+				loc = BLoc_T;
+				if (!CommonLeft)
+					loc = BLoc_TL;
+				if (!CommonRight)
+					loc = BLoc_TR;
+			} else if (!CommonBottom) {
+				loc = BLoc_B;
+				if (!CommonLeft)
+					loc = BLoc_BL;
+				if (!CommonRight)
+					loc = BLoc_BR;
+			} else {
+				if (!CommonLeft)
+					loc = BLoc_L;
+				if (!CommonRight)
+					loc = BLoc_R;
+			}
+
+			// Update the sprite id for that tile
+			tile[x][y] = GetTileSprite(zone[x][y], loc);
+		}
+	}
 }

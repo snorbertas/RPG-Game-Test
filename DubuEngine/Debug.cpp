@@ -31,13 +31,20 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 	// Press
 	// Register different keys to help change/debug variables live
 	if (!release) {
+		if (kid == ALLEGRO_KEY_F1) {
+			// PANIC BUTTON
+			g->BWIDTH = 1280;
+			g->BHEIGHT = 720;
+			g->camera.x = 0;
+			g->camera.y = 0;
+		}
 		if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
 			g->map.seed = kid - ALLEGRO_KEY_PAD_0;
 		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_Z) {
 			g->map.GenerateRandom(kid - ALLEGRO_KEY_A);
 		}
 	}
-	
+
 }
 
 
