@@ -17,6 +17,26 @@ void Map::GenerateRandom(int alg) {
 	case 1:
 		// Generation mode 2
 		break;
+	case 2:
+		// Generation mode 3
+		// In this generation mode I will take a few steps
+		/*	STEP 1: Choose default (global) biome
+				This will be the base biome of our map.
+				ex.: Water could represent an ocean or huge lake,
+				thus the next biomes created are like "islands".
+			STEP 2: Create the biome zones
+				It seems the tiles require a minimum of 3 sprites
+				both vertically and horizontally to form a complete
+				pattern. Thus the minimum biome size will be 3x3 big.
+				Biomes will have different shapes and sizes, not just
+				rectangles.
+
+			STEP 3: Sort out the sprites.
+				This will choose which sprites should be rendered to
+				suit the biome blocks. It'll careful analyze edges and
+				corners. */
+
+		break;
 	}
 }
 
