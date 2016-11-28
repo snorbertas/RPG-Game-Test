@@ -20,7 +20,7 @@
 #include <allegro5/allegro_acodec.h>
 #include <string.h>
 #include <iostream>
-#include "bass.h"
+//#include "bass.h"
 #include "DEEvents.h"
 #include "Main.h"
 #include "Game.h"
@@ -33,7 +33,7 @@
 #include "Interfaces.h"
 #include "DEText.h"
 #include "Debug.h"
-#include <array>
+#include "TilesInfo.h"
 using namespace std;
 
 int main(){
@@ -44,12 +44,12 @@ int main(){
 	}
 
 	// Initiate BASS
-	if (BASS_Init(-1, 44100, 0, 0, NULL)) {
+	/*if (BASS_Init(-1, 44100, 0, 0, NULL)) {
 		menu_theme = BASS_SampleLoad(false, "music/theme_0.mp3", 0, 0, 1, BASS_SAMPLE_LOOP);
 		main_channel = BASS_SampleGetChannel(menu_theme, false);
 	} else {
 		al_show_native_message_box(NULL, NULL, NULL, "failed to initialize Bass", NULL, NULL);
-	}
+	}*/
 
 	// Load settings
 	LoadSettings();
@@ -110,6 +110,9 @@ int main(){
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_hide_mouse_cursor(display);
 
+	// Adjust tiles info
+	TilesInfo::AdjustTilesInfo();
+
 	// Main Loop
 	MainLoop();
 
@@ -117,7 +120,7 @@ int main(){
 	SaveSettings();
 
 	// Free memory once loop ends
-	BASS_Free();
+	/*BASS_Free();*/
 	DestroyBitmaps();
 	DestroySamples();
 	DestroyFonts();

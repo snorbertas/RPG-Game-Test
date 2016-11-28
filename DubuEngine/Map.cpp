@@ -1,5 +1,37 @@
 #include "Game.h"
 #include "ScaledDraw.h"
+#include "TilesInfo.h"
+
+void Map::GenerateRandomMapWithAppropriateNeighbours() {
+	tile[0][0] = rand() % MAX_TILE_SPRITES;
+	for (int i = 1; i < MAP_SIZE_X; ++i) {
+		tile[i][0] = TilesInfo::GetAppropriateTile(tile[i - 1][0], -1);
+	}
+	for (int j = 1; j < MAP_SIZE_Y; ++j) {
+		tile[0][j] = TilesInfo::GetAppropriateTile(-1, tile[0][j - 1]);
+		bool badTileFlag = false;
+		for (int i = 1; i < MAP_SIZE_X; ++i) {
+			tile[i][j] = TilesInfo::GetAppropriateTile(tile[i - 1][j], tile[i][j - 1]);
+			if (tile[i][j] == -1) {
+				tile[i][j] = 4;
+				if (!badTileFlag) {
+					badTileFlag = true;
+					tile[i - 1][j] = TilesInfo::GetAppropriateTile(tile[i - 2][j], tile[i - 1][j - 1], tile[i - 1][j]);
+					if (tile[i - 1][j] == -1) {
+						tile[i - 1][j] = 4;
+						return ;
+					} else {
+						--i;
+					}
+				} else {
+					return ;
+				}
+			} else {
+				badTileFlag = false;
+			}
+		}
+	}
+}
 
 void Map::GenerateRandom(int alg) {
 	// Seed
@@ -15,7 +47,7 @@ void Map::GenerateRandom(int alg) {
 		}
 		break;
 	case 1:
-		// Generation mode B
+		GenerateRandomMapWithAppropriateNeighbours();
 		break;
 	case 2:
 		// Generation mode C (I think I will put this in separate functions lmao)

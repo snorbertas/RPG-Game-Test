@@ -66,6 +66,8 @@ public:
 	void GenerateRandom(int alg);		// Generates a random map based on seed
 	void Render(Game* g, SpriteStruct* sprites);
 
+	void GenerateRandomMapWithAppropriateNeighbours();
+
 	// Constants
 	static const int MAP_SIZE_X = 100;
 	static const int MAP_SIZE_Y = 100;

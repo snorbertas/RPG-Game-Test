@@ -13,8 +13,8 @@
 	ALLEGRO_SAMPLE* sample_sfx[MAX_SAMPLES];	// Allegro sample array (for sound effects)
 	ALLEGRO_FONT* font[MAX_FONTS];				// Allegro font array
 	SpriteStruct sprites;						// Array to sprites
-	HSAMPLE menu_theme;							// Bass temp
-	HCHANNEL main_channel;						// Bass temp
+	//HSAMPLE menu_theme;							// Bass temp
+	//HCHANNEL main_channel;						// Bass temp
 
 
 // Socket definitions

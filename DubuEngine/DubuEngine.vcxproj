@@ -37,6 +37,7 @@
     <ClCompile Include="MenuRenderer.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="ScaledDraw.cpp" />
+    <ClCompile Include="TilesInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DubuEngineServer\DEProtocol.h" />
@@ -49,6 +50,7 @@
     <ClInclude Include="DEText.h" />
     <ClInclude Include="DEDefinitions.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="TilesInfo.h" />
     <ClInclude Include="_EngineConfig.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameHandler.h" />
@@ -161,7 +163,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>bass.lib;User32.lib</AdditionalDependencies>
+      <AdditionalDependencies>User32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
