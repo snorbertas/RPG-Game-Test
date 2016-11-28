@@ -44,6 +44,14 @@ enum BlockLocation {
 */
 	int GetTileSprite(Biome biome, BlockLocation location);
 
+
+/* ============================ IsCommonTo =============================
+*		Returns true if the center sprite of first biome can succesfuly
+*		merge with an edge of the second biome.
+*		Otherwise returns false.
+*/
+	bool IsCommonTo(Biome center, Biome edge);
+
 // Map Class
 class Map {
 public:

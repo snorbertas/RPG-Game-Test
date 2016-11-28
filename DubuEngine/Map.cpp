@@ -87,37 +87,25 @@ void Map::GenerateRandom(int alg) {
 
 				// Check common blocks
 				if (y != 0) {
-					if (zone[x][y - 1] == zone[x][y])
-						CommonTop = true;
-					if (zone[x][y] == Biome_Grass &&
-						zone[x][y - 1] == Biome_Water)
+					if(IsCommonTo(zone[x][y], zone[x][y - 1]))
 						CommonTop = true;
 				} else {
 					CommonTop = true;
 				}
 				if (y < MAP_SIZE_Y) {
-					if (zone[x][y + 1] == zone[x][y])
-						CommonBottom = true;
-					if (zone[x][y] == Biome_Grass &&
-						zone[x][y + 1] == Biome_Water)
+					if (IsCommonTo(zone[x][y], zone[x][y + 1]))
 						CommonBottom = true;
 				} else {
 					CommonBottom = true;
 				}
 				if (x != 0) {
-					if (zone[x - 1][y] == zone[x][y])
-						CommonLeft = true;
-					if (zone[x][y] == Biome_Grass &&
-						zone[x - 1][y] == Biome_Water)
+					if (IsCommonTo(zone[x][y], zone[x - 1][y]))
 						CommonLeft = true;
 				} else {
 					CommonLeft = true;
 				}
 				if (x < MAP_SIZE_X) {
-					if (zone[x + 1][y] == zone[x][y])
-						CommonRight = true;
-					if (zone[x][y] == Biome_Grass &&
-						zone[x + 1][y] == Biome_Water)
+					if (IsCommonTo(zone[x][y], zone[x + 1][y]))
 						CommonRight = true;
 				} else {
 					CommonRight = true;
@@ -125,25 +113,25 @@ void Map::GenerateRandom(int alg) {
 
 				// Corner fills
 				if (x != 0 && y != 0) {
-					if (zone[x - 1][y - 1] == zone[x][y])
+					if (IsCommonTo(zone[x][y], zone[x - 1][y - 1]))
 						CommonTopLeft = true;
 				} else {
 					CommonTopLeft = true;
 				}
 				if (x < MAP_SIZE_X && y != 0) {
-					if (zone[x + 1][y - 1] == zone[x][y])
+					if (IsCommonTo(zone[x][y], zone[x + 1][y - 1]))
 						CommonTopRight = true;
 				} else {
 					CommonTopRight = true;
 				}
 				if (x != 0 && y < MAP_SIZE_Y) {
-					if (zone[x - 1][y + 1] == zone[x][y])
+					if (IsCommonTo(zone[x][y], zone[x - 1][y + 1]))
 						CommonBottomLeft = true;
 				} else {
 					CommonBottomLeft = true;
 				}
 				if (x < MAP_SIZE_X && y < MAP_SIZE_Y) {
-					if (zone[x + 1][y + 1] == zone[x][y])
+					if (IsCommonTo(zone[x][y], zone[x + 1][y + 1]))
 						CommonBottomRight = true;
 				} else {
 					CommonBottomRight = true;
@@ -151,16 +139,12 @@ void Map::GenerateRandom(int alg) {
 
 				// Choose the block location
 				if (!CommonTopLeft && CommonTop && CommonLeft) {
-					if(zone[x][y] == Biome_Ground)
 						loc = BCor_TL;
 				} else if (!CommonTopRight && CommonTop && CommonRight) {
-					if (zone[x][y] == Biome_Ground)
 						loc = BCor_TR;
 				} else if (!CommonBottomLeft && CommonBottom && CommonLeft) {
-					if (zone[x][y] == Biome_Ground)
 						loc = BCor_BL;
 				} else if (!CommonBottomRight && CommonBottom && CommonRight) {
-					if (zone[x][y] == Biome_Ground)
 						loc = BCor_BR;
 				} else if (!CommonTop) {
 					loc = BLoc_T;
@@ -216,9 +200,9 @@ int GetTileSprite(Biome biome, BlockLocation location) {
 		} else if (location == BLoc_C) {
 			// There are 3 different center sprites for grass
 			// Pick at random
-			return (rand() % 3) + BLoc_L;
+			return (rand() % 3) + 4;
 		} else if (location <= BCor_TL) {
-			return location + BLoc_TL + 3;
+			return location + 1;
 		}
 		break;
 	case Biome_Ground:
@@ -237,4 +221,19 @@ int GetTileSprite(Biome biome, BlockLocation location) {
 	// (I think they're for tiny 2x2 biomes, hmm, we'll see)
 	// Update: I found the use for them but idk how to describe in words
 	return 0;
+}
+
+bool IsCommonTo(Biome center, Biome edge) {
+	// Note:
+	//	- Grass is Common to Water
+	//	- Ground is Common to Grass
+	//	- Grass is Common to Ground
+	if (center == edge) return true;
+	switch (center) {
+	case Biome_Grass:
+		if (edge == Biome_Ground) return true;
+		if (edge == Biome_Water) return true;
+		break;
+	}
+	return false;
 }
