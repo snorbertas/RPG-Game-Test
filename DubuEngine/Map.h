@@ -74,8 +74,27 @@ public:
 	void Render(Game* g, SpriteStruct* sprites);
 
 	void GenerateRandomMapWithAppropriateNeighbours();
-	void GenerateMapWithBaseBiome();
-	void SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]);
+
+	/* =================== GenerateMapWithBaseBiome =====================
+	 * Generates a random map with a random base biome
+	 */
+		void GenerateMapWithBaseBiome();
+
+
+	/* ====================== GenerateRandomShape =======================
+	 * Generates a random shape in a biome matrix within the square specified
+	 */
+		void GenerateRandomShape(Biome zone[][MAP_SIZE_Y],
+			Biome new_biome,					// Desired biome to generate
+			int x, int y,						// Start x/y for square
+			int w, int h,						// Width/Height for square
+			Biome touch_only = Biome_None);		// Optional: Only write on this biome type
+
+
+	/* ====================== SortSpritesFromZone =======================
+	 * Sorts all sprites in the map based on the zone specified
+	 */
+		void SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]);
 
 
 	// Variables
