@@ -25,3 +25,14 @@ public:
 	int seed;							// Seed for random generation
 	int render_mode = 0;
 };
+
+/* =========================== GetSpriteTile ===========================
+*		Returns the sprite ID for a desired tile.
+*			Locations:
+*			[1]	[2]	[3]
+*			[4]	[5]	[6]
+*			[7]	[8]	[9]
+*		Example: If you want the top-right corner sprite for grass
+*		GetSpriteID(Biome_Grass, 3); (will return 2)
+*/
+int GetSpriteTile(int biome_id, int location);
