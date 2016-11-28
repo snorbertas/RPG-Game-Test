@@ -55,6 +55,12 @@ enum BlockLocation {
 // Map Class
 class Map {
 public:
+	// Constants
+	static const int MAP_SIZE_X = 100;
+	static const int MAP_SIZE_Y = 100;
+	static const int TILE_SIZE = 64;
+
+	// Constructor
 	Map(int s) : seed(s) {
 		for (int x = 0; x < MAP_SIZE_X; x++) {
 			for (int y = 0; y < MAP_SIZE_Y; y++) {
@@ -63,15 +69,14 @@ public:
 		}
 
 	}
+
 	void GenerateRandom(int alg);		// Generates a random map based on seed
 	void Render(Game* g, SpriteStruct* sprites);
 
 	void GenerateRandomMapWithAppropriateNeighbours();
+	void GenerateMapWithBaseBiome();
+	void SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]);
 
-	// Constants
-	static const int MAP_SIZE_X = 100;
-	static const int MAP_SIZE_Y = 100;
-	static const int TILE_SIZE = 64;
 
 	// Variables
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];	// tile[x][y]
