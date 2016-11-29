@@ -46,7 +46,7 @@ void Map::GenerateMapWithBaseBiome() {
 	render_mode = 0;
 
 	// Choose base biome and create a virtual zone
-	Biome base = (Biome)(rand() % 3 + 1);
+	Biome base = Biome_Grass;
 	Biome zone[MAP_SIZE_X][MAP_SIZE_Y];
 
 	// Fill virtual zone with base biome
@@ -59,100 +59,119 @@ void Map::GenerateMapWithBaseBiome() {
 	/* 
 		ATTEMPT TO MAKE RANDOM SHAPES
 	*/
-	for (int x = 0; x < MAP_SIZE_X / 30; x++) {
-		for (int y = 0; y < MAP_SIZE_Y / 30; y++) {
-			GenerateRandomShape(zone, (Biome)(rand() % 3 + 1),
-				x * 20,
-				y * 20,
-				20, 20);
-		}
-	}
-	//GenerateRandomShape(zone, Biome_Water, 1, 1, 20, 20);
-	//GenerateRandomShape(zone, Biome_Water, 1, 1, 20, 20);
+	GenerateRandomStamps(zone, Biome_Ground, 0, 0, 100, 100);
 
-	// Sort out sprites for all biomes (will make separate function)
+	// Sort out sprites for all biomes
 	SortSpritesFromZone(zone);
 }
 
-void Map::GenerateRandomShape(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x, int y, int w, int h, Biome touch_only) {
+void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x, int y, int w, int h) {
 	// x, y are the start position
 	// w, h are width and height of the rectangle to generate the shape within
 
-	// Choose the starting point
-	bool start_chosen = false;
-	int start_x;
-	int start_y;
-	while (!start_chosen) {
-		start_x = x + 1 + (rand() % (w - 3));
-		start_y = y + 1 + (rand() % (h - 3));
-		if (touch_only == Biome_None || zone[start_x][start_y] != touch_only) start_chosen = true;
-	}
+	// Random cross stamps
+	// Can only generate on grass
+	int stamps_left = sqrt(w * h) * 12;
 
-	// Write our start
-	zone[start_x][start_y] = new_biome;
-	zone[start_x + 1][start_y] = new_biome;
-	zone[start_x][start_y + 1] = new_biome;
-	zone[start_x + 1][start_y + 1] = new_biome;
+	struct Point {
+		Point() {}
+		Point(int X, int Y) : x(X), y(Y) {}
+		int x;
+		int y;
+	};
 
-	enum Direction {Top, Bottom, Left, Right, Dir_Members};
-	Direction dir = Top;
-
-	// Random Cross Algorythm
-	for (int i = Top; i < Dir_Members; i++) {
-		int cur_x = start_x;
-		int cur_y = start_y;
-		bool writing_cross = true;
-		while (writing_cross) {
-			if ((i == Top && cur_y > y + 1) ||
-				(i == Bottom && cur_y < y + h - 1) ||
-				(i == Left && cur_x > x + 1) ||
-				(i == Right && cur_x < x + w - 1)) {
-				if (i == Top) cur_y -= 2;
-				if (i == Bottom) cur_y += 2;
-				if (i == Left) cur_x -= 2;
-				if (i == Right) cur_x += 2;
-
-				cout << i << endl;
-
-				// Draw the square from top of cur
-				zone[cur_x][cur_y] = new_biome;
-				zone[cur_x + 1][cur_y] = new_biome;
-				zone[cur_x][cur_y + 1] = new_biome;
-				zone[cur_x + 1][cur_y + 1] = new_biome;
-
-				// Random fill horizontally
-				if (i == Top || i == Bottom) {
-					int left = rand() % ((cur_x - x) + 1);
-					int right = rand() % ((w - cur_x + 1));
-					while (left > 0) {
-						zone[cur_x - left][cur_y] = new_biome;
-						zone[cur_x - left][cur_y + 1] = new_biome;
-						left--;
-					}
-					while (right > 0) {
-						zone[cur_x + right][cur_y] = new_biome;
-						zone[cur_x + right][cur_y + 1] = new_biome;
-						right--;
-					}
-				} else {
-					/*int bottom = rand() % ((cur_y - y) + 1);
-					int top = rand() % ((h - cur_y + 1));
-					while (bottom > 0) {
-						zone[cur_x - bottom][cur_y] = new_biome;
-						zone[cur_x - bottom][cur_y + 1] = new_biome;
-						bottom--;
-					}
-					while (top > 0) {
-						zone[cur_x + top][cur_y] = new_biome;
-						zone[cur_x + top][cur_y + 1] = new_biome;
-						top--;
-					}*/
-				}
-			} else {
-				writing_cross = false;
-			}
+	// Matrix of allowed/banned points
+	bool allowed_point[MAP_SIZE_X][MAP_SIZE_Y];
+	for (int iX = 0; iX < MAP_SIZE_X; iX++) {
+		for (int iY = 0; iY < MAP_SIZE_Y; iY++) {
+			allowed_point[iX][iY] = true;
 		}
 	}
+
+	while (stamps_left > 0) {
+		// Choose random allowed point
+		bool chosen_point = false;
+		int pX, pY;
+		while (!chosen_point) {
+			pX = x + rand() % (w - 3);
+			pY = y + rand() % (h - 3);
+			if (allowed_point[pX][pY] == true) {
+				chosen_point = true;
+			}
+		}
+
+		// Draw a cross stamp at that starting point
+		// Top
+		zone[pX + 1][pY] = new_biome;
+		zone[pX + 2][pY] = new_biome;
+
+		// Middle
+		for (int i = 0; i < 4; i++) {
+			zone[pX + i][pY + 1] = new_biome;
+			zone[pX + i][pY + 2] = new_biome;
+		}
+
+		// Bottom
+		zone[pX + 1][pY + 3] = new_biome;
+		zone[pX + 2][pY + 3] = new_biome;
+
+		// Ban specific points
+		/* There are 12 main points that should be banned relative
+		   to this stamp */
+		/*
+			X = Our point
+			B = Bans
+			[ ] [ ] [ ] [B] [ ] [B] [ ] [ ] [ ]
+			[ ] [B] [ ] [ ] [ ] [ ] [ ] [B] [ ]
+			[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+			[B] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [B]
+			[ ] [ ] [ ] [ ] [X] [ ] [ ] [ ] [ ]
+			[B] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [B]
+			[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+			[ ] [B] [ ] [ ] [ ] [ ] [ ] [B] [ ]
+			[ ] [ ] [ ] [B] [ ] [B] [ ] [ ] [ ]
+		*/
+		if (pX - 3 > x && pY - 3 > y) {
+			allowed_point[pX - 3][pY - 3] = false;
+		}
+		if (pX - 3 > x && pY + 3 < y + h) {
+			allowed_point[pX - 3][pY + 3] = false;
+		}
+		if (pX + 3 < x + w && pY - 3 > y) {
+			allowed_point[pX + 3][pY - 3] = false;
+		}
+		if (pX + 3 < x + w && pY + 3 < y + w) {
+			allowed_point[pX + 3][pY + 3] = false;
+		}
+		if (pX - 1 > x && pY - 4 > y) {
+			allowed_point[pX - 1][pY - 4] = false;
+		}
+		if (pX + 1 < x + w && pY - 4 > y) {
+			allowed_point[pX + 1][pY - 4] = false;
+		}
+		if (pX + 4 < x + w && pY - 1 > y) {
+			allowed_point[pX + 4][pY - 1] = false;
+		}
+		if (pX + 4 < x + w && pY + 1 < y + w) {
+			allowed_point[pX + 4][pY + 1] = false;
+		}
+		if (pX - 1 > x && pY + 4 < y + h) {
+			allowed_point[pX - 1][pY + 4] = false;
+		}
+		if (pX + 1 < x + w && pY + 4 < y + w) {
+			allowed_point[pX + 1][pY + 4] = false;
+		}
+		if (pX - 4 > x && pY - 1 > y) {
+			allowed_point[pX - 4][pY - 1] = false;
+		}
+		if (pX - 4 > x && pY + 1 < y + h) {
+			allowed_point[pX - 4][pY + 1] = false;
+		}
+
+		// Decrement stamp count
+		stamps_left--;
+	}
+
 }
 
 void Map::GenerateRandom(int alg) {
