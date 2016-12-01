@@ -11,15 +11,19 @@ static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Tick
 	if (g->pos_x < 50) {
 		g->camera.x += 20;
+		g->camera.mode = CAMERA_MODE_CUTSCENE;
 	}
 	if (g->pos_x > g->BWIDTH - 50) {
 		g->camera.x -= 20;
+		g->camera.mode = CAMERA_MODE_CUTSCENE;
 	}
 	if (g->pos_y < 50) {
 		g->camera.y += 20;
+		g->camera.mode = CAMERA_MODE_CUTSCENE;
 	}
 	if (g->pos_y > g->BHEIGHT - 50) {
 		g->camera.y -= 20;
+		g->camera.mode = CAMERA_MODE_CUTSCENE;
 	}
 }
 
@@ -50,6 +54,10 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 			g->pl.velocity--;
 		} else if (kid == ALLEGRO_KEY_F8) {
 			g->pl.velocity++;
+		} else if (kid == ALLEGRO_KEY_F9) {
+			g->pl.ticks_to_anim--;
+		} else if (kid == ALLEGRO_KEY_F10) {
+			g->pl.ticks_to_anim++;
 		}
 	}
 }

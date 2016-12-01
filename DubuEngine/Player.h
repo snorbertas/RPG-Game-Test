@@ -25,9 +25,11 @@ public:
 	int h = 64;
 
 	// Physics
-	int velocity = 10;				// Pixels per movement
-	int	ticks_to_move = 4;			// Ticks to move & change sprite
-	int ticks_left = ticks_to_move;	// Ticks left till next movement
+	int velocity = 3;				// Pixels per movement
+	int	ticks_to_move = 1;			// Ticks to move
+	int ticks_left_move = ticks_to_move;	// Ticks left till next movement
+	int ticks_to_anim = 5;			// Ticks to change sprite
+	int ticks_left_anim = ticks_to_anim;	// Ticks left till sprite change
 
 	// Visual/Animation
 	int sprite_id = 0;				// Sprite start

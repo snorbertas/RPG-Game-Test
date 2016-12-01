@@ -302,6 +302,8 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				if(HandlePlayerMovementKeyBinds(g, kid)){
 					// If true, there was a movement key bind handled
 					// Otherwise (false) look for next binds
+				} else if (kid == g->keys.camera_bind) {
+					g->camera.mode = CAMERA_MODE_LOCKED;
 				} else if (kid == g->keys.chat_bind) {
 					g->chat.show_chat = true;
 					if (!g->chat.type_chat) {

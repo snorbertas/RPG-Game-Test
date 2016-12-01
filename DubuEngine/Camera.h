@@ -7,15 +7,13 @@
 class Camera
 {
 public:
-	Camera();
-	~Camera();
 	int x = 0;						// Camera x
 	int y = 0;						// Camera y
 	int mode = CAMERA_MODE_LOCKED;	// Camera mode
-	int move_to_x;				// x Destination for camera to slide towards
-	int move_to_y;				// y Destination for camera to slide towards
-	int x_vel;					// Camera's x velocity for sliding
-	int y_vel;					// Camera's y velocity for sliding
+	int move_to_x;					// x Destination for camera to slide towards
+	int move_to_y;					// y Destination for camera to slide towards
+	int x_vel;						// Camera's x velocity for sliding
+	int y_vel;						// Camera's y velocity for sliding
 };
 
 

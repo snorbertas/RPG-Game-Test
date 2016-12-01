@@ -64,13 +64,14 @@ bool HandlePlayerMovementKeyBinds(Game* g, int kid) {
 
 void HandlePlayerMovementLogic(Game* g) {
 	if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
-		// There's movement input, update the tick counter
-		g->pl.ticks_left--;
+		// There's movement input, update the tick counters
+		g->pl.ticks_left_move--;
+		g->pl.ticks_left_anim--;
 
 		// Time to mobilize
-		if (g->pl.ticks_left <= 0) {
+		if (g->pl.ticks_left_move <= 0) {
 			// Reset ticks
-			g->pl.ticks_left = g->pl.ticks_to_move;
+			g->pl.ticks_left_move = g->pl.ticks_to_move;
 
 			// Handle movement
 			double compound_vel = g->pl.velocity * 2; // Not sure if too fast or not
@@ -124,9 +125,13 @@ void HandlePlayerMovementLogic(Game* g) {
 			// TODO: Insert collision here
 			g->pl.x += mov_x;
 			g->pl.y += mov_y;
+		}
 
+		// Animation
+		if (g->pl.ticks_left_anim <= 0) {
 			// Update the animation
 			UpdatePlayerMovementSprite(g->pl);
+			g->pl.ticks_left_anim = g->pl.ticks_to_anim;
 		}
 	}
 }
