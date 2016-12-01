@@ -36,6 +36,9 @@
     <ClCompile Include="MenuHandler.cpp" />
     <ClCompile Include="MenuRenderer.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="PlayerMovement.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ScaledDraw.cpp" />
     <ClCompile Include="TilesInfo.cpp" />
   </ItemGroup>
@@ -50,6 +53,9 @@
     <ClInclude Include="DEText.h" />
     <ClInclude Include="DEDefinitions.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="PlayerMovement.h">
+      <SubType>Header</SubType>
+    </ClInclude>
     <ClInclude Include="TilesInfo.h" />
     <ClInclude Include="_EngineConfig.h" />
     <ClInclude Include="Game.h" />

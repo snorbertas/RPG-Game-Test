@@ -12,6 +12,7 @@
 #include "GameHandler.h"
 #include "Interfaces.h"
 #include "InputHandler.h"
+#include "PlayerMovement.h"
 #include "DEText.h"
 using namespace std;
 
@@ -187,11 +188,11 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 260:
-									RequestBindKeyInput(g, &g->keys.jump_bind);
+									RequestBindKeyInput(g, &g->keys.up_bind);
 									done = true;
 									break;
 								case 261:
-									RequestBindKeyInput(g, &g->keys.crouch_bind);
+									RequestBindKeyInput(g, &g->keys.down_bind);
 									done = true;
 									break;
 								case 262:
@@ -297,11 +298,11 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				g->keys.SHIFT = true;
 			}
 		} else if (g->scene == 1) {
-			if (!g->chat.type_chat) { // Handle key binds
-				if (kid == g->keys.left_bind) {
-					//
-				}
-				if (kid == g->keys.chat_bind) {
+			if (!g->chat.type_chat) {
+				if(HandlePlayerMovementKeyBinds(g, kid)){
+					// If true, there was a movement key bind handled
+					// Otherwise (false) look for next binds
+				} else if (kid == g->keys.chat_bind) {
 					g->chat.show_chat = true;
 					if (!g->chat.type_chat) {
 						g->chat.type_chat = true;
@@ -350,25 +351,26 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 			}
 		}
 	} else {
-	if (kid == g->keys.left_bind) {
-		g->keys.left = false;
-	}
-	if (kid == g->keys.right_bind) {
-		g->keys.right = false;
-	}
-	if (kid == g->keys.jump_bind) {
-		g->keys.jump = false;
-	}
-	if (kid == g->keys.crouch_bind) {
-		g->keys.down = false;
-	}
-	if (kid == ALLEGRO_KEY_LSHIFT || kid == ALLEGRO_KEY_RSHIFT) {
-		g->keys.SHIFT = false;
-	}
-	if (kid == ALLEGRO_KEY_BACKSPACE && g->Interfaces[INTERFACE_LOGIN].visible) {
-		g->keys.backspace = false;
-		g->logini.backspace_timer_wait = 30;
-	}
+		// Released key binds
+		if (kid == g->keys.left_bind) {
+			g->keys.left = false;
+		}
+		if (kid == g->keys.right_bind) {
+			g->keys.right = false;
+		}
+		if (kid == g->keys.up_bind) {
+			g->keys.up = false;
+		}
+		if (kid == g->keys.down_bind) {
+			g->keys.down = false;
+		}
+		if (kid == ALLEGRO_KEY_LSHIFT || kid == ALLEGRO_KEY_RSHIFT) {
+			g->keys.SHIFT = false;
+		}
+		if (kid == ALLEGRO_KEY_BACKSPACE && g->Interfaces[INTERFACE_LOGIN].visible) {
+			g->keys.backspace = false;
+			g->logini.backspace_timer_wait = 30;
+		}
 		if (g->scene == 1) {
 			switch (kid) {
 				case ALLEGRO_KEY_BACKSPACE:
@@ -577,8 +579,8 @@ void BindKey(int* target, int key_id) {
 int* KeyIsBound(Game* g, int key_id) {
 	if (g->keys.left_bind == key_id) return &g->keys.left_bind;
 	if (g->keys.right_bind == key_id) return &g->keys.right_bind;
-	if (g->keys.jump_bind == key_id) return &g->keys.jump_bind;
-	if (g->keys.crouch_bind == key_id) return &g->keys.crouch_bind;
+	if (g->keys.up_bind == key_id) return &g->keys.up_bind;
+	if (g->keys.down_bind == key_id) return &g->keys.down_bind;
 	if (g->keys.inventory_bind == key_id) return &g->keys.inventory_bind;
 	if (g->keys.skills_bind == key_id) return &g->keys.skills_bind;
 	if (g->keys.camera_bind == key_id) return &g->keys.camera_bind;

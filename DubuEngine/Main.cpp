@@ -34,6 +34,7 @@
 #include "DEText.h"
 #include "Debug.h"
 #include "TilesInfo.h"
+#include "PlayerMovement.h"
 using namespace std;
 
 int main(){
@@ -72,6 +73,7 @@ int main(){
 	// Register event functions
 	RegisterCameraEvents(TimerEvents, MouseEvents, KeyboardEvents);
 	RegisterDebugEvents(TimerEvents, MouseEvents, KeyboardEvents);
+	RegisterPlayerMovementEvents(TimerEvents, MouseEvents, KeyboardEvents);
 
 	// Initiate allegro addons, registed mouse, keyboard, etc.
 	al_init_primitives_addon();
@@ -469,8 +471,8 @@ void LoadSettings(){
 			if (setting_type == "WINDOW_MODE") g.window_mode = s_val;
 			if (setting_type == ("KEY_LEFT")) g.keys.left_bind = s_val;
 			if (setting_type == ("KEY_RIGHT")) g.keys.right_bind = s_val;
-			if (setting_type == ("KEY_JUMP")) g.keys.jump_bind = s_val;
-			if (setting_type == ("KEY_CROUCH")) g.keys.crouch_bind = s_val;
+			if (setting_type == ("KEY_UP")) g.keys.up_bind = s_val;
+			if (setting_type == ("KEY_DOWN")) g.keys.down_bind = s_val;
 			if (setting_type == ("KEY_CAMERA")) g.keys.camera_bind = s_val;
 			if (setting_type == ("KEY_INVENTORY")) g.keys.inventory_bind = s_val;
 			if (setting_type == ("KEY_SKILLS")) g.keys.skills_bind = s_val;
@@ -507,8 +509,8 @@ void SaveSettings(){
 	myfile << ("WINDOW_MODE = " + to_string(g.window_mode) + "\n");
 	myfile << ("KEY_LEFT = " + to_string(g.keys.left_bind) + "\n");
 	myfile << ("KEY_RIGHT = " + to_string(g.keys.right_bind) + "\n");
-	myfile << ("KEY_JUMP = " + to_string(g.keys.jump_bind) + "\n");
-	myfile << ("KEY_CROUCH = " + to_string(g.keys.crouch_bind) + "\n");
+	myfile << ("KEY_UP = " + to_string(g.keys.up_bind) + "\n");
+	myfile << ("KEY_DOWN = " + to_string(g.keys.down_bind) + "\n");
 	myfile << ("KEY_CAMERA = " + to_string(g.keys.camera_bind) + "\n");
 	myfile << ("KEY_INVENTORY = " + to_string(g.keys.inventory_bind) + "\n");
 	myfile << ("KEY_SKILLS = " + to_string(g.keys.skills_bind) + "\n");

@@ -8,5 +8,13 @@
  *		Called once per tick from the main() function.
  */
 	void RenderGame(Game* g,				// Game pointer
-		SpriteStruct* csprites,				// Sprites
+		SpriteStruct* sprites,				// Sprites
 		ALLEGRO_FONT** font);				// Pointer to array of fonts
+
+
+/* ============================= RenderPlayer =============================
+ *		Renders the player.
+ *
+ *		Called once per tick from the RenderGame() function.
+ */
+	void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites);

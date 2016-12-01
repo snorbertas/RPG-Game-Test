@@ -13,7 +13,19 @@
 #include "ScaledDraw.h"
 #include "GameRenderer.h"
 
-void RenderGame(Game* g, SpriteStruct* csprites, ALLEGRO_FONT** font){
+void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 	//
-	g->map.Render(g, csprites);
+	g->map.Render(g, sprites);
+
+	RenderPlayer(g, g->pl, sprites);
+}
+
+void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {
+	// Render player test (Maybe put this in a separate file?)
+	int flag = 0;
+	if (pl.facing == 3) flag = 1;
+	DrawImage(g,
+		sprites->img_body[pl.sprite_id + pl.sprite_frame],
+		pl.x + g->camera.x,
+		pl.y + g->camera.y, flag);
 }

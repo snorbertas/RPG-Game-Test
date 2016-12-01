@@ -42,9 +42,16 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 			g->map.seed = kid - ALLEGRO_KEY_PAD_0;
 		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_Z) {
 			g->map.GenerateRandom(kid - ALLEGRO_KEY_A);
+		} else if (kid == ALLEGRO_KEY_F5) {
+			g->pl.ticks_to_move--;
+		} else if (kid == ALLEGRO_KEY_F6) {
+			g->pl.ticks_to_move++;
+		} else if (kid == ALLEGRO_KEY_F7) {
+			g->pl.velocity--;
+		} else if (kid == ALLEGRO_KEY_F8) {
+			g->pl.velocity++;
 		}
 	}
-
 }
 
 

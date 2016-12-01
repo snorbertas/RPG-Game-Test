@@ -32,16 +32,16 @@
 	struct Keys {
 		int left_bind = ALLEGRO_KEY_LEFT;		// Binded key to move left
 		int right_bind = ALLEGRO_KEY_RIGHT;		// Binded key to move right
-		int jump_bind = ALLEGRO_KEY_UP;			// Binded key to jump
-		int crouch_bind = ALLEGRO_KEY_DOWN;		// Binded key to crouch
+		int up_bind = ALLEGRO_KEY_UP;			// Binded key to move up
+		int down_bind = ALLEGRO_KEY_DOWN;		// Binded key to move down
 		int camera_bind = ALLEGRO_KEY_Y;		// Binded key to change camera mode
 		int inventory_bind = ALLEGRO_KEY_I;		// Binded key to open inventory
 		int skills_bind = ALLEGRO_KEY_O;		// Binded key to open skills
 		int chat_bind = ALLEGRO_KEY_ENTER;		// Binded key to chat/type
 		bool left = false;						// If true, then moving left key is inputted
 		bool right = false;						// If true, then moving right key is inputted
-		bool down = false;						// If true, then crouch key is inputted
-		bool jump = false;						// If true, then jump key is inputted
+		bool down = false;						// If true, then down key is inputted
+		bool up = false;						// If true, then up key is inputted
 		bool CTRL = false;						// If true, then CTRL is being held down
 		bool SHIFT = false;						// If true, then SHIFT is being held down
 		bool backspace = false;					// If true, then Backspace is being held down

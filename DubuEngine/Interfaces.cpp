@@ -205,6 +205,8 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					}
 					DrawText(font[2], 255, 255, 0, 0, 45, ALLEGRO_ALIGN_LEFT, "Map Seed: %i", g->map.seed);
 					DrawText(font[2], 255, 255, 10, 0, 60, ALLEGRO_ALIGN_LEFT, "Render Mode: %i", g->map.render_mode);
+					DrawText(font[2], 255, 255, 10, 0, 75, ALLEGRO_ALIGN_LEFT, "Ticks To Move: %i", g->pl.ticks_to_move);
+					DrawText(font[2], 255, 255, 10, 0, 90, ALLEGRO_ALIGN_LEFT, "Velocity: %i", g->pl.velocity);
 					break;
 				}
 				case 7:
@@ -265,19 +267,19 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[2], 0, 0, 0,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
-						ALLEGRO_ALIGN_LEFT, "Jump:");
+						ALLEGRO_ALIGN_LEFT, "Move Up:");
 					DrawText(font[2], 255, 255, 255,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
-						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.jump_bind));
+						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.up_bind));
 					DrawText(font[2], 0, 0, 0,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
-						ALLEGRO_ALIGN_LEFT, "Action:");
+						ALLEGRO_ALIGN_LEFT, "Move Down:");
 					DrawText(font[2], 255, 255, 255,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
-						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.crouch_bind));
+						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.down_bind));
 					DrawText(font[2], 0, 0, 0,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
