@@ -1,15 +1,6 @@
 #pragma once
 #include <vector>
-
-
-// Map objects
-struct MapObject {
-	MapObject() {}
-	MapObject(int ID, int X, int Y) : id(ID), x(X), y(Y) {}
-	int id = -1;
-	int x = 0;
-	int y = 0;
-};
+#include "MapObject.h"
 
 // Biomes
 enum Biome {
@@ -19,14 +10,17 @@ enum Biome {
 	Biome_Water
 };
 
-/* Block locations
-Loc	=	Location
-Cor	=	Corner/Fill
-ERR	=	Error
-T	=	Top
-B	=	Bottom
-L	=	Left
-R	=	Right */
+// Block locations
+/*
+	Key:
+	Loc	=	Location
+	Cor	=	Corner/Fill
+	ERR	=	Error
+	T	=	Top
+	B	=	Bottom
+	L	=	Left
+	R	=	Right
+*/
 enum BlockLocation {
 	BLoc_ERR,
 	BLoc_TL,

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Game.h"
 #include "ScaledDraw.h"
 #include "TilesInfo.h"
@@ -174,6 +175,20 @@ void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x,
 
 }
 
+// Temporary function to spawn and test object rendering/interaction
+void PopulateRandomObjects(Map* map) {
+	for (int i = 0; i < 500; i++) {
+		int random_id = rand() % MapObject::MapObjectTree_SO + 4;
+		if (random_id > MapObject::MapObjectTree_SO) random_id += 6;
+		map->object.push_back(MapObject(
+			random_id,
+			rand() % (map->MAP_SIZE_X * map->TILE_SIZE),
+			rand() % (map->MAP_SIZE_Y * map->TILE_SIZE)));
+	}
+
+	sort(map->object.begin(), map->object.end(), [](const MapObject& a, const MapObject& b) { return a.y < b.y; });
+}
+
 void Map::GenerateRandom(int alg) {
 	// Seed
 	srand(seed);
@@ -194,16 +209,57 @@ void Map::GenerateRandom(int alg) {
 	case 2:
 		// Generation mode C
 		GenerateMapWithBaseBiome();
+		PopulateRandomObjects(this);
 		break;
 	}
 }
 
 void Map::RenderBackgroundObjects(Game* g, SpriteStruct* sprites) {
+	auto img_object = sprites->img_object;
+	for (int i = 0; i < object.size(); i++) {
+		// If object is in background
+		if (object[i].y < g->pl.y + g->pl.h) {
+			DrawImage(g,
+				img_object[GetObjectSprite(object[i])],
+				object[i].x + g->camera.x,
+				object[i].y - object[i].h + g->camera.y, 0);
 
+			// If it's a tree
+			if (object[i].id >= MapObject::MapObjectTree_BG &&
+				object[i].id <= MapObject::MapObjectTree_SO) {
+
+				// Draw the top of tree
+				DrawImage(g,
+					img_object[GetObjectSprite(object[i], 1)],
+					object[i].x + g->camera.x,
+					object[i].y - (object[i].h * 2) + g->camera.y, 0);
+			}
+		}
+	}
 }
 
 void Map::RenderForegroundObjects(Game* g, SpriteStruct* sprites) {
+	auto img_object = sprites->img_object;
+	for (int i = 0; i < object.size(); i++) {
+		// If object is in foreground
+		if (object[i].y >= g->pl.y + g->pl.h) {
+			DrawImage(g,
+				img_object[GetObjectSprite(object[i])],
+				object[i].x + g->camera.x,
+				object[i].y - object[i].h + g->camera.y, 0);
 
+			// If it's a tree
+			if (object[i].id >= MapObject::MapObjectTree_BG &&
+				object[i].id <= MapObject::MapObjectTree_SO) {
+
+				// Draw the top of tree
+				DrawImage(g,
+					img_object[GetObjectSprite(object[i], 1)],
+					object[i].x + g->camera.x,
+					object[i].y - (object[i].h * 2) + g->camera.y, 0);
+			}
+		}
+	}
 }
 
 void Map::RenderTiles(Game* g, SpriteStruct* sprites) {
