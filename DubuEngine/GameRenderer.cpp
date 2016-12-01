@@ -15,9 +15,10 @@
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 	//
-	g->map.Render(g, sprites);
-
+	g->map.RenderTiles(g, sprites);
+	g->map.RenderBackgroundObjects(g, sprites);
 	RenderPlayer(g, g->pl, sprites);
+	g->map.RenderForegroundObjects(g, sprites);
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {

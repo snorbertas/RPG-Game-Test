@@ -198,22 +198,22 @@ void Map::GenerateRandom(int alg) {
 	}
 }
 
-void Map::Render(Game* g, SpriteStruct* sprites) {
+void Map::RenderBackgroundObjects(Game* g, SpriteStruct* sprites) {
+
+}
+
+void Map::RenderForegroundObjects(Game* g, SpriteStruct* sprites) {
+
+}
+
+void Map::RenderTiles(Game* g, SpriteStruct* sprites) {
 	auto img_tile = sprites->img_tile;
-	switch (render_mode) {
-	case 0:
-		// Render mode 0 (Literal render)
-		for (int x = 0; x < MAP_SIZE_X; x++) {
-			for (int y = 0; y < MAP_SIZE_Y; y++) {
-				DrawImage(g, img_tile[tile[x][y]],
-					      (x * TILE_SIZE) + g->camera.x,
-						  (y * TILE_SIZE) + g->camera.y, 0);
-			}
+	for (int x = 0; x < MAP_SIZE_X; x++) {
+		for (int y = 0; y < MAP_SIZE_Y; y++) {
+			DrawImage(g, img_tile[tile[x][y]],
+				(x * TILE_SIZE) + g->camera.x,
+				(y * TILE_SIZE) + g->camera.y, 0);
 		}
-		break;
-	case 1:
-		// Render mode 1
-		break;
 	}
 }
 

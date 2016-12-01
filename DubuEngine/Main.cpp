@@ -143,6 +143,7 @@ void LoadGame() {
 	LoadSprites(sprites.img_icon, "sprites/icons", "icon_", MAX_ICON_SPRITES);
 	LoadSprites(sprites.img_interface, "sprites/interfaces", "interface_", MAX_INTERFACE_SPRITES);
 	LoadSprites(sprites.img_button, "sprites/buttons", "button_", MAX_BUTTON_SPRITES);
+	LoadSprites(sprites.img_object, "sprites/objects", "object_", MAX_OBJECT_SPRITES);
 	g.menu.bg_x = (-1500 + g.BWIDTH) + (1500 - g.BWIDTH) * (float)((float)(g.BWIDTH - g.pos_x) / (float)g.BWIDTH);
 	g.menu.bg_y = (-938 + g.BHEIGHT) + (938 - g.BHEIGHT) * (float)((float)(g.BHEIGHT - g.pos_y) / (float)g.BHEIGHT);
 	g.scene = 0;
@@ -436,6 +437,9 @@ void DestroyBitmaps(){
 	}
 	for (int i = 0; i < MAX_BUTTON_SPRITES; i++) {
 		al_destroy_bitmap(sprites.img_button[i]);
+	}
+	for (int i = 0; i < MAX_OBJECT_SPRITES; i++) {
+		al_destroy_bitmap(sprites.img_object[i]);
 	}
 }
 

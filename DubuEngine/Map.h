@@ -1,4 +1,15 @@
 #pragma once
+#include <vector>
+
+
+// Map objects
+struct MapObject {
+	MapObject() {}
+	MapObject(int ID, int X, int Y) : id(ID), x(X), y(Y) {}
+	int id = -1;
+	int x = 0;
+	int y = 0;
+};
 
 // Biomes
 enum Biome {
@@ -71,9 +82,31 @@ public:
 	}
 
 	void GenerateRandom(int alg);		// Generates a random map based on seed
-	void Render(Game* g, SpriteStruct* sprites);
 
-	void GenerateRandomMapWithAppropriateNeighbours();
+	
+	/* =================== RenderBackgroundObjects ======================
+	 * Renders the foreground objects
+	 */
+		void RenderBackgroundObjects(Game* g, SpriteStruct* sprites);
+
+
+	/* =================== RenderForegroundObjects ======================
+	 * Renders the foreground objects
+	 */
+		void RenderForegroundObjects(Game* g, SpriteStruct* sprites);
+
+
+	/* ========================= RenderTiles ============================
+	 * Renders the map's tiles
+	 */
+		void RenderTiles(Game* g, SpriteStruct* sprites);
+
+
+	/* ========= GenerateRandomMapWithAppropriateNeighbours =============
+	 * Generates a random map with appropiate neighbouring tiles
+	 */
+		void GenerateRandomMapWithAppropriateNeighbours();
+
 
 	/* =================== GenerateMapWithBaseBiome =====================
 	 * Generates a random map with a random base biome
@@ -98,6 +131,7 @@ public:
 
 	// Variables
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];	// tile[x][y]
+	vector<MapObject> object;			// Map objects (fauna, etc.)
 	int seed;							// Seed for random generation
 	int render_mode = 0;
 };

@@ -7,6 +7,7 @@
 #define MAX_BACKGROUND_SPRITES 2
 #define MAX_INTERFACE_SPRITES 5
 #define MAX_BUTTON_SPRITES 28
+#define MAX_OBJECT_SPRITES 22
 
 #include <allegro5\allegro.h>
 
@@ -21,5 +22,6 @@ struct SpriteStruct {
 	ALLEGRO_BITMAP *img_background[MAX_BACKGROUND_SPRITES];
 	ALLEGRO_BITMAP *img_interface[MAX_INTERFACE_SPRITES];
 	ALLEGRO_BITMAP *img_button[MAX_BUTTON_SPRITES];
+	ALLEGRO_BITMAP *img_object[MAX_OBJECT_SPRITES];
 };
 
