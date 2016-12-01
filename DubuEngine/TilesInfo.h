@@ -33,7 +33,6 @@ private:
 
 public:
 	static void AdjustTilesInfo();
-	static bool AppropriateNeighbours(int tile, int neighbourTile, int direction);
 	static int GetAppropriateTile(int leftTile, int upTile, int badTile = -1);
 
 public:

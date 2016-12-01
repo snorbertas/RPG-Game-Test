@@ -1,5 +1,7 @@
 #include "TilesInfo.h"
 
+#include <algorithm>
+
 const TilesInfo::Biom TilesInfo::Bioms[TilesInfo::BiomCnt] = {Biom(TilesInfo::GRASS, TilesInfo::DIRT),
 															  Biom(TilesInfo::DIRT,  TilesInfo::GRASS),
 															  Biom(TilesInfo::WATER, TilesInfo::GRASS)};
@@ -110,26 +112,42 @@ void TilesInfo::AdjustTilesInfo() {
 			}
 		}
 	}
-}
 
-bool TilesInfo::AppropriateNeighbours(int tile, int neighbourTile, int direction) {
-	if (neighbourTile == -1)
-		return true;
-	for (auto curNeighbour : TileNeighbours[direction][tile])
-		if (curNeighbour == neighbourTile)
-			return true;
-	return false;
+	for (int i = 0; i != TILE_NEIGHBOUR_SIZE; ++i)
+		for (int j = 0; j < MAX_TILE_SPRITES; ++j)
+			std::sort(TileNeighbours[i][j].begin(), TileNeighbours[i][j].end());
 }
 
 int TilesInfo::GetAppropriateTile(int leftTile, int upTile, int badTile) {
 	TempAppropriateTiles.clear();
-	for (int tile = 0; tile < MAX_TILE_SPRITES; ++tile) {
-		if (tile != badTile && 
-			AppropriateNeighbours(tile, leftTile, TILE_NEIGHBOUR_LEFT) && 
-			AppropriateNeighbours(tile, upTile, TILE_NEIGHBOUR_UP)) {
-			TempAppropriateTiles.push_back(tile);
+
+	if (leftTile == -1 && upTile == -1) {
+		for (int i = 0; i < MAX_TILE_SPRITES; ++i)
+			if (i != badTile)
+				TempAppropriateTiles.push_back(i);
+	} else if (leftTile == -1) {
+		TempAppropriateTiles = TileNeighbours[TILE_NEIGHBOUR_DOWN][upTile];
+	} else if (upTile == -1) {
+		TempAppropriateTiles = TileNeighbours[TILE_NEIGHBOUR_RIGHT][leftTile];
+	} else {
+		auto& leftNeighbours = TileNeighbours[TILE_NEIGHBOUR_RIGHT][leftTile];
+		auto& upNeighbours = TileNeighbours[TILE_NEIGHBOUR_DOWN][upTile];
+		size_t leftNeighboursSize = leftNeighbours.size();
+		size_t upNeighboursSize = upNeighbours.size();
+		for (size_t i = 0, j = 0; i < leftNeighboursSize && j < upNeighboursSize; ) {
+			if (leftNeighbours[i] < upNeighbours[j])
+				++i;
+			else if (leftNeighbours[i] > upNeighbours[j])
+				++j;
+			else {
+				if (leftNeighbours[i] != badTile)
+					TempAppropriateTiles.push_back(leftNeighbours[i]);
+				++i;
+				++j;
+			}
 		}
 	}
+
 	if (TempAppropriateTiles.size() == 0) {
 		return -1;
 	}
