@@ -329,10 +329,12 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawImage(g, img_button[SPRITE_BUTTON_CREDITS], 15, 250, 0);
 					credits_x = 100;
 					credits_y -= 80;
-					DrawRectangle(g, 95, 300, 560, 240, 0, 0, 0, 0.1);
+					DrawRectangle(g, 95, 300, 560, 290, 0, 0, 0, 0.1);
 					DrawText(font[0], 255, 200, 200, credits_x, credits_y += 20, ALLEGRO_ALIGN_LEFT, "[Programming]");
 					DrawText(font[2], 0, 0, 0, credits_x, credits_y += 30, ALLEGRO_ALIGN_LEFT, "Norbert S.");
 					DrawText(font[2], 0, 0, 50, credits_x, credits_y += 20, ALLEGRO_ALIGN_LEFT, "https://github.com/snorbertas");
+					DrawText(font[2], 0, 0, 0, credits_x, credits_y += 30, ALLEGRO_ALIGN_LEFT, "Alexander K.");
+					DrawText(font[2], 0, 0, 50, credits_x, credits_y += 20, ALLEGRO_ALIGN_LEFT, "https://github.com/Aleksander92");
 					//credits_x += 300;
 					DrawText(font[0], 255, 200, 200, credits_x, credits_y += 30, ALLEGRO_ALIGN_LEFT, "[Graphic Art]");
 					DrawText(font[2], 0, 0, 0, credits_x, credits_y += 30, ALLEGRO_ALIGN_LEFT, "Kenney");

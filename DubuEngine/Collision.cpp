@@ -1,6 +1,6 @@
 #include "Collision.h"
 
-bool PlayerMoveCollides(Player& pl, Map& map, int mov_x, int mov_y) {
+bool PlayerMoveCollides(Player& pl, Map& map, double mov_x, double mov_y) {
 	// Player box
 	CollisionBox o1(pl.x + mov_x, pl.y + mov_y, pl.w, pl.h);
 

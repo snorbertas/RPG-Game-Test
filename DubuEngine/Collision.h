@@ -8,8 +8,8 @@
  */
 	bool PlayerMoveCollides(Player& pl,	// Player info
 		Map& map,						// Map info
-		int mov_x,						// Move x distance
-		int mov_y);						// Move y distance
+		double mov_x,						// Move x distance
+		double mov_y);						// Move y distance
 
 
 /* ================================ collide ===============================

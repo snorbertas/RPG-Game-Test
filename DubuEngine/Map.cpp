@@ -183,7 +183,7 @@ void PopulateRandomObjects(Map* map) {
 
 	// Then add random poop
 	for (int i = 0; i < 500; i++) {
-		int random_id = rand() % MapObject::MapObjectTree_SO + 4;
+		int random_id = rand() % (MapObject::MapObjectTree_SO + 4);
 		if (random_id > MapObject::MapObjectTree_SO) random_id += 6;
 		map->object.push_back(MapObject(
 			random_id,
@@ -192,6 +192,47 @@ void PopulateRandomObjects(Map* map) {
 	}
 
 	sort(map->object.begin(), map->object.end(), [](const MapObject& a, const MapObject& b) { return a.y < b.y; });
+}
+
+bool ObjectHasCollision(int object_id) {
+	// Tress have collision
+	if (object_id >= MapObject::MapObjectTree_BG &&
+		object_id <= MapObject::MapObjectTree_SO) return true;
+	return false;
+}
+
+CollisionBox GetCollisionFromObject(MapObject map_object) {
+	// Working with id
+	auto id = map_object.id;
+
+	// Initial x/y values
+	int ini_x = map_object.x;
+	int ini_y = map_object.y;
+	int ini_w = 7;
+	int ini_h = 7;
+
+	// Create a CollisionBox to return and set it to the initial x/y position
+	CollisionBox cb(ini_x, ini_y, ini_w, ini_h);
+
+	// Re-size for specific objects
+	if (id == MapObject::MapObjectTree_BG ||
+		id == MapObject::MapObjectTree_BD ||
+		id == MapObject::MapObjectTree_BO) {
+		cb.x += 15;
+		cb.y += 54;
+		cb.w = 34;
+		cb.h = 9;
+	} else
+	if (id == MapObject::MapObjectTree_SG ||
+		id == MapObject::MapObjectTree_SD ||
+		id == MapObject::MapObjectTree_SO) {
+		cb.x += 17;
+		cb.y += 56;
+		cb.w = 28;
+		cb.h = 7;
+	}
+
+	return cb;
 }
 
 bool TileHasExceptBox(int tile_id) {
@@ -211,7 +252,7 @@ CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
 	// Create a CollisionBox to return and set it to the initial x/y position
 	CollisionBox cb(ini_x, ini_y, ini_w, ini_h);
 
-	// Re-size specific for specific tiles
+	// Re-size for specific tiles
 	if (tile_id == 28 || tile_id == 34) {
 		cb.x += 7;
 	} else if (tile_id == 30 || tile_id == 36) {
@@ -232,7 +273,7 @@ bool TileHasCollision(int tile_id) {
 	return false;
 }
 
-CollisionBox GetCollisionBoxFromTile(int tile_id, int x, int y) {
+CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;
 	int ini_y = y * Map::TILE_SIZE;
@@ -242,7 +283,7 @@ CollisionBox GetCollisionBoxFromTile(int tile_id, int x, int y) {
 	// Create a CollisionBox to return and set it to the initial x/y position
 	CollisionBox cb(ini_x, ini_y, ini_w, ini_h);
 
-	// Re-size specific for specific tiles
+	// Re-size for specific tiles
 	if (tile_id == 28 || tile_id == 31 || tile_id == 34) {
 		cb.x += 7;
 		cb.w -= 7;
@@ -268,7 +309,7 @@ void Map::CreateSolids() {
 	for (int x = 0; x < MAP_SIZE_X; x++) {
 		for (int y = 0; y < MAP_SIZE_X; y++) {
 			if (TileHasCollision(tile[x][y])) {
-				solid.push_back(GetCollisionBoxFromTile(tile[x][y], x, y));
+				solid.push_back(GetCollisionFromTile(tile[x][y], x, y));
 			}
 			if (TileHasExceptBox(tile[x][y])) {
 				except_solid.push_back(GetExceptBoxFromTile(tile[x][y], x, y));
@@ -277,7 +318,11 @@ void Map::CreateSolids() {
 	}
 
 	// Then objects
-
+	for (int i = 0; i < object.size(); i++) {
+		if (ObjectHasCollision(object[i].id)) {
+			solid.push_back(GetCollisionFromObject(object[i]));
+		}
+	}
 }
 
 void Map::GenerateRandom(int alg) {
@@ -312,11 +357,11 @@ void Map::RenderBackgroundObjects(Game* g, SpriteStruct* sprites) {
 	auto img_object = sprites->img_object;
 	for (int i = 0; i < object.size(); i++) {
 		// If object is in background
-		if (object[i].y < g->pl.y + g->pl.h) {
+		if (object[i].y + object[i].h < g->pl.y + g->pl.h) {
 			DrawImage(g,
 				img_object[GetObjectSprite(object[i])],
 				object[i].x + g->camera.x,
-				object[i].y - object[i].h + g->camera.y, 0);
+				object[i].y + g->camera.y, 0);
 
 			// If it's a tree
 			if (object[i].id >= MapObject::MapObjectTree_BG &&
@@ -326,7 +371,7 @@ void Map::RenderBackgroundObjects(Game* g, SpriteStruct* sprites) {
 				DrawImage(g,
 					img_object[GetObjectSprite(object[i], 1)],
 					object[i].x + g->camera.x,
-					object[i].y - (object[i].h * 2) + g->camera.y, 0);
+					object[i].y - (object[i].h) + g->camera.y, 0);
 			}
 		}
 	}
@@ -336,11 +381,11 @@ void Map::RenderForegroundObjects(Game* g, SpriteStruct* sprites) {
 	auto img_object = sprites->img_object;
 	for (int i = 0; i < object.size(); i++) {
 		// If object is in foreground
-		if (object[i].y >= g->pl.y + g->pl.h) {
+		if (object[i].y + object[i].h >= g->pl.y + g->pl.h) {
 			DrawImage(g,
 				img_object[GetObjectSprite(object[i])],
 				object[i].x + g->camera.x,
-				object[i].y - object[i].h + g->camera.y, 0);
+				object[i].y + g->camera.y, 0);
 
 			// If it's a tree
 			if (object[i].id >= MapObject::MapObjectTree_BG &&
@@ -350,7 +395,7 @@ void Map::RenderForegroundObjects(Game* g, SpriteStruct* sprites) {
 				DrawImage(g,
 					img_object[GetObjectSprite(object[i], 1)],
 					object[i].x + g->camera.x,
-					object[i].y - (object[i].h * 2) + g->camera.y, 0);
+					object[i].y - (object[i].h) + g->camera.y, 0);
 			}
 		}
 	}

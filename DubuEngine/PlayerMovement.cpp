@@ -95,7 +95,7 @@ void HandlePlayerMovementLogic(Game* g) {
 			g->pl.ticks_left_move = g->pl.ticks_to_move;
 
 			// Handle movement
-			double compound_vel = g->pl.velocity * 2; // Not sure if too fast or not
+			double compound_vel = (g->pl.velocity / sqrt(2)) * 2;
 			double mov_x = compound_vel;
 			double mov_y = compound_vel;
 
