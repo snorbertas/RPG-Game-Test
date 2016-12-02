@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "PlayerMovement.h"
+#include "Collision.h"
 
 void UpdatePlayerMovementSprite(Player& pl) {
 	pl.sprite_frame++;
@@ -62,6 +63,26 @@ bool HandlePlayerMovementKeyBinds(Game* g, int kid) {
 	return false;
 }
 
+void HandlePlayerIdle(Game* g) {
+	if (!(g->keys.right || g->keys.left || g->keys.up || g->keys.down)) {
+		// There's no movement input, player is idle, update anim counter
+		g->pl.ticks_left_anim--;		
+		
+		// Animation
+		if (g->pl.ticks_left_anim <= 0) {
+			// Update the animation
+			if (g->pl.sprite_frame != Player::FrameIdle_0) {
+				g->pl.sprite_frame = Player::FrameIdle_0;
+			} else {
+				g->pl.sprite_frame = Player::FrameIdle_1;
+			}
+
+			// Reset anim ticks
+			g->pl.ticks_left_anim = g->pl.ticks_to_anim * 2;
+		}
+	}
+}
+
 void HandlePlayerMovementLogic(Game* g) {
 	if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
 		// There's movement input, update the tick counters
@@ -122,9 +143,20 @@ void HandlePlayerMovementLogic(Game* g) {
 			}
 
 			// Update player's coordinates
-			// TODO: Insert collision here
-			g->pl.x += mov_x;
-			g->pl.y += mov_y;
+			if (!PlayerMoveCollides(g->pl, g->map, mov_x, 0)) {
+				g->pl.x += mov_x;
+			} else {
+				// Fix facing direction since we cant move in mov_x direction
+				if (mov_y > 0) g->pl.facing = Player::FacingDown;
+				if (mov_y < 0) g->pl.facing = Player::FacingUp;
+			}
+			if (!PlayerMoveCollides(g->pl, g->map, 0, mov_y)) {
+				g->pl.y += mov_y;
+			} else {
+				// Fix facing direction since we cant move in mov_y direction
+				if (mov_x > 0) g->pl.facing = Player::FacingRight;
+				if (mov_x < 0) g->pl.facing = Player::FacingLeft;
+			}
 		}
 
 		// Animation
@@ -145,6 +177,7 @@ void HandlePlayerMovementLogic(Game* g) {
 static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Tick
 	HandlePlayerMovementLogic(g);
+	HandlePlayerIdle(g);
 }
 
 static void Click(Game* g, int button, bool release, ALLEGRO_SAMPLE** sample_sfx) {

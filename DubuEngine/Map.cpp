@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "ScaledDraw.h"
 #include "TilesInfo.h"
+#include "Collision.h"
 
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	tile[0][0] = rand() % MAX_TILE_SPRITES;
@@ -177,6 +178,10 @@ void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x,
 
 // Temporary function to spawn and test object rendering/interaction
 void PopulateRandomObjects(Map* map) {
+	// First reset the vector
+	map->object.clear();
+
+	// Then add random poop
 	for (int i = 0; i < 500; i++) {
 		int random_id = rand() % MapObject::MapObjectTree_SO + 4;
 		if (random_id > MapObject::MapObjectTree_SO) random_id += 6;
@@ -187,6 +192,92 @@ void PopulateRandomObjects(Map* map) {
 	}
 
 	sort(map->object.begin(), map->object.end(), [](const MapObject& a, const MapObject& b) { return a.y < b.y; });
+}
+
+bool TileHasExceptBox(int tile_id) {
+	// Water tiles have collision
+	if (tile_id == 28 || tile_id == 30 ||
+		tile_id == 34 || tile_id == 36) return true;
+	return false;
+}
+
+CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
+	// Initial x/y values
+	int ini_x = x * Map::TILE_SIZE;
+	int ini_y = y * Map::TILE_SIZE;
+	int ini_w = 7;
+	int ini_h = 7;
+
+	// Create a CollisionBox to return and set it to the initial x/y position
+	CollisionBox cb(ini_x, ini_y, ini_w, ini_h);
+
+	// Re-size specific for specific tiles
+	if (tile_id == 28 || tile_id == 34) {
+		ini_x += 7;
+	} else if (tile_id == 30 || tile_id == 36) {
+		cb.x += 50;
+	}
+	if (tile_id == 28 || tile_id == 30) {
+		cb.y += 7;
+	} else if (tile_id == 34 || tile_id == 36) {
+		cb.y += 50;
+	}
+
+	return cb;
+}
+
+bool TileHasCollision(int tile_id) {
+	// Water tiles have collision
+	if (tile_id >= 28 && tile_id <= 40) return true;
+	return false;
+}
+
+CollisionBox GetCollisionBoxFromTile(int tile_id, int x, int y) {
+	// Initial x/y values
+	int ini_x = x * Map::TILE_SIZE;
+	int ini_y = y * Map::TILE_SIZE;
+	int ini_w = Map::TILE_SIZE;
+	int ini_h = Map::TILE_SIZE;
+
+	// Create a CollisionBox to return and set it to the initial x/y position
+	CollisionBox cb(ini_x, ini_y, ini_w, ini_h);
+
+	// Re-size specific for specific tiles
+	if (tile_id == 28 || tile_id == 31 || tile_id == 34) {
+		cb.x += 7;
+		cb.w -= 7;
+	} else if (tile_id == 30 || tile_id == 33 || tile_id == 36) {
+		cb.w -= 7;
+	}
+	if (tile_id == 28 || tile_id == 29|| tile_id == 30) {
+		cb.y += 7;
+		cb.h -= 7;
+	} else if (tile_id == 34 || tile_id == 35 || tile_id == 36) {
+		cb.h -= 7;
+	}
+
+	return cb;
+}
+
+void Map::CreateSolids() {
+	// First reset the vectors
+	solid.clear();
+	except_solid.clear();
+
+	// First tiles
+	for (int x = 0; x < MAP_SIZE_X; x++) {
+		for (int y = 0; y < MAP_SIZE_X; y++) {
+			if (TileHasCollision(tile[x][y])) {
+				solid.push_back(GetCollisionBoxFromTile(tile[x][y], x, y));
+			}
+			if (TileHasExceptBox(tile[x][y])) {
+				except_solid.push_back(GetExceptBoxFromTile(tile[x][y], x, y));
+			}
+		}
+	}
+
+	// Then objects
+
 }
 
 void Map::GenerateRandom(int alg) {
@@ -212,6 +303,9 @@ void Map::GenerateRandom(int alg) {
 		PopulateRandomObjects(this);
 		break;
 	}
+
+	// Create colission boxes for solids
+	CreateSolids();
 }
 
 void Map::RenderBackgroundObjects(Game* g, SpriteStruct* sprites) {
@@ -257,6 +351,28 @@ void Map::RenderForegroundObjects(Game* g, SpriteStruct* sprites) {
 					img_object[GetObjectSprite(object[i], 1)],
 					object[i].x + g->camera.x,
 					object[i].y - (object[i].h * 2) + g->camera.y, 0);
+			}
+		}
+	}
+
+	// Temp (Draw grid and collision boxes for solids)
+	if (g->debug.grid) {
+		for (int i = 0; i < solid.size(); i++) {
+			DrawRectangle(g,
+				solid[i].x + g->camera.x, solid[i].y + g->camera.y,
+				solid[i].w, solid[i].h, 255, 0, 0, 0.2);
+		}
+		for (int i = 0; i < except_solid.size(); i++) {
+			DrawRectangle(g,
+				except_solid[i].x + g->camera.x, except_solid[i].y + g->camera.y,
+				except_solid[i].w, except_solid[i].h, 0, 0, 255, 0.2);
+		}
+		for (int x = 0; x < MAP_SIZE_X; x++) {
+			for (int y = 0; y < MAP_SIZE_Y; y++) {
+				DrawOutline(g,
+					x * TILE_SIZE + g->camera.x,
+					y * TILE_SIZE + g->camera.y,
+					TILE_SIZE, TILE_SIZE, 0, 50, 50, 1, 50);
 			}
 		}
 	}

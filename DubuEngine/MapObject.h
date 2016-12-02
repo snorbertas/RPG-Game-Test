@@ -1,6 +1,5 @@
 #pragma once
 
-
 // Map objects
 class MapObject {
 public:

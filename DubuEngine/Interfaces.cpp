@@ -577,6 +577,13 @@ void HandleCommand(Game* g, const char* msg) {
 		if (type == "/help") {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "List of usable commands:");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/help");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/grid");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
+		} else if (type == "/seed") {
+			args >> g->map.seed;
+		} else if (type == "/grid") {
+			g->debug.grid = !g->debug.grid;
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Toggled grid.");
 		} else {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ("Unrecognized command: " + type).c_str());
 		}

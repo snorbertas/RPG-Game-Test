@@ -9,6 +9,7 @@
 #include <string.h>
 #include "Game.h"
 #include "ScaledDraw.h"
+#include "Collision.h"
 
 // Temp
 bool collide(int, int, int, int, int, int, int, int);

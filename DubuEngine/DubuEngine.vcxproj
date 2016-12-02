@@ -24,6 +24,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Chat.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DEText.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -49,6 +50,8 @@
       <SubType>Header</SubType>
     </ClInclude>
     <ClInclude Include="Chat.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DEEvents.h" />
     <ClInclude Include="DEText.h" />

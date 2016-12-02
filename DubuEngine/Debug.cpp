@@ -34,7 +34,7 @@ static void Click(Game* g, int button, bool release, ALLEGRO_SAMPLE** sample_sfx
 static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 	// Press
 	// Register different keys to help change/debug variables live
-	if (!release) {
+	if (!release && !g->chat.type_chat) {
 		if (kid == ALLEGRO_KEY_F1) {
 			// PANIC BUTTON
 			g->BWIDTH = 1280;

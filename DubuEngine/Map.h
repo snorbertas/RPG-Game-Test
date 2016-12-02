@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "MapObject.h"
+#include "CollisionBox.h"
 
 // Biomes
 enum Biome {
@@ -75,7 +76,11 @@ public:
 
 	}
 
-	void GenerateRandom(int alg);		// Generates a random map based on seed
+	// Writes all the solid CollisionBoxes into a vector
+	void CreateSolids();
+
+	// Generates a random map based on seed
+	void GenerateRandom(int alg);	
 
 	
 	/* =================== RenderBackgroundObjects ======================
@@ -126,6 +131,8 @@ public:
 	// Variables
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];	// tile[x][y]
 	vector<MapObject> object;			// Map objects (fauna, etc.)
+	vector<CollisionBox> solid;			// Solids (collisions/can't pass trough)
+	vector<CollisionBox> except_solid;	// Special collision boxes to except solid collision
 	int seed;							// Seed for random generation
 	int render_mode = 0;
 };

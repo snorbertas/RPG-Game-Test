@@ -3,17 +3,21 @@
 
 class Player {
 public:
-	string name = "null";
+	std::string name = "null";
 
 	enum Frame {
 		FrameDown_0, FrameDown_1, FrameDown_2,
 		FrameHor_0, FrameHor_1, FrameHor_2,
-		FrameUp_0, FrameUp_1, FrameUp_2
+		FrameUp_0, FrameUp_1, FrameUp_2,
+		FrameIdle_0, FrameIdle_1 = 0
 	};
 
 	enum Facing {
 		FacingUp, FacingDown, FacingLeft, FacingRight
 	};
+
+	// Bladder
+	int pee_ammo = 0;
 
 	// Location
 	double x = 0;					// x/y coordinates

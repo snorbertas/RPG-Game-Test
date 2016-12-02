@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Player.h"
 #include "Map.h"
+#include "Debug.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -133,4 +134,5 @@
 			Keys keys;							// Keys struct, holds the information on some input
 			Player pl;							// Player
 			Map map = Map(0);					// Map
+			Debug debug;						// Temp debug
 	};
