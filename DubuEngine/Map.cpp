@@ -213,7 +213,7 @@ CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
 
 	// Re-size specific for specific tiles
 	if (tile_id == 28 || tile_id == 34) {
-		ini_x += 7;
+		cb.x += 7;
 	} else if (tile_id == 30 || tile_id == 36) {
 		cb.x += 50;
 	}
