@@ -3,6 +3,7 @@
 #include "ScaledDraw.h"
 #include "TilesInfo.h"
 #include "Collision.h"
+#include "GameRenderer.h"
 
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	tile[0][0] = rand() % MAX_TILE_SPRITES;
@@ -191,7 +192,9 @@ void PopulateRandomObjects(Map* map) {
 			rand() % (map->MAP_SIZE_Y * map->TILE_SIZE)));
 	}
 
-	sort(map->object.begin(), map->object.end(), [](const MapObject& a, const MapObject& b) { return a.y < b.y; });
+	map->object.sort([](MapObject& a, MapObject& b) {return a.y < b.y;});
+
+	//sort(map->object.begin(), map->object.end(), [](const MapObject& a, const MapObject& b) { return a.y < b.y; });
 }
 
 bool ObjectHasCollision(int object_id) {
@@ -318,9 +321,9 @@ void Map::CreateSolids() {
 	}
 
 	// Then objects
-	for (int i = 0; i < object.size(); i++) {
-		if (ObjectHasCollision(object[i].id)) {
-			solid.push_back(GetCollisionFromObject(object[i]));
+	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
+		if (ObjectHasCollision(it->id)) {
+			solid.push_back(GetCollisionFromObject(*it));
 		}
 	}
 }
@@ -353,53 +356,62 @@ void Map::GenerateRandom(int alg) {
 	CreateSolids();
 }
 
-void Map::RenderBackgroundObjects(Game* g, SpriteStruct* sprites) {
+void Map::SortPlayerObjects(Game* g) {
+	// Loop trough each object
+	bool inserted_player = false;
+
+	// First remove current local player
+	// Idea: Store an itteration pointer for each player and loop trough all of them from highest y to lowest y
+	object.remove_if([](MapObject& a) { return (a.id == MapObject::MapObjectPlayer_L); });
+
+	for (std::list<MapObject>::iterator it = object.begin(); it != object.end() && !inserted_player; it++) {
+		// Loop trough each player
+		// Only local player atm
+		// TODO: MULTIPLAYER PLAYER OBJECTS
+		// Then insert new local player
+		if (it->y + it->h > g->pl.y + g->pl.h) {
+			// Memes
+			MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
+			object.insert(it, player_object);
+			inserted_player = true;
+		}
+	}
+	// Memes
+	if (!inserted_player) {
+		MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
+		object.push_back(player_object);
+		inserted_player = true;
+	}
+}
+
+void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
 	auto img_object = sprites->img_object;
-	for (int i = 0; i < object.size(); i++) {
-		// If object is in background
-		if (object[i].y + object[i].h < g->pl.y + g->pl.h) {
+	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
+		if (it->id < MapObject::MapObjectPlayer_L) {
+			// Rendering immobile objects
 			DrawImage(g,
-				img_object[GetObjectSprite(object[i])],
-				object[i].x + g->camera.x,
-				object[i].y + g->camera.y, 0);
+				img_object[GetObjectSprite(*it)],
+				it->x + g->camera.x,
+				it->y + g->camera.y, 0);
 
 			// If it's a tree
-			if (object[i].id >= MapObject::MapObjectTree_BG &&
-				object[i].id <= MapObject::MapObjectTree_SO) {
+			if (it->id >= MapObject::MapObjectTree_BG &&
+				it->id <= MapObject::MapObjectTree_SO) {
 
 				// Draw the top of tree
 				DrawImage(g,
-					img_object[GetObjectSprite(object[i], 1)],
-					object[i].x + g->camera.x,
-					object[i].y - (object[i].h) + g->camera.y, 0);
+					img_object[GetObjectSprite(*it, 1)],
+					it->x + g->camera.x,
+					it->y - (it->h) + g->camera.y, 0);
 			}
+		} else {
+			// Rendering Players/NPCs
+			RenderPlayer(g, g->pl, sprites);
 		}
 	}
 }
 
-void Map::RenderForegroundObjects(Game* g, SpriteStruct* sprites) {
-	auto img_object = sprites->img_object;
-	for (int i = 0; i < object.size(); i++) {
-		// If object is in foreground
-		if (object[i].y + object[i].h >= g->pl.y + g->pl.h) {
-			DrawImage(g,
-				img_object[GetObjectSprite(object[i])],
-				object[i].x + g->camera.x,
-				object[i].y + g->camera.y, 0);
-
-			// If it's a tree
-			if (object[i].id >= MapObject::MapObjectTree_BG &&
-				object[i].id <= MapObject::MapObjectTree_SO) {
-
-				// Draw the top of tree
-				DrawImage(g,
-					img_object[GetObjectSprite(object[i], 1)],
-					object[i].x + g->camera.x,
-					object[i].y - (object[i].h) + g->camera.y, 0);
-			}
-		}
-	}
-
+void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 	// Temp (Draw grid and collision boxes for solids)
 	if (g->debug.grid) {
 		for (int i = 0; i < solid.size(); i++) {

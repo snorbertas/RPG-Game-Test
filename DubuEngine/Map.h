@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 #include "MapObject.h"
 #include "CollisionBox.h"
 
@@ -83,16 +84,24 @@ public:
 	void GenerateRandom(int alg);	
 
 	
-	/* =================== RenderBackgroundObjects ======================
-	 * Renders the foreground objects
+	/* ====================== SortPlayerObjects =========================
+	 * Sorts the map object list in a way so all players are in correct
+	 * locations. This function assumes that all current objects are already
+	 * sorted by their y coordinate (smallest to highest).
 	 */
-		void RenderBackgroundObjects(Game* g, SpriteStruct* sprites);
+		void SortPlayerObjects(Game* g);
 
 
-	/* =================== RenderForegroundObjects ======================
-	 * Renders the foreground objects
+	/* ======================== RenderObjects ===========================
+	 * Renders all objects on map (fauna, players, etc.)
 	 */
-		void RenderForegroundObjects(Game* g, SpriteStruct* sprites);
+		void RenderObjects(Game* g, SpriteStruct* sprites);
+
+
+	/* ========================== RenderGird ============================
+	 * Renders the grid (for debug only)
+	 */
+		void RenderGrid(Game* g, SpriteStruct* sprites);
 
 
 	/* ========================= RenderTiles ============================
@@ -130,7 +139,7 @@ public:
 
 	// Variables
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];	// tile[x][y]
-	vector<MapObject> object;			// Map objects (fauna, etc.)
+	list<MapObject> object;				// Map objects (fauna, etc.)
 	vector<CollisionBox> solid;			// Solids (collisions/can't pass trough)
 	vector<CollisionBox> except_solid;	// Special collision boxes to except solid collision
 	int seed;							// Seed for random generation

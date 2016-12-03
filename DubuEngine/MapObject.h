@@ -21,6 +21,8 @@ public:
 		R = Red
 		C = Cyan
 		P = Purple
+		Player_L = Local player
+		Player_M = Multi player
 	*/
 	enum MapObjectType {
 		MapObjectBush_SG,
@@ -38,7 +40,8 @@ public:
 		MapObjectFlower_R = 18,
 		MapObjectFlower_C,
 		MapObjectFlower_P,
-
+		MapObjectPlayer_L = 100,
+		MapObjectPlayer_M_0 = 200
 	};
 };
 

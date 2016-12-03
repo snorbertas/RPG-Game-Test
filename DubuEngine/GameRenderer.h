@@ -1,4 +1,5 @@
 #pragma once
+#include <allegro5/allegro_font.h>
 
 /* ============================== RenderGame ==============================
  *		Main render function for gameplay. Renders a whole frame for the game.

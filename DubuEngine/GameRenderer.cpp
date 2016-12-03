@@ -14,11 +14,16 @@
 #include "GameRenderer.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
-	//
+
+	// Render Tiles
 	g->map.RenderTiles(g, sprites);
-	g->map.RenderBackgroundObjects(g, sprites);
-	RenderPlayer(g, g->pl, sprites);
-	g->map.RenderForegroundObjects(g, sprites);
+
+	// Sort and render objects
+	g->map.SortPlayerObjects(g);
+	g->map.RenderObjects(g, sprites);
+
+	// Render grid
+	g->map.RenderGrid(g, sprites);
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {
