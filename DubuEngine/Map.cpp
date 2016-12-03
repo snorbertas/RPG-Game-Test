@@ -357,30 +357,59 @@ void Map::GenerateRandom(int alg) {
 }
 
 void Map::SortPlayerObjects(Game* g) {
-	// Loop trough each object
+	// Hold some info
 	bool inserted_player = false;
+	bool inserted_multi[Game::MAX_PLAYERS];
+	for (int i = 0; i < Game::MAX_PLAYERS; i++) { inserted_multi[i] = false; }
 
-	// First remove current local player
-	// Idea: Store an itteration pointer for each player and loop trough all of them from highest y to lowest y
-	object.remove_if([](MapObject& a) { return (a.id == MapObject::MapObjectPlayer_L); });
+	// First remove all player objects
+	object.remove_if([](MapObject& a) { return (a.id >= MapObject::MapObjectPlayer_L); });
 
-	for (std::list<MapObject>::iterator it = object.begin(); it != object.end() && !inserted_player; it++) {
-		// Loop trough each player
-		// Only local player atm
-		// TODO: MULTIPLAYER PLAYER OBJECTS
-		// Then insert new local player
-		if (it->y + it->h > g->pl.y + g->pl.h) {
-			// Memes
-			MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
-			object.insert(it, player_object);
-			inserted_player = true;
+	// Loop trough each object
+	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
+		// Local player
+		if (!inserted_player) {
+			if (it->y + it->h > g->pl.y + g->pl.h) {
+				// Insert player object
+				MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
+				object.insert(it, player_object);
+				inserted_player = true;
+			}
+		}
+
+		// Multi-player
+		if (g->connected) {
+			for (int i = 0; i < Game::MAX_PLAYERS; i++) {
+				if (g->Players[i].connected && !inserted_multi[i]) {
+					if (it->y + it->h > g->Players[i].y + g->Players[i].h) {
+						// Insert player object
+						MapObject player_object = MapObject(
+							MapObject::MapObjectPlayer_M_0 + i,
+							g->Players[i].x, g->Players[i].y);
+						object.insert(it, player_object);
+						inserted_multi[i] = true;
+					}
+				}
+			}
 		}
 	}
-	// Memes
+
+	// Push back if they dont belong inside
 	if (!inserted_player) {
+		// Insert player object
 		MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
 		object.push_back(player_object);
-		inserted_player = true;
+	}
+	if (g->connected) {
+		for (int i = 0; i < Game::MAX_PLAYERS; i++) {
+			if (!inserted_multi[i] && g->Players[i].connected) {
+				// Insert player object
+				MapObject player_object = MapObject(
+					MapObject::MapObjectPlayer_M_0 + i,
+					g->Players[i].x, g->Players[i].y);
+				object.push_back(player_object);
+			}
+		}
 	}
 }
 
@@ -404,9 +433,11 @@ void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
 					it->x + g->camera.x,
 					it->y - (it->h) + g->camera.y, 0);
 			}
-		} else {
+		} else if (it->id == MapObject::MapObjectPlayer_L) {
 			// Rendering Players/NPCs
 			RenderPlayer(g, g->pl, sprites);
+		} else if (it->id >= MapObject::MapObjectPlayer_M_0) {
+			RenderPlayer(g, g->Players[it->id - MapObject::MapObjectPlayer_M_0], sprites);
 		}
 	}
 }

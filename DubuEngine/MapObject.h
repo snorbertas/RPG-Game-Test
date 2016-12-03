@@ -40,8 +40,8 @@ public:
 		MapObjectFlower_R = 18,
 		MapObjectFlower_C,
 		MapObjectFlower_P,
-		MapObjectPlayer_L = 100,
-		MapObjectPlayer_M_0 = 200
+		MapObjectPlayer_L = 199,
+		MapObjectPlayer_M_0
 	};
 };
 

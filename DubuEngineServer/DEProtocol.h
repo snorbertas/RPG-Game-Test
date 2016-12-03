@@ -6,10 +6,8 @@
 #define PACKET_TYPE_AUTHENTICATE 100
 #define PACKET_TYPE_SERVER_MESSAGE 101
 #define PACKET_TYPE_CHAT_MESSAGE 102
-#define PACKET_TYPE_PLAYER_STATE 103
-#define PACKET_TYPE_PLAYER_NAME 104
-#define PACKET_TYPE_HIT 105
-#define PACKET_TYPE_ACTION 106
+#define PACKET_TYPE_PLAYER_INFO 103
+#define PACKET_TYPE_PLAYER_STATE 104
 #include <iostream>
 #include <string.h>
 using namespace std;
@@ -19,6 +17,8 @@ using namespace std;
 #define DEP_DERIV_PING 1
 #define DEP_DERIV_1BUFF 2
 #define DEP_DERIV_2BUFF 3
+#define DEP_DERIV_PINFO 4
+#define DEP_DERIV_PSTATE 5
 
 // The base packet class, contains no information except the type and deriv
 class Packet {
@@ -55,6 +55,40 @@ public:
 	PacketBuffer2(uint16_t type) : Packet(type, DEP_DERIV_2BUFF) {}
 	char buffer_1[50] = "";
 	char buffer_2[50] = "";
+};
+
+// Packet derivative for player info
+class PacketPlayerInfo : public Packet {
+public:
+	PacketPlayerInfo(uint16_t type) : Packet(type, DEP_DERIV_PINFO) {}
+	// Player ID
+	uint8_t p_id = 0;
+
+	// Width/Height
+	uint8_t w = 0;
+	uint8_t h = 0;
+
+	// Name
+	char name[50] = "";
+
+	// Visual
+	uint16_t sprite_id = 0;
+};
+
+// Packet derivative for player state
+class PacketPlayerState : public Packet {
+public:
+	PacketPlayerState(uint16_t type) : Packet(type, DEP_DERIV_PSTATE) {}
+	// Player ID
+	uint8_t p_id = 0;
+
+	// Player x/y coordinates
+	uint16_t x = 0;
+	uint16_t y = 0;
+
+	// Visual
+	uint8_t frame = 0;
+	uint8_t facing = 0;
 };
 
 int GetPacketSize(uint16_t deriv_id);

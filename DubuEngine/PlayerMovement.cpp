@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "PlayerMovement.h"
 #include "Collision.h"
+#include "GameHandler.h"
 
 void UpdatePlayerMovementSprite(Player& pl) {
 	pl.sprite_frame++;
@@ -164,6 +165,18 @@ void HandlePlayerMovementLogic(Game* g) {
 			// Update the animation
 			UpdatePlayerMovementSprite(g->pl);
 			g->pl.ticks_left_anim = g->pl.ticks_to_anim;
+		}
+
+		// Multiplayer (if either timer got reset)
+		if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
+			g->pl.ticks_left_move == g->pl.ticks_to_move) {
+			// Add a packet to queue concerning our current state
+			PacketPlayerState* packet = new PacketPlayerState(PACKET_TYPE_PLAYER_STATE);
+			packet->facing = g->pl.facing;
+			packet->x = g->pl.x;
+			packet->y = g->pl.y;
+			packet->frame = g->pl.sprite_frame;
+			AddPacketToQueue(g, packet);
 		}
 	}
 }

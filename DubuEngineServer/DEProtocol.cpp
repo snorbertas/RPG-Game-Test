@@ -32,5 +32,7 @@ int GetPacketSize(uint16_t deriv_id) {
 	if (deriv_id == DEP_DERIV_PING) return sizeof(Packet);
 	if (deriv_id == DEP_DERIV_1BUFF) return sizeof(PacketBuffer1);
 	if (deriv_id == DEP_DERIV_2BUFF) return sizeof(PacketBuffer2);
+	if (deriv_id == DEP_DERIV_PINFO) return sizeof(PacketPlayerInfo);
+	if (deriv_id == DEP_DERIV_PSTATE) return sizeof(PacketPlayerState);
 	return 0;
 }

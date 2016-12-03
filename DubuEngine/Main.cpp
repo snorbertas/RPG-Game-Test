@@ -601,22 +601,35 @@ unsigned int __stdcall ClientThread(void *data) {
 				cout << "Empty packet received!\n";
 				break;
 			case DEP_DERIV_PING: {
-				Packet p;
-				nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
-				HandlePacket(g, &p);
-				break;
-			}
+					Packet p;
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
 			case DEP_DERIV_1BUFF: {
-				PacketBuffer1 p(DEP_EMPTY);
-				nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
-				HandlePacket(g, &p);
-				break;
-			}
-			case DEP_DERIV_2BUFF:
-				PacketBuffer2 p(DEP_EMPTY);
-				nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
-				HandlePacket(g, &p);
-				break;
+					PacketBuffer1 p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
+			case DEP_DERIV_2BUFF: {
+					PacketBuffer2 p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
+			case DEP_DERIV_PINFO: {
+					PacketPlayerInfo p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
+			case DEP_DERIV_PSTATE: {
+					PacketPlayerState p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
 			}
 
 			// Unblock our socket again

@@ -96,6 +96,8 @@
 			bool ReadyToSendPackets = false;	// If true, the main socket thread will send all packets
 			bool connected = false;				// If true, socket is succesfully connected to the server
 			PacketQ PacketQueue[MAX_PACKETS_CLIENT]; // A packet queue to store unsent packets
+			static const int MAX_PLAYERS = 20;	// Maximum ammount of players client can handle
+			Player Players[MAX_PLAYERS];		// Array of multi players
 
 			// Non-socket related variables
 			int fade_in = 0;					// Fade-in timer

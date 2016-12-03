@@ -10,6 +10,8 @@ class, it's easier to use a macro */
 
 #define p1b ((PacketBuffer1*)p)
 #define p2b ((PacketBuffer2*)p)
+#define ppi ((PacketPlayerInfo*)p)
+#define pps ((PacketPlayerState*)p)
 
 void HandlePacket(Game* g, int pID, Packet* p) {
 	int deriv = p->deriv();
@@ -46,6 +48,29 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 				}
 			}
 			break;
+		}
+	} else if (deriv == DEP_DERIV_PINFO) {
+		// Store info
+		g->players[pID].name = ppi->name;
+		g->players[pID].w = ppi->w;
+		g->players[pID].h = ppi->h;
+		g->players[pID].sprite = ppi->sprite_id;
+	} else if (deriv == DEP_DERIV_PSTATE) {
+		// Store state
+		g->players[pID].x = pps->x;
+		g->players[pID].y = pps->y;
+
+		// Share state with all clients
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			if (g->SocketUsed[i] && i != pID) {
+				PacketPlayerState* pstate = new PacketPlayerState(PACKET_TYPE_PLAYER_STATE);
+				pstate->x = pps->x;
+				pstate->y = pps->y;
+				pstate->frame = pps->frame;
+				pstate->facing = pps->facing;
+				pstate->p_id = i;
+				AddPacketToQueue(&g->players[i], pstate);
+			}
 		}
 	}
 }
