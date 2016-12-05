@@ -3,15 +3,23 @@
 
 class Player {
 public:
+	// This should correspond to the # in array for multiplayer
+	int pID = -1;
+
+	// Player name
 	std::string name = "null";
 
+	// Animation frames
 	enum Frame {
 		FrameDown_0, FrameDown_1, FrameDown_2,
 		FrameHor_0, FrameHor_1, FrameHor_2,
 		FrameUp_0, FrameUp_1, FrameUp_2,
-		FrameIdle_0, FrameIdle_1 = 0
+		FrameIdleDown_0 = 0, FrameIdleDown_1 = 9,
+		FrameIdleHor_0 = 4, FrameIdleHor_1 = 10,
+		FrameIdleUp_0 = 7, FrameIdleUp_1 = 11
 	};
 
+	// Facing directions
 	enum Facing {
 		FacingUp, FacingDown, FacingLeft, FacingRight
 	};

@@ -64,6 +64,15 @@ bool HandlePlayerMovementKeyBinds(Game* g, int kid) {
 	return false;
 }
 
+void QueueMovementPacket(Game* g) {
+	PacketPlayerState* packet = new PacketPlayerState(PACKET_TYPE_PLAYER_STATE);
+	packet->facing = g->pl.facing;
+	packet->x = g->pl.x;
+	packet->y = g->pl.y;
+	packet->frame = g->pl.sprite_frame;
+	AddPacketToQueue(g, packet);
+}
+
 void HandlePlayerIdle(Game* g) {
 	if (!(g->keys.right || g->keys.left || g->keys.up || g->keys.down)) {
 		// There's no movement input, player is idle, update anim counter
@@ -72,14 +81,38 @@ void HandlePlayerIdle(Game* g) {
 		// Animation
 		if (g->pl.ticks_left_anim <= 0) {
 			// Update the animation
-			if (g->pl.sprite_frame != Player::FrameIdle_0) {
-				g->pl.sprite_frame = Player::FrameIdle_0;
-			} else {
-				g->pl.sprite_frame = Player::FrameIdle_1;
+			if (g->pl.facing == Player::FacingDown) {
+				if (g->pl.sprite_frame != Player::FrameIdleDown_0) {
+					g->pl.sprite_frame = Player::FrameIdleDown_0;
+				} else {
+					g->pl.sprite_frame = Player::FrameIdleDown_1;
+				}
+			} else if (g->pl.facing == Player::FacingLeft ||
+					   g->pl.facing == Player::FacingRight) {
+				if (g->pl.sprite_frame != Player::FrameIdleHor_0) {
+					g->pl.sprite_frame = Player::FrameIdleHor_0;
+				} else {
+					g->pl.sprite_frame = Player::FrameIdleHor_1;
+				}
+			} else if (g->pl.facing == Player::FacingUp) {
+				if (g->pl.sprite_frame != Player::FrameIdleUp_0) {
+					g->pl.sprite_frame = Player::FrameIdleUp_0;
+				} else {
+					g->pl.sprite_frame = Player::FrameIdleUp_1;
+				}
 			}
 
 			// Reset anim ticks
 			g->pl.ticks_left_anim = g->pl.ticks_to_anim * 2;
+
+			// Multiplayer
+			if (g->connected) {
+				if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
+					g->pl.ticks_left_move == g->pl.ticks_to_move) {
+					// Add a packet to queue concerning our current state
+					QueueMovementPacket(g);
+				}
+			}
 		}
 	}
 }
@@ -168,15 +201,12 @@ void HandlePlayerMovementLogic(Game* g) {
 		}
 
 		// Multiplayer (if either timer got reset)
-		if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
-			g->pl.ticks_left_move == g->pl.ticks_to_move) {
-			// Add a packet to queue concerning our current state
-			PacketPlayerState* packet = new PacketPlayerState(PACKET_TYPE_PLAYER_STATE);
-			packet->facing = g->pl.facing;
-			packet->x = g->pl.x;
-			packet->y = g->pl.y;
-			packet->frame = g->pl.sprite_frame;
-			AddPacketToQueue(g, packet);
+		if (g->connected) {
+			if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
+				g->pl.ticks_left_move == g->pl.ticks_to_move) {
+				// Add a packet to queue concerning our current state
+				QueueMovementPacket(g);
+			}
 		}
 	}
 }

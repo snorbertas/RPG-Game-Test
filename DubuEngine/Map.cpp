@@ -193,8 +193,6 @@ void PopulateRandomObjects(Map* map) {
 	}
 
 	map->object.sort([](MapObject& a, MapObject& b) {return a.y < b.y;});
-
-	//sort(map->object.begin(), map->object.end(), [](const MapObject& a, const MapObject& b) { return a.y < b.y; });
 }
 
 bool ObjectHasCollision(int object_id) {
@@ -357,60 +355,61 @@ void Map::GenerateRandom(int alg) {
 }
 
 void Map::SortPlayerObjects(Game* g) {
-	// Hold some info
-	bool inserted_player = false;
-	bool inserted_multi[Game::MAX_PLAYERS];
-	for (int i = 0; i < Game::MAX_PLAYERS; i++) { inserted_multi[i] = false; }
+	// Create a vector to store player pointers
+	vector<Player*> players;
+
+	// Local player
+	players.push_back(&g->pl);
+
+	// Multi players
+	if (g->connected) {
+		for (int i = 0; i < Game::MAX_PLAYERS; i++) {
+			if (g->Players[i].connected) {
+				players.push_back(&g->Players[i]);
+			}
+		}
+	}
+
+	// Sort them by their y value
+	sort(players.begin(), players.end(), [](const Player* a, const Player* b) { return a->y < b->y; });
+
+	// Boolean to store which players are already inserted
+	bool* inserted_player = new bool[players.size()];
+	for (int i = 0; i < players.size(); i++) { inserted_player[i] = false; }
 
 	// First remove all player objects
 	object.remove_if([](MapObject& a) { return (a.id >= MapObject::MapObjectPlayer_L); });
 
-	// Loop trough each object
+	// Loop trough each object to check where we can insert player objects
 	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
-		// Local player
-		if (!inserted_player) {
-			if (it->y + it->h > g->pl.y + g->pl.h) {
-				// Insert player object
-				MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
-				object.insert(it, player_object);
-				inserted_player = true;
-			}
-		}
-
-		// Multi-player
-		if (g->connected) {
-			for (int i = 0; i < Game::MAX_PLAYERS; i++) {
-				if (g->Players[i].connected && !inserted_multi[i]) {
-					if (it->y + it->h > g->Players[i].y + g->Players[i].h) {
-						// Insert player object
-						MapObject player_object = MapObject(
-							MapObject::MapObjectPlayer_M_0 + i,
-							g->Players[i].x, g->Players[i].y);
-						object.insert(it, player_object);
-						inserted_multi[i] = true;
-					}
+		for (int i = 0; i < players.size(); i++) {
+			if (!inserted_player[i]) {
+				if (it->y + it->h > players[i]->y + players[i]->h) {
+					// Insert player object
+					MapObject player_object = MapObject(
+						MapObject::MapObjectPlayer_M_0 + players[i]->pID,
+						players[i]->x, players[i]->y);
+					object.insert(it, player_object);
+					inserted_player[i] = true;
 				}
 			}
 		}
 	}
 
-	// Push back if they dont belong inside
-	if (!inserted_player) {
-		// Insert player object
-		MapObject player_object = MapObject(MapObject::MapObjectPlayer_L, g->pl.x, g->pl.y);
-		object.push_back(player_object);
-	}
-	if (g->connected) {
-		for (int i = 0; i < Game::MAX_PLAYERS; i++) {
-			if (!inserted_multi[i] && g->Players[i].connected) {
-				// Insert player object
-				MapObject player_object = MapObject(
-					MapObject::MapObjectPlayer_M_0 + i,
-					g->Players[i].x, g->Players[i].y);
-				object.push_back(player_object);
-			}
+	// The rest of player objects are on bottom of all objects
+	// Todo: maybe reverse order? can't test since there's a weird bug
+	for (int i = 0; i < players.size(); i++) {
+		if (!inserted_player[i]) {
+			// Insert player object
+			MapObject player_object = MapObject(
+				MapObject::MapObjectPlayer_M_0 + players[i]->pID,
+				players[i]->x, players[i]->y);
+			object.push_front(player_object);
 		}
 	}
+
+	// Release dynamic memory
+	delete[] inserted_player;
 }
 
 void Map::RenderObjects(Game* g, SpriteStruct* sprites) {

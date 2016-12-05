@@ -1,13 +1,13 @@
 #pragma once
 
-#define MAX_BODY_SPRITES 10
+#define MAX_BODY_SPRITES 12
 #define MAX_TILE_SPRITES 41
 #define MAX_ICON_SPRITES 1
-#define MAX_MISC_SPRITES 6
+#define MAX_MISC_SPRITES 5
 #define MAX_BACKGROUND_SPRITES 2
 #define MAX_INTERFACE_SPRITES 5
 #define MAX_BUTTON_SPRITES 28
-#define MAX_OBJECT_SPRITES 22
+#define MAX_OBJECT_SPRITES 21
 
 #include <allegro5\allegro.h>
 
