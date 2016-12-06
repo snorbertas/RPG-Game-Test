@@ -192,6 +192,7 @@ void PopulateRandomObjects(Map* map) {
 			rand() % (map->MAP_SIZE_Y * map->TILE_SIZE)));
 	}
 
+	// Sort by y
 	map->object.sort([](MapObject& a, MapObject& b) {return a.y < b.y;});
 }
 
