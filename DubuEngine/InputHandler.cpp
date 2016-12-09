@@ -14,6 +14,7 @@
 #include "InputHandler.h"
 #include "PlayerMovement.h"
 #include "DEText.h"
+#include "Digging.h"
 using namespace std;
 
 void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
@@ -219,7 +220,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 266:
-									RequestBindKeyInput(g, &g->keys.inventory_bind);
+									RequestBindKeyInput(g, &g->keys.dig_bind);
 									done = true;
 									break;
 								case 267:
@@ -302,6 +303,8 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				if(HandlePlayerMovementKeyBinds(g, kid)){
 					// If true, there was a movement key bind handled
 					// Otherwise (false) look for next binds
+				} else if (kid == g->keys.dig_bind) {
+					StartDigging(g, &g->pl);
 				} else if (kid == g->keys.camera_bind) {
 					g->camera.mode = CAMERA_MODE_LOCKED;
 				} else if (kid == g->keys.chat_bind) {
@@ -583,7 +586,7 @@ int* KeyIsBound(Game* g, int key_id) {
 	if (g->keys.right_bind == key_id) return &g->keys.right_bind;
 	if (g->keys.up_bind == key_id) return &g->keys.up_bind;
 	if (g->keys.down_bind == key_id) return &g->keys.down_bind;
-	if (g->keys.inventory_bind == key_id) return &g->keys.inventory_bind;
+	if (g->keys.dig_bind == key_id) return &g->keys.dig_bind;
 	if (g->keys.skills_bind == key_id) return &g->keys.skills_bind;
 	if (g->keys.camera_bind == key_id) return &g->keys.camera_bind;
 	if (g->keys.chat_bind == key_id) return &g->keys.chat_bind;

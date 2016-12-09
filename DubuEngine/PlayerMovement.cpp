@@ -2,6 +2,7 @@
 #include "PlayerMovement.h"
 #include "Collision.h"
 #include "GameHandler.h"
+#include "Digging.h"
 
 void UpdatePlayerMovementSprite(Player& pl) {
 	pl.sprite_frame++;
@@ -74,139 +75,141 @@ void QueueMovementPacket(Game* g) {
 }
 
 void HandlePlayerIdle(Game* g) {
-	if (!(g->keys.right || g->keys.left || g->keys.up || g->keys.down)) {
-		// There's no movement input, player is idle, update anim counter
-		g->pl.ticks_left_anim--;		
+	// Update anim counter
+	g->pl.ticks_left_anim--;		
 		
-		// Animation
-		if (g->pl.ticks_left_anim <= 0) {
-			// Update the animation
-			if (g->pl.facing == Player::FacingDown) {
-				if (g->pl.sprite_frame != Player::FrameIdleDown_0) {
-					g->pl.sprite_frame = Player::FrameIdleDown_0;
-				} else {
-					g->pl.sprite_frame = Player::FrameIdleDown_1;
-				}
-			} else if (g->pl.facing == Player::FacingLeft ||
-					   g->pl.facing == Player::FacingRight) {
-				if (g->pl.sprite_frame != Player::FrameIdleHor_0) {
-					g->pl.sprite_frame = Player::FrameIdleHor_0;
-				} else {
-					g->pl.sprite_frame = Player::FrameIdleHor_1;
-				}
-			} else if (g->pl.facing == Player::FacingUp) {
-				if (g->pl.sprite_frame != Player::FrameIdleUp_0) {
-					g->pl.sprite_frame = Player::FrameIdleUp_0;
-				} else {
-					g->pl.sprite_frame = Player::FrameIdleUp_1;
-				}
-			}
-
-			// Reset anim ticks
-			g->pl.ticks_left_anim = g->pl.ticks_to_anim * 2;
-
-			// Multiplayer
-			if (g->connected) {
-				if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
-					g->pl.ticks_left_move == g->pl.ticks_to_move) {
-					// Add a packet to queue concerning our current state
-					QueueMovementPacket(g);
-				}
-			}
-		}
-	}
-}
-
-void HandlePlayerMovementLogic(Game* g) {
-	if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
-		// There's movement input, update the tick counters
-		g->pl.ticks_left_move--;
-		g->pl.ticks_left_anim--;
-
-		// Time to mobilize
-		if (g->pl.ticks_left_move <= 0) {
-			// Reset ticks
-			g->pl.ticks_left_move = g->pl.ticks_to_move;
-
-			// Handle movement
-			double compound_vel = (g->pl.velocity / sqrt(2)) * 2;
-			double mov_x = compound_vel;
-			double mov_y = compound_vel;
-
-			// Prioritize horizontal movement first, then vertical
-			if (g->keys.left) {
-				if (g->keys.up) {
-					// Compound movement
-					mov_x /= -2;
-					mov_y = mov_x;
-				} else if (g->keys.down) {
-					// Compound movement
-					mov_x /= -2;
-					mov_y = -mov_x;
-				} else {
-					// Mono movement
-					g->pl.facing = Player::FacingLeft;
-					mov_x = -g->pl.velocity;
-					mov_y = 0;
-				}
-			} else if (g->keys.right) {
-				if (g->keys.up) {
-					// Compound movement
-					mov_x /= 2;
-					mov_y = -mov_x;
-				} else if (g->keys.down) {
-					// Compound movement
-					mov_x /= 2;
-					mov_y = mov_x;
-				} else {
-					// Mono movement
-					g->pl.facing = Player::FacingRight;
-					mov_x = g->pl.velocity;
-					mov_y = 0;
-				}
-			} else if (g->keys.up) {
-				// Mono movement
-				g->pl.facing = Player::FacingUp;
-				mov_x = 0;
-				mov_y = -g->pl.velocity;
-			} else if (g->keys.down) {
-				// Mono movement
-				g->pl.facing = Player::FacingDown;
-				mov_x = 0;
-				mov_y = g->pl.velocity;
-			}
-
-			// Update player's coordinates
-			if (!PlayerMoveCollides(g->pl, g->map, mov_x, 0)) {
-				g->pl.x += mov_x;
+	// Animation
+	if (g->pl.ticks_left_anim <= 0) {
+		// Update the animation
+		if (g->pl.digging) {
+			if (g->pl.sprite_frame != Player::FrameDig_0) {
+				g->pl.sprite_frame = Player::FrameDig_0;
 			} else {
-				// Fix facing direction since we cant move in mov_x direction
-				if (mov_y > 0) g->pl.facing = Player::FacingDown;
-				if (mov_y < 0) g->pl.facing = Player::FacingUp;
+				g->pl.sprite_frame = Player::FrameDig_1;
 			}
-			if (!PlayerMoveCollides(g->pl, g->map, 0, mov_y)) {
-				g->pl.y += mov_y;
+		} else if (g->pl.facing == Player::FacingDown) {
+			if (g->pl.sprite_frame != Player::FrameIdleDown_0) {
+				g->pl.sprite_frame = Player::FrameIdleDown_0;
 			} else {
-				// Fix facing direction since we cant move in mov_y direction
-				if (mov_x > 0) g->pl.facing = Player::FacingRight;
-				if (mov_x < 0) g->pl.facing = Player::FacingLeft;
+				g->pl.sprite_frame = Player::FrameIdleDown_1;
+			}
+		} else if (g->pl.facing == Player::FacingLeft ||
+					g->pl.facing == Player::FacingRight) {
+			if (g->pl.sprite_frame != Player::FrameIdleHor_0) {
+				g->pl.sprite_frame = Player::FrameIdleHor_0;
+			} else {
+				g->pl.sprite_frame = Player::FrameIdleHor_1;
+			}
+		} else if (g->pl.facing == Player::FacingUp) {
+			if (g->pl.sprite_frame != Player::FrameIdleUp_0) {
+				g->pl.sprite_frame = Player::FrameIdleUp_0;
+			} else {
+				g->pl.sprite_frame = Player::FrameIdleUp_1;
 			}
 		}
 
-		// Animation
-		if (g->pl.ticks_left_anim <= 0) {
-			// Update the animation
-			UpdatePlayerMovementSprite(g->pl);
-			g->pl.ticks_left_anim = g->pl.ticks_to_anim;
-		}
+		// Reset anim ticks
+		g->pl.ticks_left_anim = g->pl.ticks_to_anim * 2;
 
-		// Multiplayer (if either timer got reset)
+		// Multiplayer
 		if (g->connected) {
 			if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
 				g->pl.ticks_left_move == g->pl.ticks_to_move) {
 				// Add a packet to queue concerning our current state
 				QueueMovementPacket(g);
 			}
+		}
+	}
+}
+
+void HandlePlayerMovementLogic(Game* g) {
+	// There's movement input, update the tick counters
+	g->pl.ticks_left_move--;
+	g->pl.ticks_left_anim--;
+
+	// Time to mobilize
+	if (g->pl.ticks_left_move <= 0) {
+		// Reset ticks
+		g->pl.ticks_left_move = g->pl.ticks_to_move;
+
+		// Handle movement
+		double compound_vel = (g->pl.velocity / sqrt(2)) * 2;
+		double mov_x = compound_vel;
+		double mov_y = compound_vel;
+
+		// Prioritize horizontal movement first, then vertical
+		if (g->keys.left) {
+			if (g->keys.up) {
+				// Compound movement
+				mov_x /= -2;
+				mov_y = mov_x;
+			} else if (g->keys.down) {
+				// Compound movement
+				mov_x /= -2;
+				mov_y = -mov_x;
+			} else {
+				// Mono movement
+				g->pl.facing = Player::FacingLeft;
+				mov_x = -g->pl.velocity;
+				mov_y = 0;
+			}
+		} else if (g->keys.right) {
+			if (g->keys.up) {
+				// Compound movement
+				mov_x /= 2;
+				mov_y = -mov_x;
+			} else if (g->keys.down) {
+				// Compound movement
+				mov_x /= 2;
+				mov_y = mov_x;
+			} else {
+				// Mono movement
+				g->pl.facing = Player::FacingRight;
+				mov_x = g->pl.velocity;
+				mov_y = 0;
+			}
+		} else if (g->keys.up) {
+			// Mono movement
+			g->pl.facing = Player::FacingUp;
+			mov_x = 0;
+			mov_y = -g->pl.velocity;
+		} else if (g->keys.down) {
+			// Mono movement
+			g->pl.facing = Player::FacingDown;
+			mov_x = 0;
+			mov_y = g->pl.velocity;
+		}
+
+		// Update player's coordinates
+		if (!PlayerMoveCollides(g->pl, g->map, mov_x, 0)) {
+			g->pl.x += mov_x;
+		} else {
+			// Fix facing direction since we cant move in mov_x direction
+			if (mov_y > 0) g->pl.facing = Player::FacingDown;
+			if (mov_y < 0) g->pl.facing = Player::FacingUp;
+		}
+		if (!PlayerMoveCollides(g->pl, g->map, 0, mov_y)) {
+			g->pl.y += mov_y;
+		} else {
+			// Fix facing direction since we cant move in mov_y direction
+			if (mov_x > 0) g->pl.facing = Player::FacingRight;
+			if (mov_x < 0) g->pl.facing = Player::FacingLeft;
+		}
+	}
+
+	// Animation
+	if (g->pl.ticks_left_anim <= 0) {
+		// Update the animation
+		UpdatePlayerMovementSprite(g->pl);
+		g->pl.ticks_left_anim = g->pl.ticks_to_anim;
+	}
+
+	// Multiplayer (if either timer got reset)
+	if (g->connected) {
+		if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
+			g->pl.ticks_left_move == g->pl.ticks_to_move) {
+			// Add a packet to queue concerning our current state
+			QueueMovementPacket(g);
 		}
 	}
 }
@@ -219,8 +222,16 @@ void HandlePlayerMovementLogic(Game* g) {
 */
 static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Tick
-	HandlePlayerMovementLogic(g);
-	HandlePlayerIdle(g);
+	if (g->pl.digging) {
+		HandleDigging(&g->pl);
+		HandlePlayerIdle(g);
+	} else {
+		if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
+			HandlePlayerMovementLogic(g);
+		} else {
+			HandlePlayerIdle(g);
+		}
+	}
 }
 
 static void Click(Game* g, int button, bool release, ALLEGRO_SAMPLE** sample_sfx) {

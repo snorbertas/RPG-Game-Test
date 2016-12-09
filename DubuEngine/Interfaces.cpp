@@ -292,11 +292,11 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[2], 0, 0, 0,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
-						ALLEGRO_ALIGN_LEFT, "Inventory:");
+						ALLEGRO_ALIGN_LEFT, "Dig:");
 					DrawText(font[2], 255, 255, 255,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
-						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.inventory_bind));
+						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.dig_bind));
 					DrawText(font[2], 0, 0, 0,
 						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),

@@ -144,6 +144,7 @@ void LoadGame() {
 	LoadSprites(sprites.img_interface, "sprites/interfaces", "interface_", MAX_INTERFACE_SPRITES);
 	LoadSprites(sprites.img_button, "sprites/buttons", "button_", MAX_BUTTON_SPRITES);
 	LoadSprites(sprites.img_object, "sprites/objects", "object_", MAX_OBJECT_SPRITES);
+	LoadSprites(sprites.img_gfx, "sprites/gfx", "gfx_", MAX_GFX_SPRITES);
 	g.menu.bg_x = (-1500 + g.BWIDTH) + (1500 - g.BWIDTH) * (float)((float)(g.BWIDTH - g.pos_x) / (float)g.BWIDTH);
 	g.menu.bg_y = (-938 + g.BHEIGHT) + (938 - g.BHEIGHT) * (float)((float)(g.BHEIGHT - g.pos_y) / (float)g.BHEIGHT);
 	g.scene = 0;
@@ -441,6 +442,9 @@ void DestroyBitmaps(){
 	for (int i = 0; i < MAX_OBJECT_SPRITES; i++) {
 		al_destroy_bitmap(sprites.img_object[i]);
 	}
+	for (int i = 0; i < MAX_GFX_SPRITES; i++) {
+		al_destroy_bitmap(sprites.img_gfx[i]);
+	}
 }
 
 void DestroySamples(){
@@ -478,7 +482,7 @@ void LoadSettings(){
 			if (setting_type == ("KEY_UP")) g.keys.up_bind = s_val;
 			if (setting_type == ("KEY_DOWN")) g.keys.down_bind = s_val;
 			if (setting_type == ("KEY_CAMERA")) g.keys.camera_bind = s_val;
-			if (setting_type == ("KEY_INVENTORY")) g.keys.inventory_bind = s_val;
+			if (setting_type == ("KEY_DIG")) g.keys.dig_bind = s_val;
 			if (setting_type == ("KEY_SKILLS")) g.keys.skills_bind = s_val;
 			if (setting_type == ("KEY_CHAT")) g.keys.chat_bind = s_val;
 		}
@@ -516,7 +520,7 @@ void SaveSettings(){
 	myfile << ("KEY_UP = " + to_string(g.keys.up_bind) + "\n");
 	myfile << ("KEY_DOWN = " + to_string(g.keys.down_bind) + "\n");
 	myfile << ("KEY_CAMERA = " + to_string(g.keys.camera_bind) + "\n");
-	myfile << ("KEY_INVENTORY = " + to_string(g.keys.inventory_bind) + "\n");
+	myfile << ("KEY_DIG = " + to_string(g.keys.dig_bind) + "\n");
 	myfile << ("KEY_SKILLS = " + to_string(g.keys.skills_bind) + "\n");
 	myfile << ("KEY_CHAT = " + to_string(g.keys.chat_bind) + "\n");
 	myfile.close();

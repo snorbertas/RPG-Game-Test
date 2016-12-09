@@ -12,11 +12,14 @@
 #include "Game.h"
 #include "ScaledDraw.h"
 #include "GameRenderer.h"
+#include "Digging.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
-
 	// Render Tiles
 	g->map.RenderTiles(g, sprites);
+
+	// Render digging tiles
+	RenderDigging(g, sprites);
 
 	// Sort and render objects
 	g->map.SortPlayerObjects(g);

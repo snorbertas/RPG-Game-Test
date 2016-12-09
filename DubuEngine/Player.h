@@ -16,7 +16,8 @@ public:
 		FrameUp_0, FrameUp_1, FrameUp_2,
 		FrameIdleDown_0 = 0, FrameIdleDown_1 = 9,
 		FrameIdleHor_0 = 4, FrameIdleHor_1 = 10,
-		FrameIdleUp_0 = 7, FrameIdleUp_1 = 11
+		FrameIdleUp_0 = 7, FrameIdleUp_1 = 11,
+		FrameDig_0 = 11, FrameDig_1
 	};
 
 	// Facing directions
@@ -42,10 +43,13 @@ public:
 	int ticks_left_move = ticks_to_move;	// Ticks left till next movement
 	int ticks_to_anim = 5;			// Ticks to change sprite
 	int ticks_left_anim = ticks_to_anim;	// Ticks left till sprite change
+	int dig_duration = TPS;			// Takes one second to dig
+	int dig_timer = 0;				// Timer to track digging
 
 	// Visual/Animation
 	int sprite_id = 0;				// Sprite start
 	int sprite_frame = 0;			// Sprite offset
+	bool digging = false;
 
 	// Multi-player
 	bool connected = false;

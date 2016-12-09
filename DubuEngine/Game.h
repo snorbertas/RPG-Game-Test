@@ -36,7 +36,7 @@
 		int up_bind = ALLEGRO_KEY_UP;			// Binded key to move up
 		int down_bind = ALLEGRO_KEY_DOWN;		// Binded key to move down
 		int camera_bind = ALLEGRO_KEY_Y;		// Binded key to change camera mode
-		int inventory_bind = ALLEGRO_KEY_I;		// Binded key to open inventory
+		int dig_bind = ALLEGRO_KEY_Z;		// Binded key to open inventory
 		int skills_bind = ALLEGRO_KEY_O;		// Binded key to open skills
 		int chat_bind = ALLEGRO_KEY_ENTER;		// Binded key to chat/type
 		bool left = false;						// If true, then moving left key is inputted
