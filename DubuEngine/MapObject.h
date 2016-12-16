@@ -10,6 +10,7 @@ public:
 	int y = 0;
 	int w = 64;
 	int h = 64;
+	double distance = 0;	//temp
 
 	// Map object types
 	/*	Key:
@@ -41,7 +42,8 @@ public:
 		MapObjectFlower_C,
 		MapObjectFlower_P,
 		MapObjectPlayer_L = 199,
-		MapObjectPlayer_M_0
+		MapObjectPlayer_M_0,
+		MapObjectBone = 300
 	};
 };
 

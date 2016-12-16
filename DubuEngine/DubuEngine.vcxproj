@@ -43,6 +43,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ScaledDraw.cpp" />
+    <ClCompile Include="Sniffing.cpp" />
     <ClCompile Include="TilesInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +64,7 @@
     <ClInclude Include="PlayerMovement.h">
       <SubType>Header</SubType>
     </ClInclude>
+    <ClInclude Include="Sniffing.h" />
     <ClInclude Include="TilesInfo.h" />
     <ClInclude Include="_EngineConfig.h" />
     <ClInclude Include="Game.h" />

@@ -142,6 +142,7 @@ public:
 	list<MapObject> object;				// Map objects (fauna, etc.)
 	vector<CollisionBox> solid;			// Solids (collisions/can't pass trough)
 	vector<CollisionBox> except_solid;	// Special collision boxes to except solid collision
+	vector<MapObject> bone;				// Bones hidden on the map
 	int seed;							// Seed for random generation
 	int render_mode = 0;
 };

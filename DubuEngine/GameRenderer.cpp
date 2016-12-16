@@ -27,6 +27,22 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 	// Render grid
 	g->map.RenderGrid(g, sprites);
+
+	// Render sniff info (debug/temp)
+	if (g->debug.grid) {
+		CalculateBoneDistances(g);
+		for (int i = 0; i < g->map.bone.size(); i++) {
+			DrawOutline(g, g->map.bone[i].x + g->camera.x, g->map.bone[i].y + g->camera.y,
+				Map::TILE_SIZE, Map::TILE_SIZE, 255, 255, 255, 3);
+			float r_x = (float)g->s_x / (float)g->BWIDTH;
+			float r_y = (float)g->s_y / (float)g->BHEIGHT;
+			DrawText(font[4], 255, 255, 255, g->map.bone[i].x + g->camera.x + 4, g->map.bone[i].y + g->camera.y,
+				ALLEGRO_ALIGN_LEFT, "Bone: #%i", i);
+			DrawText(font[4], 255, 255, 255, g->map.bone[i].x + g->camera.x + 4, g->map.bone[i].y + g->camera.y + 12,
+				ALLEGRO_ALIGN_LEFT, "%f", g->map.bone[i].distance);
+		}
+	}
+
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {

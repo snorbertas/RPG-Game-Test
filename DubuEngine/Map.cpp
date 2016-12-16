@@ -194,6 +194,14 @@ void PopulateRandomObjects(Map* map) {
 
 	// Sort by y
 	map->object.sort([](MapObject& a, MapObject& b) {return a.y < b.y;});
+
+	// Temp 50 bones
+	for (int i = 0; i < 50; i++) {
+		int rand_x = rand() % Map::MAP_SIZE_X * Map::TILE_SIZE;
+		int rand_y = rand() % Map::MAP_SIZE_Y * Map::TILE_SIZE;
+		MapObject rand_bone(MapObject::MapObjectBone, rand_x, rand_y);
+		map->bone.push_back(rand_bone);
+	}
 }
 
 bool ObjectHasCollision(int object_id) {
@@ -444,6 +452,7 @@ void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
 
 void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 	// Temp (Draw grid and collision boxes for solids)
+
 	if (g->debug.grid) {
 		for (int i = 0; i < solid.size(); i++) {
 			DrawRectangle(g,

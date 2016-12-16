@@ -483,7 +483,7 @@ void LoadSettings(){
 			if (setting_type == ("KEY_DOWN")) g.keys.down_bind = s_val;
 			if (setting_type == ("KEY_CAMERA")) g.keys.camera_bind = s_val;
 			if (setting_type == ("KEY_DIG")) g.keys.dig_bind = s_val;
-			if (setting_type == ("KEY_SKILLS")) g.keys.skills_bind = s_val;
+			if (setting_type == ("KEY_SNIFF")) g.keys.sniff_bind = s_val;
 			if (setting_type == ("KEY_CHAT")) g.keys.chat_bind = s_val;
 		}
 	}
@@ -521,7 +521,7 @@ void SaveSettings(){
 	myfile << ("KEY_DOWN = " + to_string(g.keys.down_bind) + "\n");
 	myfile << ("KEY_CAMERA = " + to_string(g.keys.camera_bind) + "\n");
 	myfile << ("KEY_DIG = " + to_string(g.keys.dig_bind) + "\n");
-	myfile << ("KEY_SKILLS = " + to_string(g.keys.skills_bind) + "\n");
+	myfile << ("KEY_SNIFF = " + to_string(g.keys.sniff_bind) + "\n");
 	myfile << ("KEY_CHAT = " + to_string(g.keys.chat_bind) + "\n");
 	myfile.close();
 }

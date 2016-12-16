@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Debug.h"
+#include "Sniffing.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -24,9 +25,9 @@
 		int type_indicator_count = 0;			//
 		int backspace_timer = 0;				//	Timers
 		int backspace_timer_wait = 60;			//
-		string username_input = "";		// Username input
-		string password_input = "";		// Password input
-		string password_input_mask = "";	// Password input converted into starts ****
+		string username_input = "";				// Username input
+		string password_input = "";				// Password input
+		string password_input_mask = "";		// Password input converted into starts ****
 	};
 
 // Keys strucutre (key bindings and input)
@@ -36,8 +37,8 @@
 		int up_bind = ALLEGRO_KEY_UP;			// Binded key to move up
 		int down_bind = ALLEGRO_KEY_DOWN;		// Binded key to move down
 		int camera_bind = ALLEGRO_KEY_Y;		// Binded key to change camera mode
-		int dig_bind = ALLEGRO_KEY_Z;		// Binded key to open inventory
-		int skills_bind = ALLEGRO_KEY_O;		// Binded key to open skills
+		int dig_bind = ALLEGRO_KEY_Z;			// Binded key to dig
+		int sniff_bind = ALLEGRO_KEY_X;			// Binded key to sniff
 		int chat_bind = ALLEGRO_KEY_ENTER;		// Binded key to chat/type
 		bool left = false;						// If true, then moving left key is inputted
 		bool right = false;						// If true, then moving right key is inputted
@@ -137,4 +138,5 @@
 			Player pl;							// Player
 			Map map = Map(0);					// Map
 			Debug debug;						// Temp debug
+			SniffInfo sniff;					// Sniff info
 	};
