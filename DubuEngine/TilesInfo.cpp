@@ -118,6 +118,50 @@ void TilesInfo::AdjustTilesInfo() {
 			std::sort(TileNeighbours[i][j].begin(), TileNeighbours[i][j].end());
 }
 
+static int TryAppropriateTile(std::vector<int>& TempAppropriateTiles, int type) {
+	if (type == 0) {
+		bool contains4 = false;
+		for (const auto& tile : TempAppropriateTiles) {
+			if (tile == 4) {
+				contains4 = true;
+				break;
+			}
+		}
+		if (contains4)
+			return 4;
+		else
+			return -1;
+	} else {
+		bool have32 = false;
+		bool haveProper = false;
+		for (int i = 0; i < (int) TempAppropriateTiles.size(); ++i) {
+			if (!(TempAppropriateTiles[i] >= 28 && TempAppropriateTiles[i] <= 40)) {
+				TempAppropriateTiles[i] = TempAppropriateTiles.back();
+				TempAppropriateTiles.pop_back();
+				--i;
+			} else {
+				have32 |= (TempAppropriateTiles[i] == 32);
+				haveProper |= (TempAppropriateTiles[i] < 37);
+			}
+		}
+		if (TempAppropriateTiles.size() == 0)
+			return -1;
+		if (have32 && rand() % 10 < 9) {
+			return 32;
+		}
+		if (haveProper && rand() % 10 < 4) {
+			for (int i = 0; i < (int) TempAppropriateTiles.size(); ++i) {
+				if (TempAppropriateTiles[i] >= 37) {
+					TempAppropriateTiles[i] = TempAppropriateTiles.back();
+					TempAppropriateTiles.pop_back();
+					--i;
+				}
+			}
+		}
+		return TempAppropriateTiles[static_cast<size_t>(rand()) % TempAppropriateTiles.size()];
+	}
+}
+
 int TilesInfo::GetAppropriateTile(int leftTile, int upTile, int badTile) {
 	TempAppropriateTiles.clear();
 
@@ -151,6 +195,18 @@ int TilesInfo::GetAppropriateTile(int leftTile, int upTile, int badTile) {
 	if (TempAppropriateTiles.size() == 0) {
 		return -1;
 	}
-	int resultIndex = abs(rand()) % ((int) TempAppropriateTiles.size());
-	return TempAppropriateTiles[resultIndex];
+	/*int resultIndex = abs(rand()) % ((int) TempAppropriateTiles.size());
+	return TempAppropriateTiles[resultIndex];*/
+
+	int type = rand() % 100;
+	if (type < 2)
+		type = 2;
+	else
+		type = 0;
+	int result = TryAppropriateTile(TempAppropriateTiles, type);
+	if (result == -1) {
+		type = (type + 2) % 4;
+		result = TryAppropriateTile(TempAppropriateTiles, type);
+	}
+	return result;
 }

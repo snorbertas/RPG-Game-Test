@@ -10,6 +10,10 @@ private:
 public:
 	enum ESubstance {GRASS = 0, DIRT, WATER, ESUBSSTANCE_SIZE};
 	struct Tile {
+		Tile() : SpriteId(0) {
+			for (int i = 0; i < 9; ++i)
+				Side[i] = GRASS;
+		}
 		ESubstance Side[9];
 		int SpriteId;
 	};

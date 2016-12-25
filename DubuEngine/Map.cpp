@@ -5,8 +5,28 @@
 #include "Collision.h"
 #include "GameRenderer.h"
 
+const double Map::_MaxWaterBiomSideToMapProportion = 1 / 4.;
+const double Map::_MaxBiomTilesOverhead = 11 / 10.;
+const std::pair<int, int> Map::_NeighbourWay[_NeighbourWayCnt] = {make_pair(0, 1), make_pair(0, -1), make_pair(1, 0), make_pair(-1, 0)};
+
+static bool pointInSegment(int start, int end, int p) {
+	return start <= p && p <= end;
+}
+
+static bool intersectingSegments(int a1, int a2, int b1, int b2) {
+	return pointInSegment(a1, a2, b1) || 
+		   pointInSegment(a1, a2, b2) || 
+		   pointInSegment(b1, b2, a1) || 
+		   pointInSegment(b1, b2, a2);
+}
+
+static bool intersectingRectangles(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+	return intersectingSegments(x1, x1 + w1, x2, x2 + w2) && 
+		   intersectingSegments(y1, y1 + h1, y2, y2 + h2);
+}
+
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
-	tile[0][0] = rand() % MAX_TILE_SPRITES;
+	tile[0][0] = 4;
 	for (int i = 1; i < MAP_SIZE_X; ++i) {
 		tile[i][0] = TilesInfo::GetAppropriateTile(tile[i - 1][0], -1);
 	}
@@ -27,6 +47,137 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 			}
 		}
 	}
+}
+
+void Map::AddNeighbour(int x, int y) {
+	if (_Visited[x][y]) {
+		cerr << "Generate map: cell is already visited!\n";
+		throw exception("cell already visited");
+	}
+	_Visited[x][y] = true;
+	_Neighbours.push_back(make_pair(x, y));
+}
+
+void Map::AppendNeighbourToBiom(int index, int xs, int xf, int ys, int yf) {
+	auto t = _Neighbours[index];
+	tile[t.first][t.second] = TilesInfo::BiomTiles[TilesInfo::WATER][4].SpriteId;
+	for (const auto& way : _NeighbourWay) {
+		int xNew = t.first + way.first;
+		int yNew = t.second + way.second;
+		if (xNew >= xs && xNew <= xf && yNew >= ys && yNew <= yf && !_Visited[xNew][yNew])
+			AddNeighbour(xNew, yNew);
+	}
+	_Neighbours[index] = _Neighbours.back();
+	_Neighbours.pop_back();
+}
+
+void Map::AdjustTileSides(int xs, int xf, int ys, int yf) {
+}
+
+int Map::GenerateWaterBiom(int xs, int ys, int w, int h) {
+	int xf = xs + w - 1;
+	int yf = ys + h - 1;
+
+	// Checking biom rectangle lying within map
+	if (!(xs > -1 && xf < MAP_SIZE_X && ys > -1 && yf < MAP_SIZE_Y))
+ 		return 0;
+
+	_Neighbours.clear();
+
+	// Setting initials
+	int biomStartX = (xs + xf) / 2;
+	int biomStartY = (ys + yf) / 2;
+	AddNeighbour(biomStartX, biomStartY);
+
+	int farTilesMaxDist = ((w + h) - 1) / 4;
+	int farTilesLimit = abs(w - h) + 1;
+
+	// Building biom
+	int biomSize = 0;
+	while (farTilesLimit > 0 && _Neighbours.size() != 0) {
+		int index = rand() % static_cast<int>(_Neighbours.size());
+		auto tile = _Neighbours[index];
+		AppendNeighbourToBiom(index, xs, xf, ys, yf);
+		int dist = max(abs(tile.first - biomStartX), abs(tile.second - biomStartY));
+		if (dist >= farTilesMaxDist)
+			--farTilesLimit;
+		++biomSize;
+	}
+
+	// Making biom 4x bigger to avoid inexisting tiles
+	for (int x = xf; x >= xs; --x) {
+		for (int y = yf; y >= ys; --y) {
+			int xNew = xs + (x - xs) * 2;
+			int yNew = ys + (y - ys) * 2;
+			tile[xNew + 1][yNew + 1] = tile[x][y];
+			tile[xNew][yNew + 1]	 = tile[x][y];
+			tile[xNew + 1][yNew]	 = tile[x][y];
+			tile[xNew][yNew]		 = tile[x][y];
+		}
+	}
+
+	// Adjusting tile sides
+	AdjustTileSides(xs, ys, xf, yf);
+
+	return biomSize;
+}
+
+void Map::GenerateWaterBioms(int minWaterTiles) {
+	std::vector<std::pair<int, int>> upLeftCorners;
+	std::vector<std::pair<int, int>> sizes;
+	int maxWaterTiles = static_cast<int>(minWaterTiles * _MaxBiomTilesOverhead);
+	int totalTiles = MAP_SIZE_X * MAP_SIZE_Y;
+	if (maxWaterTiles > totalTiles)
+		maxWaterTiles = minWaterTiles + (totalTiles - minWaterTiles) / 2;
+	int takenTiles = 0;
+
+	// Clearing visited tiles to place biom rectangles
+	for (int x = 0; x < MAP_SIZE_X; ++x)
+		for (int y = 0; y < MAP_SIZE_Y; ++y)
+			_Visited[x][y] = false;
+
+	while (takenTiles < minWaterTiles) {
+		int cornerX = rand() % MAP_SIZE_X;
+		int cornerY = rand() % MAP_SIZE_Y;
+		int w = rand() % (MAP_SIZE_X - cornerX) + 1;
+		int h = rand() % (MAP_SIZE_Y - cornerY) + 1;
+		w = std::max(w, static_cast<int>(MAP_SIZE_X * _MaxWaterBiomSideToMapProportion));
+		h = std::max(h, static_cast<int>(MAP_SIZE_Y * _MaxWaterBiomSideToMapProportion));
+
+		while (w * h > maxWaterTiles - takenTiles) {
+			if (w > h)
+				w = (w * 2) / 3;
+			else
+				h = (h * 2) / 3;
+		}
+
+		bool intersecting = false;
+		for (size_t i = 0; i < upLeftCorners.size(); ++i) {
+			intersecting |= intersectingRectangles(cornerX, cornerY, w, h, 
+												   upLeftCorners[i].first, upLeftCorners[i].second, sizes[i].first, sizes[i].second);
+		}
+		if (intersecting)
+			continue;
+		takenTiles += GenerateWaterBiom(cornerX, cornerY, w, h);
+		upLeftCorners.push_back(make_pair(cornerX, cornerY));
+		sizes.push_back(make_pair(w, h));
+	}
+}
+
+void Map::GenerateBiomsRoadsMap() {
+	// Clearing map
+	for (int x = 0; x < MAP_SIZE_X; ++x)
+		for (int y = 0; y < MAP_SIZE_Y; ++y)
+			tile[x][y] = TilesInfo::BiomTiles[TilesInfo::GRASS][4].SpriteId;
+
+	// Need think & write adjusting tiles
+	return ;
+
+	int waterPercentage = rand() % 40 + 1;
+	int mapTiles = MAP_SIZE_X * MAP_SIZE_Y;
+	int waterTiles = (mapTiles * waterPercentage) / 100;
+
+	GenerateWaterBioms(waterTiles);
 }
 
 void Map::GenerateMapWithBaseBiome() {
@@ -356,6 +507,10 @@ void Map::GenerateRandom(int alg) {
 		// Generation mode C
 		GenerateMapWithBaseBiome();
 		PopulateRandomObjects(this);
+		break;
+	case 3:
+		// Generation mode D
+		GenerateBiomsRoadsMap();
 		break;
 	}
 

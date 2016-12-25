@@ -74,7 +74,6 @@ public:
 				tile[x][y] = GetTileSprite(Biome_Grass, BLoc_C);
 			}
 		}
-
 	}
 
 	// Writes all the solid CollisionBoxes into a vector
@@ -136,13 +135,35 @@ public:
 	 */
 		void SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]);
 
+	/* ====================== GenerateBiomsRoadsMap =======================
+	 *	Generates map based on idea of blocks of bioms and system of roads
+	 */
+		void GenerateBiomsRoadsMap();
+
+		void GenerateWaterBioms(int minWaterTiles);
+		int GenerateWaterBiom(int xs, int ys, int w, int h);
+		void AddNeighbour(int x, int y);
+		void AppendNeighbourToBiom(int index, int xs, int xf, int ys, int yf);
+		void AdjustTileSides(int xs, int xf, int ys, int yf);
 
 	// Variables
-	int tile[MAP_SIZE_X][MAP_SIZE_Y];	// tile[x][y]
-	list<MapObject> object;				// Map objects (fauna, etc.)
-	vector<CollisionBox> solid;			// Solids (collisions/can't pass trough)
-	vector<CollisionBox> except_solid;	// Special collision boxes to except solid collision
-	vector<MapObject> bone;				// Bones hidden on the map
-	int seed;							// Seed for random generation
+public:
+	int tile[MAP_SIZE_X][MAP_SIZE_Y];	  // tile[x][y]
+	list<MapObject> object;				  // Map objects (fauna, etc.)
+	vector<CollisionBox> solid;			  // Solids (collisions/can't pass trough)
+	vector<CollisionBox> except_solid;	  // Special collision boxes to except solid collision
+	vector<MapObject> bone;				  // Bones hidden on the map
+	int seed;							  // Seed for random generation
 	int render_mode = 0;
+
+private:
+	bool _Visited[MAP_SIZE_X][MAP_SIZE_Y]; // tile visiting array for biom generation
+	std::vector<std::pair<int, int>> _Neighbours;
+
+	// Constants
+private:
+	static const double _MaxWaterBiomSideToMapProportion;
+	static const double _MaxBiomTilesOverhead;
+	static const int _NeighbourWayCnt = 4;
+	static const std::pair<int, int> _NeighbourWay[_NeighbourWayCnt];
 };
