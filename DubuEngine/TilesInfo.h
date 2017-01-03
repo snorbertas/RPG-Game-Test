@@ -14,6 +14,9 @@ public:
 			for (int i = 0; i < 9; ++i)
 				Side[i] = GRASS;
 		}
+		ESubstance GetSubstance() const {
+			return Side[4];
+		}
 		ESubstance Side[9];
 		int SpriteId;
 	};
@@ -38,6 +41,7 @@ private:
 public:
 	static void AdjustTilesInfo();
 	static int GetAppropriateTile(int leftTile, int upTile, int badTile = -1);
+	static const Tile& GetTileBySpriteId(int spriteId);
 
 public:
 	enum {TILE_NEIGHBOUR_LEFT = 0, TILE_NEIGHBOUR_RIGHT, TILE_NEIGHBOUR_UP, TILE_NEIGHBOUR_DOWN, TILE_NEIGHBOUR_SIZE};

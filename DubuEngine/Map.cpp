@@ -25,6 +25,10 @@ static bool intersectingRectangles(int x1, int y1, int w1, int h1, int x2, int y
 		   intersectingSegments(y1, y1 + h1, y2, y2 + h2);
 }
 
+bool Map::InMap(int x, int y) {
+	return x > -1 && y > -1 && x < MAP_SIZE_X && y < MAP_SIZE_Y;
+}
+
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	tile[0][0] = 4;
 	for (int i = 1; i < MAP_SIZE_X; ++i) {
@@ -47,6 +51,58 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 			}
 		}
 	}
+
+	BuildRoads();
+}
+
+void Map::BuildRoads() {
+	int infiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			_Dist[i][j] = infiniteDist;
+	_Queue.clear();
+	for (size_t i = 0; i < MAP_SIZE_X; ++i) {
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
+			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER) {
+				_Dist[i][j] = 0;
+				_Queue.push_back(std::make_pair(i, j));
+			}
+		}
+	}
+
+	for (size_t i = 0; i < _Queue.size(); ++i) {
+		int x = _Queue[i].first;
+		int y = _Queue[i].second;
+		int d = _Dist[x][y];
+		if (d == _LakesToRoadsSpawnDist)
+			break;
+
+		for (size_t j = 0; j < _NeighbourWayCnt; ++j) {
+			int xNew = x + _NeighbourWay[j].first;
+			int yNew = y + _NeighbourWay[j].second;
+			if (InMap(xNew, yNew) && _Dist[xNew][yNew] == infiniteDist) {
+				_Dist[xNew][yNew] = d + 1;
+				_Queue.push_back(std::make_pair(xNew, yNew));
+			}
+		}
+	}
+
+	_Queue.clear();
+	for (size_t i = 0; i < MAP_SIZE_X; ++i) {
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
+			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() != TilesInfo::GRASS ||
+				_Dist[i][j] != infiniteDist ||
+				rand() % _RoadChance != 0)
+				continue;
+			_Queue.push_back(std::make_pair(i, j));
+			tile[i][j] = 19;
+		}
+	}
+	/*for (size_t i = 0; i < _Queue.size(); ++i) {
+		for (size_t j = i + 1; j < _Queue.size(); ++j) {
+			BuildRoad(_Queue[i], _Queue[j]);
+		}
+	}*/
 }
 
 void Map::AddNeighbour(int x, int y) {

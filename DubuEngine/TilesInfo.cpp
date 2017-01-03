@@ -118,6 +118,25 @@ void TilesInfo::AdjustTilesInfo() {
 			std::sort(TileNeighbours[i][j].begin(), TileNeighbours[i][j].end());
 }
 
+const TilesInfo::Tile& TilesInfo::GetTileBySpriteId(const int spriteId) {
+	int biomIndex;
+	int tileIndex = spriteId;
+	if (spriteId >= 28) {
+		biomIndex = 2;
+		tileIndex -= 28;
+	} else if (spriteId >= 15) {
+		biomIndex = 1;
+		tileIndex -= 15;
+	} else {
+		biomIndex = 0;
+		if (spriteId == 4 || spriteId == 5)
+			tileIndex = 3;
+		else if (spriteId > 5)
+			tileIndex -= 2;
+	}
+	return BiomTiles[biomIndex][tileIndex];
+}
+
 static int TryAppropriateTile(std::vector<int>& TempAppropriateTiles, int type) {
 	if (type == 0) {
 		bool contains4 = false;
@@ -146,10 +165,10 @@ static int TryAppropriateTile(std::vector<int>& TempAppropriateTiles, int type) 
 		}
 		if (TempAppropriateTiles.size() == 0)
 			return -1;
-		if (have32 && rand() % 10 < 9) {
+		if (have32 && rand() % 10 < 8) {
 			return 32;
 		}
-		if (haveProper && rand() % 10 < 4) {
+		if (haveProper && rand() % 10 < 5) {
 			for (int i = 0; i < (int) TempAppropriateTiles.size(); ++i) {
 				if (TempAppropriateTiles[i] >= 37) {
 					TempAppropriateTiles[i] = TempAppropriateTiles.back();

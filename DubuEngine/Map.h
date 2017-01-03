@@ -135,7 +135,8 @@ public:
 	 */
 		void SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]);
 
-	/* ====================== GenerateBiomsRoadsMap =======================
+private:
+	/* ===================== GenerateBiomsRoadsMap ======================
 	 *	Generates map based on idea of blocks of bioms and system of roads
 	 */
 		void GenerateBiomsRoadsMap();
@@ -145,6 +146,22 @@ public:
 		void AddNeighbour(int x, int y);
 		void AppendNeighbourToBiom(int index, int xs, int xf, int ys, int yf);
 		void AdjustTileSides(int xs, int xf, int ys, int yf);
+
+	/* ========================== Build Roads ===========================
+	 *	Generates roads from already generated water bioms map
+	 */
+		void BuildRoads();
+
+	/* ========================== Build Roads ===========================
+	 *	Generates roads from already generated water bioms map
+	 */
+		/*void BuildRoad(std::pair<int, int> a, std::pair<int, int> b);*/
+
+		
+	/* ========================== Build Roads ===========================
+	 *	Generates roads from already generated water bioms map
+	 */
+		bool InMap(int x, int y);
 
 	// Variables
 public:
@@ -157,8 +174,10 @@ public:
 	int render_mode = 0;
 
 private:
-	bool _Visited[MAP_SIZE_X][MAP_SIZE_Y]; // tile visiting array for biom generation
-	std::vector<std::pair<int, int>> _Neighbours;
+	bool _Visited[MAP_SIZE_X][MAP_SIZE_Y];		  // Tile visiting array
+	int _Dist[MAP_SIZE_X][MAP_SIZE_Y];			  // Distance to tile array
+	vector<std::pair<int, int>> _Queue;			  // Tile queue
+	std::vector<std::pair<int, int>> _Neighbours; // Tile neighbours array to exisiting biom tiles
 
 	// Constants
 private:
@@ -166,4 +185,6 @@ private:
 	static const double _MaxBiomTilesOverhead;
 	static const int _NeighbourWayCnt = 4;
 	static const std::pair<int, int> _NeighbourWay[_NeighbourWayCnt];
+	static const int _LakesToRoadsSpawnDist = 3;
+	static const int _RoadChance = 50;
 };
