@@ -19,7 +19,7 @@
 
 
 /* =========================== DrawScaledImage ============================
- *		Draws an image, scaled to desired width/height.
+ *		Draws an image, scaled with a desired width/height increase.
  *		The image will be rescaled according to the ratio between game size
  *		and the resolution setting. (g->BWIDTH, g->BHEIGHT & g->s_x, g->s_y)
  *

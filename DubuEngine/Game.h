@@ -12,7 +12,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Debug.h"
-#include "Sniffing.h"
+#include "Radar.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -138,5 +138,5 @@
 			Player pl;							// Player
 			Map map = Map(0);					// Map
 			Debug debug;						// Temp debug
-			SniffInfo sniff;					// Sniff info
+			Radar radar;						// Radar interface
 	};

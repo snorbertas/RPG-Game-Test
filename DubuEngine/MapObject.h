@@ -10,7 +10,7 @@ public:
 	int y = 0;
 	int w = 64;
 	int h = 64;
-	double distance = 0;	//temp
+	double distance = 0;
 
 	// Map object types
 	/*	Key:

@@ -223,7 +223,7 @@ void HandlePlayerMovementLogic(Game* g) {
 static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Tick
 	if (g->pl.digging) {
-		HandleDigging(&g->pl);
+		HandleDigging(g, &g->pl);
 		HandlePlayerIdle(g);
 	} else {
 		if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {

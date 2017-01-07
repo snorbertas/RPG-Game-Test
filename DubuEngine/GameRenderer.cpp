@@ -30,7 +30,6 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 	// Render sniff info (debug/temp)
 	if (g->debug.grid) {
-		CalculateBoneDistances(g);
 		for (int i = 0; i < g->map.bone.size(); i++) {
 			DrawOutline(g, g->map.bone[i].x + g->camera.x, g->map.bone[i].y + g->camera.y,
 				Map::TILE_SIZE, Map::TILE_SIZE, 255, 255, 255, 3);

@@ -15,7 +15,6 @@
 #include "PlayerMovement.h"
 #include "DEText.h"
 #include "Digging.h"
-#include "Sniffing.h"
 
 using namespace std;
 
@@ -201,6 +200,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								case 262:
 									HideAllInterfaces(g, INTERFACE_VERSION);
 									g->Interfaces[INTERFACE_CHAT].visible = true;
+									g->Interfaces[INTERFACE_RADAR].visible = true;
 									//
 									g->scene = 1;
 									done = true;
@@ -308,7 +308,7 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				} else if (kid == g->keys.dig_bind) {
 					StartDigging(g, &g->pl);
 				} else if (kid == g->keys.sniff_bind) {
-					Sniff(g);
+					//Sniff(g);
 				} else if (kid == g->keys.camera_bind) {
 					g->camera.mode = CAMERA_MODE_LOCKED;
 				} else if (kid == g->keys.chat_bind) {

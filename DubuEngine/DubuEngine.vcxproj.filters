@@ -78,7 +78,7 @@
     <ClCompile Include="Digging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sniffing.cpp">
+    <ClCompile Include="Radar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +167,7 @@
     <ClInclude Include="Digging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sniffing.h">
+    <ClInclude Include="Radar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

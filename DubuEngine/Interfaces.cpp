@@ -9,6 +9,7 @@
 #include "GameHandler.h"
 #include "ScaledDraw.h"
 #include "Interfaces.h"
+#include "Radar.h"
 
 inline const char * const BoolToString(bool b)
 {
@@ -99,6 +100,10 @@ void LoadInterfaces(Game* g){
 
 	// Interface 11
 	NewInterface(&g->Interfaces[INTERFACE_CREDITS], NO_SPRITE, 0, 0);
+
+	// Interface 12
+	NewInterface(&g->Interfaces[INTERFACE_RADAR], NO_SPRITE, g->BWIDTH / 2, (g->BHEIGHT / 2) + 300);
+	g->Interfaces[INTERFACE_RADAR].visible = true;
 
 	// Interface 29 - Chat/Console
 	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 480);
@@ -368,6 +373,9 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						"Press [ESC] to close...");
 					break;
 				}
+				case INTERFACE_RADAR: {
+					RenderRadar(g, font, sprites);
+				}
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
 						DrawRectangle(g, g->Interfaces[i].x + 2, g->Interfaces[i].y + 2, 500 - 4, 400 - 4, 0, 0, 0, 0.3);
@@ -441,7 +449,12 @@ bool InterfaceIsOnTop(Game* g, int id) {
 	for (int i = 0; i < MAX_INTERFACES; i++) {
 		if (g->Interfaces[i].visible == true) {
 			// TODO
-			if(i != 6 && i != 2 && i != 7 && i != 31 && i != 32 && i != 33 && i != 29 && i != 27 && i != 28 && i != 34 && i != 35 && i != 26) top_i = i;
+			if (i != 6 && i != 2 && i != 7 && i != 12 &&
+				i != 31 && i != 32 && i != 33 && i != 29 &&
+				i != 27 && i != 28 && i != 34 && i != 35 &&
+				i != 26) {
+				top_i = i;
+			}
 		}
 	}
 	if (top_i == id) {
