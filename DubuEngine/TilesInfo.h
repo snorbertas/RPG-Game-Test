@@ -14,6 +14,13 @@ public:
 			for (int i = 0; i < 9; ++i)
 				Side[i] = GRASS;
 		}
+		bool operator == (const Tile& t) {
+			return Side[1] == t.Side[1] && 
+				   Side[3] == t.Side[3] && 
+				   Side[4] == t.Side[4] && 
+				   Side[5] == t.Side[5] && 
+				   Side[7] == t.Side[7];
+		}
 		ESubstance GetSubstance() const {
 			return Side[4];
 		}
@@ -29,10 +36,10 @@ public:
 		ESubstance InnerSubstance;
 		ESubstance OuterSubstance;
 	};
-	static const int BiomCnt = 3;
-	static const int BiomTileCnt = 13;
-	static const Biom Bioms[BiomCnt];
-	static Tile BiomTiles[BiomCnt][BiomTileCnt];
+	static const int BIOM_CNT = 3;
+	static const int BIOM_TILE_CNT = 13;
+	static const Biom Bioms[BIOM_CNT];
+	static Tile BiomTiles[BIOM_CNT][BIOM_TILE_CNT];
 
 private:
 	static void AdjustNeighboursLeftRight(const Tile& l, const Tile& r);
@@ -41,7 +48,9 @@ private:
 public:
 	static void AdjustTilesInfo();
 	static int GetAppropriateTile(int leftTile, int upTile, int badTile = -1);
+	static int GetSpriteIdByTile(const Tile& tileWithoutSprite);
 	static const Tile& GetTileBySpriteId(int spriteId);
+	static ESubstance GetSubstanceBySpriteId(int spriteId);
 
 public:
 	enum {TILE_NEIGHBOUR_LEFT = 0, TILE_NEIGHBOUR_RIGHT, TILE_NEIGHBOUR_UP, TILE_NEIGHBOUR_DOWN, TILE_NEIGHBOUR_SIZE};

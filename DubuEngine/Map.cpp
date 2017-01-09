@@ -1,12 +1,9 @@
 #include <algorithm>
 #include "Game.h"
 #include "ScaledDraw.h"
-#include "TilesInfo.h"
 #include "Collision.h"
 #include "GameRenderer.h"
 
-const double Map::_MaxWaterBiomSideToMapProportion = 1 / 4.;
-const double Map::_MaxBiomTilesOverhead = 11 / 10.;
 const std::pair<int, int> Map::_NeighbourWay[_NeighbourWayCnt] = {make_pair(0, 1), make_pair(0, -1), make_pair(1, 0), make_pair(-1, 0)};
 
 static bool pointInSegment(int start, int end, int p) {
@@ -55,6 +52,113 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	BuildRoads();
 }
 
+bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
+	if (a > b)
+		swap(a, b);
+
+	if (sqrt((a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second)) > _MaxJunctionDistanceForRoad)
+		return false;
+
+	_TemporaryQueue.clear();
+	_TemporaryQueue.push_back(a);
+
+	std::pair<int, int> s = a;
+	int xCur = a.first;
+	int yCur = a.second;
+	int yAdd;
+	if (a.second < b.second)
+		yAdd = 1;
+	else
+		yAdd = -1;
+	for (int xCur = a.first; xCur <= b.first; ++xCur) {
+		int yLast = b.second;
+		if (xCur != b.first) {
+			double yDouble = s.second + (b.second - s.second) * ((xCur + 1 - s.first) / double(b.first - s.first + 1));
+			yLast = static_cast<int>(yDouble + 1e-9 * yAdd);
+		}
+
+		bool nonWaterCells = true;
+		int yMove = yCur - yAdd;
+		do {
+			yMove += yAdd;
+			if (TilesInfo::GetSubstanceBySpriteId(tile[xCur][yMove]) == TilesInfo::WATER) {
+				nonWaterCells = false;
+				break;
+			}
+		} while (yMove != yLast);
+		if (!nonWaterCells) {
+			yMove -= yAdd;
+			++xCur;
+			for (; xCur <= b.first; ++xCur) {
+				if (TilesInfo::GetSubstanceBySpriteId(tile[xCur][yMove]) == TilesInfo::WATER) {
+					return false;
+				}
+				if (TilesInfo::GetSubstanceBySpriteId(tile[xCur][yMove + yAdd]) != TilesInfo::WATER) {
+					s = std::make_pair(xCur, yMove + yAdd);
+					yLast = s.second;
+					_TemporaryQueue.push_back(s);
+					break;
+				}
+			}
+			if (xCur > b.first)
+				return false;
+		}
+
+		yCur = yLast;
+	}
+
+	_TemporaryQueue.push_back(b);
+
+	size_t size = _TemporaryQueue.size();
+	if (size == 0)
+		return false;
+	bool canBuildStraight = true;
+	for (size_t i = 0; i < size - 1; ++i) {
+		if (!BuildStraightRoad(_TemporaryQueue[i], _TemporaryQueue[i + 1], false)) {
+			canBuildStraight = false;
+			break;
+		}
+	}
+	if (!canBuildStraight)
+		return false;
+	for (size_t i = 0; i < size - 1; ++i) {
+		BuildStraightRoad(_TemporaryQueue[i], _TemporaryQueue[i + 1], true);
+	}
+	return true;
+}
+
+bool Map::BuildStraightRoad(std::pair<int, int> a, std::pair<int, int> b, bool actualBuild) {
+	int xCur = a.first;
+	int yCur = a.second;
+	int yAdd;
+	if (a.second < b.second)
+		yAdd = 1;
+	else
+		yAdd = -1;
+	bool horizontalThick = (abs(a.first - b.first) < abs(a.second - b.second));
+	for (int xCur = a.first; xCur <= b.first; ++xCur) {
+		int yLast = b.second;
+		if (xCur != b.first) {
+			double yDouble = a.second + (b.second - a.second) * (double(xCur + 1 - a.first) / (b.first - a.first + 1));
+			yLast = static_cast<int>(yDouble + 1e-9 * yAdd);
+		}
+
+		int yMove = yCur - yAdd;
+		do {
+			yMove += yAdd;
+			if (!actualBuild) {
+				if (TilesInfo::GetSubstanceBySpriteId(tile[xCur][yMove]) == TilesInfo::WATER)
+					return false;
+			} else {
+				PutRoadSegment(xCur, yMove, horizontalThick);
+			}
+		} while (yMove != yLast);
+
+		yCur = yLast;
+	}
+	return true;
+}
+
 void Map::BuildRoads() {
 	int infiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
 	for (size_t i = 0; i < MAP_SIZE_X; ++i)
@@ -92,148 +196,159 @@ void Map::BuildRoads() {
 		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
 			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() != TilesInfo::GRASS ||
 				_Dist[i][j] != infiniteDist ||
-				rand() % _RoadChance != 0)
+				rand() % _JunctionChance != 0)
 				continue;
 			_Queue.push_back(std::make_pair(i, j));
 			tile[i][j] = 19;
 		}
 	}
-	/*for (size_t i = 0; i < _Queue.size(); ++i) {
-		for (size_t j = i + 1; j < _Queue.size(); ++j) {
+
+	size_t size = _Queue.size();
+	for (size_t i = 0; i < size; ++i) {
+		for (size_t j = i + 1; j < size; ++j) {
 			BuildRoad(_Queue[i], _Queue[j]);
 		}
-	}*/
-}
-
-void Map::AddNeighbour(int x, int y) {
-	if (_Visited[x][y]) {
-		cerr << "Generate map: cell is already visited!\n";
-		throw exception("cell already visited");
-	}
-	_Visited[x][y] = true;
-	_Neighbours.push_back(make_pair(x, y));
-}
-
-void Map::AppendNeighbourToBiom(int index, int xs, int xf, int ys, int yf) {
-	auto t = _Neighbours[index];
-	tile[t.first][t.second] = TilesInfo::BiomTiles[TilesInfo::WATER][4].SpriteId;
-	for (const auto& way : _NeighbourWay) {
-		int xNew = t.first + way.first;
-		int yNew = t.second + way.second;
-		if (xNew >= xs && xNew <= xf && yNew >= ys && yNew <= yf && !_Visited[xNew][yNew])
-			AddNeighbour(xNew, yNew);
-	}
-	_Neighbours[index] = _Neighbours.back();
-	_Neighbours.pop_back();
-}
-
-void Map::AdjustTileSides(int xs, int xf, int ys, int yf) {
-}
-
-int Map::GenerateWaterBiom(int xs, int ys, int w, int h) {
-	int xf = xs + w - 1;
-	int yf = ys + h - 1;
-
-	// Checking biom rectangle lying within map
-	if (!(xs > -1 && xf < MAP_SIZE_X && ys > -1 && yf < MAP_SIZE_Y))
- 		return 0;
-
-	_Neighbours.clear();
-
-	// Setting initials
-	int biomStartX = (xs + xf) / 2;
-	int biomStartY = (ys + yf) / 2;
-	AddNeighbour(biomStartX, biomStartY);
-
-	int farTilesMaxDist = ((w + h) - 1) / 4;
-	int farTilesLimit = abs(w - h) + 1;
-
-	// Building biom
-	int biomSize = 0;
-	while (farTilesLimit > 0 && _Neighbours.size() != 0) {
-		int index = rand() % static_cast<int>(_Neighbours.size());
-		auto tile = _Neighbours[index];
-		AppendNeighbourToBiom(index, xs, xf, ys, yf);
-		int dist = max(abs(tile.first - biomStartX), abs(tile.second - biomStartY));
-		if (dist >= farTilesMaxDist)
-			--farTilesLimit;
-		++biomSize;
 	}
 
-	// Making biom 4x bigger to avoid inexisting tiles
-	for (int x = xf; x >= xs; --x) {
-		for (int y = yf; y >= ys; --y) {
-			int xNew = xs + (x - xs) * 2;
-			int yNew = ys + (y - ys) * 2;
-			tile[xNew + 1][yNew + 1] = tile[x][y];
-			tile[xNew][yNew + 1]	 = tile[x][y];
-			tile[xNew + 1][yNew]	 = tile[x][y];
-			tile[xNew][yNew]		 = tile[x][y];
+	AdjustDirtSides();
+}
+
+void Map::PutRoadSegment(int x, int y, bool horizontalThick) {
+	std::pair<int, int> move;
+	if (horizontalThick)
+		move = std::make_pair(1, 0);
+	else
+		move = std::make_pair(0, 1);
+	int forwardSteps = (_RoadThickness + 1) / 2;
+	int backwardSteps = _RoadThickness - forwardSteps;
+	int xCur = x, yCur = y;
+	for (int i = 0; i < forwardSteps; ++i, xCur += move.first, yCur += move.second) {
+		if (!InMap(xCur, yCur) || TilesInfo::GetSubstanceBySpriteId(tile[xCur][yCur]) == TilesInfo::WATER)
+			break;
+		tile[xCur][yCur] = 19;
+	}
+	xCur = x - move.first, yCur = y - move.second;
+	for (int i = 0; i < backwardSteps; ++i, xCur -= move.first, yCur -= move.second) {
+		if (!InMap(xCur, yCur) || TilesInfo::GetSubstanceBySpriteId(tile[xCur][yCur]) == TilesInfo::WATER)
+			break;
+		tile[xCur][yCur] = 19;
+	}
+}
+
+bool Map::CanPatchSquare(int xa, int ya, std::pair<int, int> move) {
+	int xb = xa + move.first, yb = ya;
+	int xc = xa, yc = ya + move.second;
+	int xd = xa + move.first, yd = ya + move.second;
+	if (!InMap(xa, ya) || !InMap(xb, yb) || !InMap(xc, yc) || !InMap(xd, yd))
+		return false;
+	if (TilesInfo::GetSubstanceBySpriteId(tile[xa][ya]) == TilesInfo::WATER || 
+		TilesInfo::GetSubstanceBySpriteId(tile[xb][yb]) == TilesInfo::WATER || 
+		TilesInfo::GetSubstanceBySpriteId(tile[xc][yc]) == TilesInfo::WATER || 
+		TilesInfo::GetSubstanceBySpriteId(tile[xd][yd]) == TilesInfo::WATER)
+		return false;
+	return true;
+}
+
+bool Map::AdjustDirtPlacePatch(int x, int y) {
+	for (size_t i = 0; i < _NeighbourWayCnt; ++i) {
+		for (size_t j = i + 1; j < _NeighbourWayCnt; ++j) {
+			std::pair<int, int> way = std::make_pair(_NeighbourWay[i].first + _NeighbourWay[j].first, 
+													 _NeighbourWay[i].second + _NeighbourWay[j].second);
+			if (way.first == 0)
+				continue;
+
+			if (CanPatchSquare(x, y, way)) {
+				tile[x][y] = 19;
+				tile[x + way.first][y] = 19;
+				tile[x][y + way.second] = 19;
+				tile[x + way.first][y + way.second] = 19;
+				return true;
+			}
 		}
 	}
 
-	// Adjusting tile sides
-	AdjustTileSides(xs, ys, xf, yf);
-
-	return biomSize;
+	// if we can't patch with a square
+	tile[x][y] = 4;
+	return false;
 }
 
-void Map::GenerateWaterBioms(int minWaterTiles) {
-	std::vector<std::pair<int, int>> upLeftCorners;
-	std::vector<std::pair<int, int>> sizes;
-	int maxWaterTiles = static_cast<int>(minWaterTiles * _MaxBiomTilesOverhead);
-	int totalTiles = MAP_SIZE_X * MAP_SIZE_Y;
-	if (maxWaterTiles > totalTiles)
-		maxWaterTiles = minWaterTiles + (totalTiles - minWaterTiles) / 2;
-	int takenTiles = 0;
+TilesInfo::Tile Map::BuildTileBySides(int x, int y) {
+	TilesInfo::Tile t;
+	t.Side[4] = t.Side[1] = t.Side[3] = t.Side[5] = t.Side[7] = TilesInfo::GetSubstanceBySpriteId(tile[x][y]);
 
-	// Clearing visited tiles to place biom rectangles
-	for (int x = 0; x < MAP_SIZE_X; ++x)
-		for (int y = 0; y < MAP_SIZE_Y; ++y)
-			_Visited[x][y] = false;
+	if (y > 0)
+		t.Side[1] = TilesInfo::GetSubstanceBySpriteId(tile[x][y - 1]);
+	if (x > 0)
+		t.Side[3] = TilesInfo::GetSubstanceBySpriteId(tile[x - 1][y]);
+	if (x < MAP_SIZE_X - 1)
+		t.Side[5] = TilesInfo::GetSubstanceBySpriteId(tile[x + 1][y]);
+	if (y < MAP_SIZE_Y - 1)
+		t.Side[7] = TilesInfo::GetSubstanceBySpriteId(tile[x][y + 1]);
 
-	while (takenTiles < minWaterTiles) {
-		int cornerX = rand() % MAP_SIZE_X;
-		int cornerY = rand() % MAP_SIZE_Y;
-		int w = rand() % (MAP_SIZE_X - cornerX) + 1;
-		int h = rand() % (MAP_SIZE_Y - cornerY) + 1;
-		w = std::max(w, static_cast<int>(MAP_SIZE_X * _MaxWaterBiomSideToMapProportion));
-		h = std::max(h, static_cast<int>(MAP_SIZE_Y * _MaxWaterBiomSideToMapProportion));
+	if (t.Side[1] == TilesInfo::WATER)
+		t.Side[1] = TilesInfo::GRASS;
+	if (t.Side[3] == TilesInfo::WATER)
+		t.Side[3] = TilesInfo::GRASS;
+	if (t.Side[5] == TilesInfo::WATER)
+		t.Side[5] = TilesInfo::GRASS;
+	if (t.Side[7] == TilesInfo::WATER)
+		t.Side[7] = TilesInfo::GRASS;
 
-		while (w * h > maxWaterTiles - takenTiles) {
-			if (w > h)
-				w = (w * 2) / 3;
-			else
-				h = (h * 2) / 3;
+	return t;
+}
+
+static bool CanAdjustTile(const TilesInfo::Tile& tile) {
+	int grassSides = 0;
+	if (tile.Side[1] == TilesInfo::GRASS)
+		++grassSides;
+	if (tile.Side[3] == TilesInfo::GRASS)
+		++grassSides;
+	if (tile.Side[5] == TilesInfo::GRASS)
+		++grassSides;
+	if (tile.Side[7] == TilesInfo::GRASS)
+		++grassSides;
+	return grassSides < 2 || (grassSides == 2 && tile.Side[1] != tile.Side[7]);
+}
+
+void Map::AdjustDirtPlaceAdditional(std::pair<int, int> s) {	
+	if (AdjustDirtPlacePatch(s.first, s.second))
+		return ;
+	_Queue.clear();
+	_Queue.push_back(s);
+	
+	for (size_t i = 0; i < _Queue.size(); ++i) {
+		int x = _Queue[i].first;
+		int y = _Queue[i].second;
+		for (size_t j = 0; j < _NeighbourWayCnt; ++j) {
+			int xNew = x + _NeighbourWay[j].first;
+			int yNew = y + _NeighbourWay[j].second;
+			if (InMap(xNew, yNew) && 
+				TilesInfo::GetSubstanceBySpriteId(tile[xNew][yNew]) == TilesInfo::DIRT && 
+				!CanAdjustTile(BuildTileBySides(xNew, yNew))) {
+				if (!AdjustDirtPlacePatch(xNew, yNew))
+					_Queue.push_back(std::make_pair(xNew, yNew));
+			}
 		}
-
-		bool intersecting = false;
-		for (size_t i = 0; i < upLeftCorners.size(); ++i) {
-			intersecting |= intersectingRectangles(cornerX, cornerY, w, h, 
-												   upLeftCorners[i].first, upLeftCorners[i].second, sizes[i].first, sizes[i].second);
-		}
-		if (intersecting)
-			continue;
-		takenTiles += GenerateWaterBiom(cornerX, cornerY, w, h);
-		upLeftCorners.push_back(make_pair(cornerX, cornerY));
-		sizes.push_back(make_pair(w, h));
 	}
 }
 
-void Map::GenerateBiomsRoadsMap() {
-	// Clearing map
-	for (int x = 0; x < MAP_SIZE_X; ++x)
-		for (int y = 0; y < MAP_SIZE_Y; ++y)
-			tile[x][y] = TilesInfo::BiomTiles[TilesInfo::GRASS][4].SpriteId;
+void Map::AdjustDirtSides() {
+	for (int x = 0; x < MAP_SIZE_X; ++x) {
+		for (int y = 0; y < MAP_SIZE_Y; ++y) {
+			if (tile[x][y] != 19)
+				continue;
+			if (!CanAdjustTile(BuildTileBySides(x, y)))
+				AdjustDirtPlaceAdditional(std::make_pair(x, y));
+		}
+	}
 
-	// Need think & write adjusting tiles
-	return ;
-
-	int waterPercentage = rand() % 40 + 1;
-	int mapTiles = MAP_SIZE_X * MAP_SIZE_Y;
-	int waterTiles = (mapTiles * waterPercentage) / 100;
-
-	GenerateWaterBioms(waterTiles);
+	for (int x = 0; x < MAP_SIZE_X; ++x) {
+		for (int y = 0; y < MAP_SIZE_Y; ++y) {
+			if (tile[x][y] != 19)
+				continue;
+			tile[x][y] = TilesInfo::GetSpriteIdByTile(BuildTileBySides(x, y));
+		}
+	}
 }
 
 void Map::GenerateMapWithBaseBiome() {
@@ -563,10 +678,6 @@ void Map::GenerateRandom(int alg) {
 		// Generation mode C
 		GenerateMapWithBaseBiome();
 		PopulateRandomObjects(this);
-		break;
-	case 3:
-		// Generation mode D
-		GenerateBiomsRoadsMap();
 		break;
 	}
 

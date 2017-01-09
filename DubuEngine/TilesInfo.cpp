@@ -2,11 +2,11 @@
 
 #include <algorithm>
 
-const TilesInfo::Biom TilesInfo::Bioms[TilesInfo::BiomCnt] = {Biom(TilesInfo::GRASS, TilesInfo::DIRT),
+const TilesInfo::Biom TilesInfo::Bioms[TilesInfo::BIOM_CNT] = {Biom(TilesInfo::GRASS, TilesInfo::DIRT),
 															  Biom(TilesInfo::DIRT,  TilesInfo::GRASS),
 															  Biom(TilesInfo::WATER, TilesInfo::GRASS)};
 
-TilesInfo::Tile TilesInfo::BiomTiles[BiomCnt][BiomTileCnt]{};
+TilesInfo::Tile TilesInfo::BiomTiles[BIOM_CNT][BIOM_TILE_CNT]{};
 
 std::vector<int> TilesInfo::TileNeighbours[TILE_NEIGHBOUR_SIZE][MAX_TILE_SPRITES]{};
 
@@ -59,10 +59,10 @@ void TilesInfo::Biom::CreateTiles(Tile* tiles) const {
 		spriteStart = 15;
 	if (InnerSubstance == WATER)
 		spriteStart = 28;
-	for (int i = 0; i < BiomTileCnt; ++i)
+	for (int i = 0; i < BIOM_TILE_CNT; ++i)
 		tiles[i].SpriteId = spriteStart + i;
 	if (InnerSubstance == GRASS)
-		for (int i = 5; i < BiomTileCnt; ++i)
+		for (int i = 5; i < BIOM_TILE_CNT; ++i)
 			tiles[i].SpriteId = i + 2;
 }
 
@@ -81,29 +81,29 @@ void TilesInfo::AdjustNeighboursUpDown(const Tile& u, const Tile& d) {
 }
 
 void TilesInfo::AdjustTilesInfo() {
-	for (int i = 0; i < BiomCnt; ++i) {
+	for (int i = 0; i < BIOM_CNT; ++i) {
 		Bioms[i].CreateTiles(BiomTiles[i]);
 	}
 
-	for (int i = 0; i < BiomCnt; ++i) {
-		for (int ti = 0; ti < BiomTileCnt; ++ti) {
-			for (int tj = ti + 1; tj < BiomTileCnt; ++tj) {
+	for (int i = 0; i < BIOM_CNT; ++i) {
+		for (int ti = 0; ti < BIOM_TILE_CNT; ++ti) {
+			for (int tj = ti + 1; tj < BIOM_TILE_CNT; ++tj) {
 				AdjustNeighboursLeftRight(BiomTiles[i][ti], BiomTiles[i][tj]);
 				AdjustNeighboursLeftRight(BiomTiles[i][tj], BiomTiles[i][ti]);
 				AdjustNeighboursUpDown(BiomTiles[i][ti], BiomTiles[i][tj]);
 				AdjustNeighboursUpDown(BiomTiles[i][tj], BiomTiles[i][ti]);
 			}
 		}
-		for (int ti = 0; ti < BiomTileCnt; ++ti) {
+		for (int ti = 0; ti < BIOM_TILE_CNT; ++ti) {
 			AdjustNeighboursLeftRight(BiomTiles[i][ti], BiomTiles[i][ti]);
 			AdjustNeighboursUpDown(BiomTiles[i][ti], BiomTiles[i][ti]);
 		}
 	}
 
-	for (int i = 0; i < BiomCnt; ++i) {
-		for (int j = i + 1; j < BiomCnt; ++j) {
-			for (int ti = 0; ti < BiomTileCnt; ++ti) {
-				for (int tj = 0; tj < BiomTileCnt; ++tj) {
+	for (int i = 0; i < BIOM_CNT; ++i) {
+		for (int j = i + 1; j < BIOM_CNT; ++j) {
+			for (int ti = 0; ti < BIOM_TILE_CNT; ++ti) {
+				for (int tj = 0; tj < BIOM_TILE_CNT; ++tj) {
 					AdjustNeighboursLeftRight(BiomTiles[i][ti], BiomTiles[j][tj]);
 					AdjustNeighboursLeftRight(BiomTiles[j][tj], BiomTiles[i][ti]);
 					AdjustNeighboursUpDown(BiomTiles[i][ti], BiomTiles[j][tj]);
@@ -118,7 +118,30 @@ void TilesInfo::AdjustTilesInfo() {
 			std::sort(TileNeighbours[i][j].begin(), TileNeighbours[i][j].end());
 }
 
-const TilesInfo::Tile& TilesInfo::GetTileBySpriteId(const int spriteId) {
+int TilesInfo::GetSpriteIdByTile(const Tile& tileWithoutSprite) {
+	int biomIndex = 0;
+	switch (tileWithoutSprite.GetSubstance()) {
+	case GRASS:
+		biomIndex = 0;
+		break;
+	case DIRT:
+		biomIndex = 1;
+		break;
+	case WATER:
+		biomIndex = 2;
+		break;
+	default:
+		throw std::exception("GetSpriteByTile: unknown substance");
+	}
+	for (int i = 0; i < BIOM_TILE_CNT; ++i) {
+		if (BiomTiles[biomIndex][i] == tileWithoutSprite) {
+			return BiomTiles[biomIndex][i].SpriteId;
+		}
+	}
+	throw std::exception("GetSpriteByTile: no suitable tile found");
+}
+
+const TilesInfo::Tile& TilesInfo::GetTileBySpriteId(int spriteId) {
 	int biomIndex;
 	int tileIndex = spriteId;
 	if (spriteId >= 28) {
@@ -135,6 +158,10 @@ const TilesInfo::Tile& TilesInfo::GetTileBySpriteId(const int spriteId) {
 			tileIndex -= 2;
 	}
 	return BiomTiles[biomIndex][tileIndex];
+}
+
+TilesInfo::ESubstance TilesInfo::GetSubstanceBySpriteId(int spriteId) {
+	return GetTileBySpriteId(spriteId).GetSubstance();
 }
 
 static int TryAppropriateTile(std::vector<int>& TempAppropriateTiles, int type) {
@@ -214,11 +241,17 @@ int TilesInfo::GetAppropriateTile(int leftTile, int upTile, int badTile) {
 	if (TempAppropriateTiles.size() == 0) {
 		return -1;
 	}
-	/*int resultIndex = abs(rand()) % ((int) TempAppropriateTiles.size());
-	return TempAppropriateTiles[resultIndex];*/
-
+	
 	int type = rand() % 100;
-	if (type < 2)
+	int chance = 1;
+	bool waterConnection = false;
+	if (leftTile != -1 && GetSubstanceBySpriteId(leftTile) == WATER && (leftTile >= 37 || (leftTile <= 32 && leftTile != 30)))
+		waterConnection = true;
+	if (upTile != -1 && GetSubstanceBySpriteId(upTile) == WATER && (upTile >= 37 || (upTile <= 32 && upTile != 30)))
+		waterConnection = true;
+	if (waterConnection)
+		chance = 99;
+	if (type < chance)
 		type = 2;
 	else
 		type = 0;
