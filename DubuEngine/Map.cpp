@@ -1,8 +1,9 @@
-#include <algorithm>
-#include "Game.h"
-#include "ScaledDraw.h"
 #include "Collision.h"
+#include "Game.h"
 #include "GameRenderer.h"
+#include "ScaledDraw.h"
+
+#include <algorithm>
 
 const std::pair<int, int> Map::_NeighbourWay[_NeighbourWayCnt] = {make_pair(0, 1), make_pair(0, -1), make_pair(1, 0), make_pair(-1, 0)};
 
@@ -50,6 +51,13 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	}
 
 	BuildRoads();
+
+	for (int i = 0; i < MAP_SIZE_X; ++i) {
+		for (int j = 0; j < MAP_SIZE_Y; ++j) {
+			if (tile[i][j] == 4)
+				tile[i][j] += rand() % 3;
+		}
+	}
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
@@ -500,7 +508,7 @@ void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x,
 }
 
 // Temporary function to spawn and test object rendering/interaction
-void PopulateRandomObjects(Map* map) {
+static void PopulateRandomObjects(Map* map) {
 	// First reset the vector
 	map->object.clear();
 
@@ -526,14 +534,14 @@ void PopulateRandomObjects(Map* map) {
 	}
 }
 
-bool ObjectHasCollision(int object_id) {
+static bool ObjectHasCollision(int object_id) {
 	// Tress have collision
 	if (object_id >= MapObject::MapObjectTree_BG &&
 		object_id <= MapObject::MapObjectTree_SO) return true;
 	return false;
 }
 
-CollisionBox GetCollisionFromObject(MapObject map_object) {
+static CollisionBox GetCollisionFromObject(MapObject map_object) {
 	// Working with id
 	auto id = map_object.id;
 
@@ -567,14 +575,14 @@ CollisionBox GetCollisionFromObject(MapObject map_object) {
 	return cb;
 }
 
-bool TileHasExceptBox(int tile_id) {
+static bool TileHasExceptBox(int tile_id) {
 	// Water tiles have collision
 	if (tile_id == 28 || tile_id == 30 ||
 		tile_id == 34 || tile_id == 36) return true;
 	return false;
 }
 
-CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
+static CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;
 	int ini_y = y * Map::TILE_SIZE;
@@ -599,13 +607,13 @@ CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
 	return cb;
 }
 
-bool TileHasCollision(int tile_id) {
+static bool TileHasCollision(int tile_id) {
 	// Water tiles have collision
 	if (tile_id >= 28 && tile_id <= 40) return true;
 	return false;
 }
 
-CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
+static CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;
 	int ini_y = y * Map::TILE_SIZE;
