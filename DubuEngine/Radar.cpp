@@ -19,7 +19,7 @@ void CalculateBoneDistances(Game* g) {
 		double distance_y = (bone_y - player_y) / Map::TILE_SIZE;
 		if (distance_x < 0) distance_x *= -1;
 		if (distance_y < 0) distance_y *= -1;
-		double distance = sqrt(pow(distance_x, 2) + pow(distance_y, 2));
+		double distance = fabs(sqrt(pow(distance_x, 2) + pow(distance_y, 2)));
 		g->map.bone[i].distance = distance;
 	}
 }
@@ -112,8 +112,11 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 			if (y_dist < 0) hypotenuse *= -1;
 
 			// Spooky trigonometry
-			const long double PI = 3.141592653589793238L;
-			double ratio = -x_dist / hypotenuse;
+			const long double PI = acos(-1.0);
+			double ratio = 0.0;
+			if (hypotenuse != 0) {
+				ratio = -x_dist / hypotenuse;
+			}
 			int angle = (asin(ratio) * 180.0) / PI;
 			if (y_dist < 0) angle += 180;
 

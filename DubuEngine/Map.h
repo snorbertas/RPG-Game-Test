@@ -232,3 +232,5 @@ private:
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
 };
+
+void UpdateMapAnimations(Game* g);

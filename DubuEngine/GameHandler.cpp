@@ -19,6 +19,7 @@ void NewGame(Game* g){
 void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Game handling code here
 	HandleGamePackets(g);
+	UpdateMapAnimations(g);
 }
 
 void HandleGamePackets(Game* g) {

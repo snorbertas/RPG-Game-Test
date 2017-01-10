@@ -11,6 +11,7 @@ public:
 	int w = 64;
 	int h = 64;
 	double distance = 0;
+	int anim_timer = -1;	// -1 = Disabled, 0 = Done, 0 > Frames left
 
 	// Map object types
 	/*	Key:
@@ -41,6 +42,8 @@ public:
 		MapObjectFlower_R = 18,
 		MapObjectFlower_C,
 		MapObjectFlower_P,
+		MapObjectGrass_0,
+		MapObjectGrass_1,
 		MapObjectPlayer_L = 199,
 		MapObjectPlayer_M_0,
 		MapObjectBone = 300

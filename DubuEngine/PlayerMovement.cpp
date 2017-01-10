@@ -195,6 +195,27 @@ void HandlePlayerMovementLogic(Game* g) {
 			if (mov_x > 0) g->pl.facing = Player::FacingRight;
 			if (mov_x < 0) g->pl.facing = Player::FacingLeft;
 		}
+
+		// Check collision with idle grass for animation
+		for (std::list<MapObject>::iterator it = g->map.object.begin(); it != g->map.object.end(); it++) {
+			if (it->id == MapObject::MapObjectGrass_0) {
+				// Check collision
+				CollisionBox grass(it->x + 8, it->y + 8, 56, 56);
+				CollisionBox player(g->pl.x, g->pl.y, g->pl.w, g->pl.h);
+
+				// Adjust the player box
+				player.x += 28;
+				player.y += 56;
+				player.w = 8;
+				player.h = 8;
+
+				// Animate if colliding
+				if (collide(grass, player)) {
+					it->id++;
+					it->anim_timer = SecondsToTicks(0.3);
+				}
+			}
+		}
 	}
 
 	// Animation

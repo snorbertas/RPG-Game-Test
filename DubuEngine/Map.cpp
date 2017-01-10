@@ -746,7 +746,14 @@ void Map::SortPlayerObjects(Game* g) {
 void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
 	auto img_object = sprites->img_object;
 	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
-		if (it->id < MapObject::MapObjectPlayer_L) {
+		if (it->id == MapObject::MapObjectGrass_0 ||
+			it->id == MapObject::MapObjectGrass_1) {
+			// Tall Grass
+			DrawImage(g,
+				img_object[GetObjectSprite(*it)],
+				it->x + g->camera.x - 18,
+				it->y + g->camera.y - 36, 0);
+		} else if (it->id < MapObject::MapObjectPlayer_L) {
 			// Rendering immobile objects
 			DrawImage(g,
 				img_object[GetObjectSprite(*it)],
@@ -946,6 +953,21 @@ void Map::SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]) {
 
 			// Update the sprite id for that tile
 			tile[x][y] = GetTileSprite(zone[x][y], loc);
+		}
+	}
+}
+
+void UpdateMapAnimations(Game* g) {
+	for (std::list<MapObject>::iterator it = g->map.object.begin(); it != g->map.object.end(); it++) {
+		if (it->id == MapObject::MapObjectGrass_1) {
+			// Decrement timer
+			it->anim_timer--;
+
+			// Revert to idle grass if timer ran out
+			if (it->anim_timer == 0) {
+				it->anim_timer = -1;
+				it->id = MapObject::MapObjectGrass_0;
+			}
 		}
 	}
 }

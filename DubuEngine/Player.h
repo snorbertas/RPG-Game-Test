@@ -49,7 +49,7 @@ public:
 	// Visual/Animation
 	int sprite_id = 0;				// Sprite start
 	int sprite_frame = 0;			// Sprite offset
-	bool digging = false;
+	bool digging = false;			// Digging
 
 	// Multi-player
 	bool connected = false;
