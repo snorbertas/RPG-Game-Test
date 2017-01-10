@@ -27,6 +27,8 @@ bool Map::InMap(int x, int y) {
 	return x > -1 && y > -1 && x < MAP_SIZE_X && y < MAP_SIZE_Y;
 }
 
+static void PopulateRandomObjects(Map* map);
+
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	tile[0][0] = 4;
 	for (int i = 1; i < MAP_SIZE_X; ++i) {
@@ -58,6 +60,8 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 				tile[i][j] += rand() % 3;
 		}
 	}
+
+	PopulateRandomObjects(this);
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
@@ -167,20 +171,22 @@ bool Map::BuildStraightRoad(std::pair<int, int> a, std::pair<int, int> b, bool a
 	return true;
 }
 
-void Map::BuildRoads() {
-	int infiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
+void Map::BFSInitWater() {
 	for (size_t i = 0; i < MAP_SIZE_X; ++i)
 		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
-			_Dist[i][j] = infiniteDist;
-	_Queue.clear();
-	for (size_t i = 0; i < MAP_SIZE_X; ++i) {
-		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
-			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER) {
+			_Dist[i][j] = _InfiniteDist;
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER)
 				_Dist[i][j] = 0;
+}
+
+void Map::BFSMarkTiles(int maxDist) {	
+	_Queue.clear();
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			if (_Dist[i][j] == 0)
 				_Queue.push_back(std::make_pair(i, j));
-			}
-		}
-	}
 
 	for (size_t i = 0; i < _Queue.size(); ++i) {
 		int x = _Queue[i].first;
@@ -192,18 +198,23 @@ void Map::BuildRoads() {
 		for (size_t j = 0; j < _NeighbourWayCnt; ++j) {
 			int xNew = x + _NeighbourWay[j].first;
 			int yNew = y + _NeighbourWay[j].second;
-			if (InMap(xNew, yNew) && _Dist[xNew][yNew] == infiniteDist) {
+			if (InMap(xNew, yNew) && _Dist[xNew][yNew] == _InfiniteDist) {
 				_Dist[xNew][yNew] = d + 1;
 				_Queue.push_back(std::make_pair(xNew, yNew));
 			}
 		}
 	}
+}
+
+void Map::BuildRoads() {
+	BFSInitWater();
+	BFSMarkTiles(_LakesToRoadsSpawnDist);
 
 	_Queue.clear();
 	for (size_t i = 0; i < MAP_SIZE_X; ++i) {
 		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
 			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() != TilesInfo::GRASS ||
-				_Dist[i][j] != infiniteDist ||
+				_Dist[i][j] != _InfiniteDist ||
 				rand() % _JunctionChance != 0)
 				continue;
 			_Queue.push_back(std::make_pair(i, j));
@@ -511,6 +522,7 @@ void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x,
 static void PopulateRandomObjects(Map* map) {
 	// First reset the vector
 	map->object.clear();
+	map->bone.clear();
 
 	// Then add random poop
 	for (int i = 0; i < 500; i++) {

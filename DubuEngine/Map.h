@@ -163,6 +163,23 @@ private:
 	 */
 		bool BuildStraightRoad(std::pair<int, int> a, std::pair<int, int> b, bool actualBuild);
 
+	/* ========================== BFSMarkTiles ==========================
+	 *	Applies breadth-first-search starting from tiles with dist = 0
+	 *	Ends running on dist = maxDist
+	 *	One of BFSInit should be executed before using this function to init dist = 0 tiles
+	 *
+	 *	@param maxDist maximal distance for bfs
+	 */
+		void BFSMarkTiles(int maxDist);
+
+	/* ========================== BFSInitWater ==========================
+	 *	Initializes map dist array for BFSMarkTiles
+	 *	Marks starting tiles with 0
+	 *	Marks non-starting tiles with _InfiniteDist
+	 *	Starting tiles are water tiles
+	 */
+		void BFSInitWater();
+
 	 /* ======================== PutRoadSegment =========================
 	 *	Puts road tile with a thickness
 	 *
@@ -229,4 +246,5 @@ private:
 	static const int _JunctionChance = 70;
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
+	static const int _InfiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
 };
