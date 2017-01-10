@@ -163,6 +163,23 @@ private:
 	 */
 		bool BuildStraightRoad(std::pair<int, int> a, std::pair<int, int> b, bool actualBuild);
 
+	/* ========================== BFSMarkTiles ==========================
+	 *	Applies breadth-first-search starting from tiles with dist = 0
+	 *	Ends running on dist = maxDist
+	 *	One of BFSInit should be executed before using this function to init dist = 0 tiles
+	 *
+	 *	@param maxDist maximal distance for bfs
+	 */
+		void BFSMarkTiles(int maxDist);
+
+	/* ========================== BFSInitWater ==========================
+	 *	Initializes map dist array for BFSMarkTiles
+	 *	Marks starting tiles with 0
+	 *	Marks non-starting tiles with _InfiniteDist
+	 *	Starting tiles are water tiles
+	 */
+		void BFSInitWater();
+
 	 /* ======================== PutRoadSegment =========================
 	 *	Puts road tile with a thickness
 	 *
@@ -185,7 +202,7 @@ private:
 		void AdjustDirtPlaceAdditional(std::pair<int, int> s);
 		
 	/* ========================= CanPatchSquare =========================
-	 *	Check whether we can patch square 2x2 with a tiles (x, y), (x + move.x), (x, y + move.y), (x + move.x, y + move.y)
+	 *	Check whether we can patch square 2x2 with tiles (x, y), (x + move.x), (x, y + move.y), (x + move.x, y + move.y)
 	 */
 		bool CanPatchSquare(int x, int y, std::pair<int, int> move);
 		
@@ -199,7 +216,7 @@ private:
 		bool AdjustDirtPlacePatch(int x, int y);
 		
 	/* ============================= InMap ==============================
-	 *	Checks whether point is within the map or not
+	 *	Checks whether point is within map or not
 	 */
 		bool InMap(int x, int y);
 		
@@ -208,14 +225,13 @@ private:
 	 */
 		TilesInfo::Tile BuildTileBySides(int x, int y);
 
-	// Variables
 public:
-	int tile[MAP_SIZE_X][MAP_SIZE_Y];	  // tile[x][y]
-	list<MapObject> object;				  // Map objects (fauna, etc.)
-	vector<CollisionBox> solid;			  // Solids (collisions/can't pass trough)
-	vector<CollisionBox> except_solid;	  // Special collision boxes to except solid collision
-	vector<MapObject> bone;				  // Bones hidden on the map
-	int seed;							  // Seed for random generation
+	int tile[MAP_SIZE_X][MAP_SIZE_Y];		// tile[x][y]
+	std::list<MapObject> object;			// Map objects (fauna, etc.)
+	std::vector<CollisionBox> solid;		// Solids (collisions/can't pass trough)
+	std::vector<CollisionBox> except_solid;	// Special collision boxes to except solid collision
+	std::vector<MapObject> bone;			// Bones hidden on the map
+	int seed;								// Seed for random generation
 	int render_mode = 0;
 
 private:
@@ -223,7 +239,6 @@ private:
 	std::vector<std::pair<int, int>> _Queue;			// Tile queue
 	std::vector<std::pair<int, int>> _TemporaryQueue;	// Tile queue for temporary needs
 
-	// Constants
 private:
 	static const int _NeighbourWayCnt = 4;
 	static const std::pair<int, int> _NeighbourWay[_NeighbourWayCnt];
@@ -231,6 +246,7 @@ private:
 	static const int _JunctionChance = 70;
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
+	static const int _InfiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
 };
 
 void UpdateMapAnimations(Game* g);

@@ -1,8 +1,9 @@
-#include <algorithm>
-#include "Game.h"
-#include "ScaledDraw.h"
 #include "Collision.h"
+#include "Game.h"
 #include "GameRenderer.h"
+#include "ScaledDraw.h"
+
+#include <algorithm>
 
 const std::pair<int, int> Map::_NeighbourWay[_NeighbourWayCnt] = {make_pair(0, 1), make_pair(0, -1), make_pair(1, 0), make_pair(-1, 0)};
 
@@ -25,6 +26,8 @@ static bool intersectingRectangles(int x1, int y1, int w1, int h1, int x2, int y
 bool Map::InMap(int x, int y) {
 	return x > -1 && y > -1 && x < MAP_SIZE_X && y < MAP_SIZE_Y;
 }
+
+static void PopulateRandomObjects(Map* map);
 
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	tile[0][0] = 4;
@@ -50,6 +53,15 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	}
 
 	BuildRoads();
+
+	for (int i = 0; i < MAP_SIZE_X; ++i) {
+		for (int j = 0; j < MAP_SIZE_Y; ++j) {
+			if (tile[i][j] == 4)
+				tile[i][j] += rand() % 3;
+		}
+	}
+
+	PopulateRandomObjects(this);
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
@@ -159,20 +171,22 @@ bool Map::BuildStraightRoad(std::pair<int, int> a, std::pair<int, int> b, bool a
 	return true;
 }
 
-void Map::BuildRoads() {
-	int infiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
+void Map::BFSInitWater() {
 	for (size_t i = 0; i < MAP_SIZE_X; ++i)
 		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
-			_Dist[i][j] = infiniteDist;
-	_Queue.clear();
-	for (size_t i = 0; i < MAP_SIZE_X; ++i) {
-		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
-			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER) {
+			_Dist[i][j] = _InfiniteDist;
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER)
 				_Dist[i][j] = 0;
+}
+
+void Map::BFSMarkTiles(int maxDist) {	
+	_Queue.clear();
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			if (_Dist[i][j] == 0)
 				_Queue.push_back(std::make_pair(i, j));
-			}
-		}
-	}
 
 	for (size_t i = 0; i < _Queue.size(); ++i) {
 		int x = _Queue[i].first;
@@ -184,18 +198,23 @@ void Map::BuildRoads() {
 		for (size_t j = 0; j < _NeighbourWayCnt; ++j) {
 			int xNew = x + _NeighbourWay[j].first;
 			int yNew = y + _NeighbourWay[j].second;
-			if (InMap(xNew, yNew) && _Dist[xNew][yNew] == infiniteDist) {
+			if (InMap(xNew, yNew) && _Dist[xNew][yNew] == _InfiniteDist) {
 				_Dist[xNew][yNew] = d + 1;
 				_Queue.push_back(std::make_pair(xNew, yNew));
 			}
 		}
 	}
+}
+
+void Map::BuildRoads() {
+	BFSInitWater();
+	BFSMarkTiles(_LakesToRoadsSpawnDist);
 
 	_Queue.clear();
 	for (size_t i = 0; i < MAP_SIZE_X; ++i) {
 		for (size_t j = 0; j < MAP_SIZE_Y; ++j) {
 			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() != TilesInfo::GRASS ||
-				_Dist[i][j] != infiniteDist ||
+				_Dist[i][j] != _InfiniteDist ||
 				rand() % _JunctionChance != 0)
 				continue;
 			_Queue.push_back(std::make_pair(i, j));
@@ -500,9 +519,10 @@ void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x,
 }
 
 // Temporary function to spawn and test object rendering/interaction
-void PopulateRandomObjects(Map* map) {
+static void PopulateRandomObjects(Map* map) {
 	// First reset the vector
 	map->object.clear();
+	map->bone.clear();
 
 	// Then add random poop
 	for (int i = 0; i < 500; i++) {
@@ -526,14 +546,14 @@ void PopulateRandomObjects(Map* map) {
 	}
 }
 
-bool ObjectHasCollision(int object_id) {
+static bool ObjectHasCollision(int object_id) {
 	// Tress have collision
 	if (object_id >= MapObject::MapObjectTree_BG &&
 		object_id <= MapObject::MapObjectTree_SO) return true;
 	return false;
 }
 
-CollisionBox GetCollisionFromObject(MapObject map_object) {
+static CollisionBox GetCollisionFromObject(MapObject map_object) {
 	// Working with id
 	auto id = map_object.id;
 
@@ -567,14 +587,14 @@ CollisionBox GetCollisionFromObject(MapObject map_object) {
 	return cb;
 }
 
-bool TileHasExceptBox(int tile_id) {
+static bool TileHasExceptBox(int tile_id) {
 	// Water tiles have collision
 	if (tile_id == 28 || tile_id == 30 ||
 		tile_id == 34 || tile_id == 36) return true;
 	return false;
 }
 
-CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
+static CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;
 	int ini_y = y * Map::TILE_SIZE;
@@ -599,13 +619,13 @@ CollisionBox GetExceptBoxFromTile(int tile_id, int x, int y) {
 	return cb;
 }
 
-bool TileHasCollision(int tile_id) {
+static bool TileHasCollision(int tile_id) {
 	// Water tiles have collision
 	if (tile_id >= 28 && tile_id <= 40) return true;
 	return false;
 }
 
-CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
+static CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;
 	int ini_y = y * Map::TILE_SIZE;
