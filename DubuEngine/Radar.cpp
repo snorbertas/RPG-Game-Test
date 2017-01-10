@@ -25,10 +25,69 @@ void CalculateBoneDistances(Game* g) {
 }
 
 void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
-	// Scan for closest bone
-	MapObject* closest_bone = NULL;
-	for (int i = 0; i < g->map.bone.size(); i++) {
-		if (g->map.bone[i].distance <= g->radar.range) {
+	/* =======================	*/
+	/*	   Distance Sniffing	*/
+	/* =======================	*/
+	if (g->radar.mode == Radar::Mode::DISTANCE_SNIFF) {
+		// Scan for closest bone (within radar range)
+		MapObject* closest_bone = NULL;
+		for (int i = 0; i < g->map.bone.size(); i++) {
+			if (g->map.bone[i].distance <= g->radar.range) {
+				if (closest_bone == NULL) {
+					closest_bone = &g->map.bone[i];
+				}
+				else {
+					if (closest_bone->distance > g->map.bone[i].distance) {
+						closest_bone = &g->map.bone[i];
+					}
+				}
+			}
+		}
+
+		// Update state
+		if (closest_bone == NULL) {
+			// Bone detected
+			g->radar.bone_detected = false;
+		} else {
+			/* Set timer to -1 if this is the first tick a bone is found
+			   This will further increment to 0 and will play a sound */
+			if (g->radar.bone_detected == false) g->radar.timer = -1;
+
+			// Bone detected
+			g->radar.bone_detected = true;
+
+			// Remember distance (for text rendering)
+			g->radar.closest_distance = closest_bone->distance;
+
+			// Timer
+			g->radar.timer++;
+			int anim_duration = 8 + closest_bone->distance * 6;
+			if (g->radar.timer > anim_duration) {
+				g->radar.timer = 0;
+			}
+
+			// Animation
+			float animation_prog = (float)(g->radar.timer) / (float)(anim_duration);
+			float new_scale = (0.2 * animation_prog);
+			g->radar.scale = new_scale;
+			g->radar.opacity = 1.0 - 0.5 * (closest_bone->distance / g->radar.range);
+
+			// Sound
+			if (g->radar.timer == 0) {
+				float speed = 2.0 - (closest_bone->distance / g->radar.range);
+				float volume = 0.5 + (speed - 1.5);
+				al_play_sample(sample_sfx[0], volume, 0.0, speed, ALLEGRO_PLAYMODE_ONCE, NULL);
+			}
+		}
+	}
+
+	/* =======================	*/
+	/*	 Directional Sniffing	*/
+	/* =======================	*/
+	if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
+		// Scan for closest bone
+		MapObject* closest_bone = NULL;
+		for (int i = 0; i < g->map.bone.size(); i++) {
 			if (closest_bone == NULL) {
 				closest_bone = &g->map.bone[i];
 			} else {
@@ -37,41 +96,29 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 				}
 			}
 		}
-	}
 
-	// Update state
-	if (closest_bone == NULL) {
-		// Bone detected
-		g->radar.bone_detected = false;
-	} else {
-		/* Set timer to -1 if this is the first tick a bone is found
-		   This will further increment to 0 and will play a sound */
-		if (g->radar.bone_detected == false) g->radar.timer = -1;
+		// Update state
+		if (closest_bone == NULL) {
+			// Bone detected
+			g->radar.bone_detected = false;
+		} else {
+			// Calculate angle
+			g->radar.bone_detected = true;
+			double hypotenuse = closest_bone->distance * Map::TILE_SIZE;
+			double x_dist = g->pl.x - closest_bone->x;
+			double y_dist = g->pl.y - closest_bone->y;
 
-		// Bone detected
-		g->radar.bone_detected = true;
+			// Invert
+			if (y_dist < 0) hypotenuse *= -1;
 
-		// Remember distance (for text rendering)
-		g->radar.closest_distance = closest_bone->distance;
+			// Spooky trigonometry
+			const long double PI = 3.141592653589793238L;
+			double ratio = -x_dist / hypotenuse;
+			int angle = (asin(ratio) * 180.0) / PI;
+			if (y_dist < 0) angle += 180;
 
-		// Timer
-		g->radar.timer++;
-		int anim_duration = 8 + closest_bone->distance * 6;
-		if (g->radar.timer > anim_duration) {
-			g->radar.timer = 0;
-		}
-
-		// Animation
-		float animation_prog = (float)(g->radar.timer) / (float)(anim_duration);
-		float new_scale = (0.2 * animation_prog);
-		g->radar.scale = new_scale;
-		g->radar.opacity = 1.0 - 0.5 * (closest_bone->distance / g->radar.range);
-
-		// Sound
-		if (g->radar.timer == 0) {
-			float speed = 2.0 - (closest_bone->distance / g->radar.range);
-			float volume = 0.5 + (speed - 1.5);
-			al_play_sample(sample_sfx[0], volume, 0.0, speed, ALLEGRO_PLAYMODE_ONCE, NULL);
+			// Update Angle
+			g->radar.angle = angle;
 		}
 	}
 }
@@ -81,35 +128,54 @@ void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 	DrawRectangle(g, g->Interfaces[INTERFACE_RADAR].x - 10, g->Interfaces[INTERFACE_RADAR].y - 10, 63 + 20, 200, 100, 100, 100);
 	DrawOutline(g, g->Interfaces[INTERFACE_RADAR].x - 10, g->Interfaces[INTERFACE_RADAR].y - 10, 63 + 20, 200, 0, 0, 0, 1);
 
-	// Text
+	// Text size ratio
 	float r_x = (float)g->s_x / (float)g->BWIDTH;
 	float r_y = (float)g->s_y / (float)g->BHEIGHT;
-	if (g->radar.bone_detected) {
-		if (g->radar.closest_distance < 0.5) {
-			DrawText(font[2], 10, 200, 10,
-				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
-				"Bone!!!");
+
+	if (g->radar.mode == Radar::Mode::DISTANCE_SNIFF) {
+		// Text
+		if (g->radar.bone_detected) {
+			if (g->radar.closest_distance < 0.5) {
+				DrawText(font[2], 10, 200, 10,
+					g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+					"Bone!!!");
+			} else {
+				DrawText(font[2], 200, 200, 10,
+					g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+					"Sniff...");
+			}
 		} else {
+			DrawText(font[2], 50, 50, 50,
+				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+				"No bones");
+		}
+
+		// Image
+		int x_offset = (-63 * g->radar.scale) / 2;
+		int y_offset = (-44 * g->radar.scale) / 2;
+		DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR],
+			g->Interfaces[INTERFACE_RADAR].x + x_offset,
+			g->Interfaces[INTERFACE_RADAR].y + y_offset,
+			63.0 * g->radar.scale, 44.0 * g->radar.scale, 0, g->radar.opacity);
+	}
+	if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
+		if (g->radar.bone_detected) {
+			// Text
 			DrawText(font[2], 200, 200, 10,
 				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
-				"Sniff...");
+				"This way!");
+
+			// Image
+			DrawRotatedImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR + 1],
+				g->Interfaces[INTERFACE_RADAR].x + 32,
+				g->Interfaces[INTERFACE_RADAR].y + 22,
+				g->radar.angle, 0);
+		} else {
+			DrawText(font[2], 50, 50, 50,
+				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+				"No bones");
 		}
-	} else {
-		DrawText(font[2], 50, 50, 50,
-			g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
-			"No bones");
 	}
-
-	// Image
-	/*DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR],
-		g->Interfaces[INTERFACE_RADAR].x, g->Interfaces[INTERFACE_RADAR].y, 0);*/
-
-	int x_offset = (-63 * g->radar.scale) / 2;
-	int y_offset = (-44 * g->radar.scale) / 2;
-	DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR],
-		g->Interfaces[INTERFACE_RADAR].x + x_offset,
-		g->Interfaces[INTERFACE_RADAR].y + y_offset,
-		63.0 * g->radar.scale, 44.0 * g->radar.scale, 0, g->radar.opacity);
 }
 
 static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {

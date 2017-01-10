@@ -6,10 +6,13 @@ class Radar
 {
 public:
 	Radar() {};
+	enum Mode {DISTANCE_SNIFF, DIRECTION_SNIFF};
+	Mode mode = DIRECTION_SNIFF;
 	float opacity = 0.5;
 	float scale = 0.0;
 	double range = 7;
 	int timer = 0;
+	int angle = 0;
 	bool bone_detected = false;
 	double closest_distance = 0.0;
 };

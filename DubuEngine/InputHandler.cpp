@@ -308,7 +308,11 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				} else if (kid == g->keys.dig_bind) {
 					StartDigging(g, &g->pl);
 				} else if (kid == g->keys.sniff_bind) {
-					//Sniff(g);
+					if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
+						g->radar.mode = Radar::Mode::DISTANCE_SNIFF;
+					} else {
+						g->radar.mode = Radar::Mode::DIRECTION_SNIFF;
+					}
 				} else if (kid == g->keys.camera_bind) {
 					g->camera.mode = CAMERA_MODE_LOCKED;
 				} else if (kid == g->keys.chat_bind) {
