@@ -102,7 +102,7 @@ void LoadInterfaces(Game* g){
 	NewInterface(&g->Interfaces[INTERFACE_CREDITS], NO_SPRITE, 0, 0);
 
 	// Interface 12
-	NewInterface(&g->Interfaces[INTERFACE_RADAR], NO_SPRITE, g->BWIDTH / 2, (g->BHEIGHT / 2) + 300);
+	NewInterface(&g->Interfaces[INTERFACE_RADAR], NO_SPRITE, g->BWIDTH / 2, g->BHEIGHT- 60);
 	g->Interfaces[INTERFACE_RADAR].visible = true;
 
 	// Interface 29 - Chat/Console
@@ -375,6 +375,19 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				}
 				case INTERFACE_RADAR: {
 					RenderRadar(g, font, sprites);
+					if (g->pl.dig_timer > 0) {
+						// Prog bar
+						int x = g->BWIDTH / 2 - 100;
+						int y = g->BHEIGHT / 2 - 50;
+						int length_empty = 200;
+						int length_red = length_empty - ((float)g->pl.dig_timer / (float)g->pl.dig_duration) * length_empty;
+						DrawEmptyBar(g, sprites, x, y, length_empty);
+						DrawRedBar(g, sprites, x, y, length_red);
+
+						// Text
+						DrawText(font[3], 232, 106, 23, (g->BWIDTH / 2), y - 25, ALLEGRO_ALIGN_CENTER, "Digging...");
+					}
+					break;
 				}
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
@@ -582,8 +595,7 @@ void SubmitMessage(Game* g, const char* msg) {
 void HandleCommand(Game* g, const char* msg) {
 	if ((string)msg == "/version") {
 		AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ((string)"Running: " + ENGINE_VERSION).c_str());
-	}
-	else {
+	} else {
 		string type;
 		string command = msg;
 		istringstream args(command);
@@ -603,4 +615,18 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ("Unrecognized command: " + type).c_str());
 		}
 	}
+}
+
+void DrawEmptyBar(Game* g, SpriteStruct* sprites, int x, int y, int length) {
+	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_EL], x, y, 0);
+	int wi = length - 36;
+	DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_EC], x + 9, y, wi, 0, 0);
+	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_ER], x + (length - 9), y, 0);
+}
+
+void DrawRedBar(Game* g, SpriteStruct* sprites, int x, int y, int length) {
+	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_RL], x, y, 0);
+	int wi = length - 36;
+	DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_RC], x + 9, y, wi, 0, 0);
+	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_RR], x + (length - 9), y, 0);
 }

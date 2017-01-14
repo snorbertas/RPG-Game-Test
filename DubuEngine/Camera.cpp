@@ -19,10 +19,8 @@ void MoveCamera(Game* g, int to_x, int to_y, int x_vel, int y_vel) {
 void HandleCamera(Game* g) {
 	if (g->camera.mode == CAMERA_MODE_LOCKED) {
 		// Set camera's offset depending on player's position
-		g->camera.x = -(g->pl.x - (g->BWIDTH / 2));
-		g->camera.y = -(g->pl.y - (g->BHEIGHT / 2));
-		g->camera.x = -(g->pl.x - (g->BWIDTH / 2));
-		g->camera.y = -(g->pl.y - (g->BHEIGHT / 2));
+		g->camera.x = -(g->pl.x + (g->pl.w / 2) - (g->BWIDTH / 2));
+		g->camera.y = -(g->pl.y + (g->pl.h / 2) - (g->BHEIGHT / 2));
 	} else if (g->camera.mode == CAMERA_MODE_CUTSCENE) {
 		if (g->camera.x < g->camera.move_to_x) {
 			g->camera.x += g->camera.x_vel;

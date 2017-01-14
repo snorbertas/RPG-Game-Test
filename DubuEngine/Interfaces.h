@@ -125,3 +125,17 @@
  */
 	void HandleCommand(Game* g,
 		const char* msg);					// Message command to handle
+
+
+/* ============================== DrawEmptyBar ============================
+ *		Draws an empty progress bar.
+ *
+ *		Called when drawing interfaces.
+ */
+	void DrawEmptyBar(Game* g, 
+		SpriteStruct* sprites,				// Sprite struct
+		int x, int y,						// x, y start
+		int length);						// Lenght of bar (total)
+
+	// Other bars
+	void DrawRedBar(Game* g, SpriteStruct* sprites, int x, int y, int length);

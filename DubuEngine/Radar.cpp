@@ -127,9 +127,10 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 }
 
 void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
-	// Interface sketch
-	DrawRectangle(g, g->Interfaces[INTERFACE_RADAR].x - 10, g->Interfaces[INTERFACE_RADAR].y - 10, 63 + 20, 200, 100, 100, 100);
-	DrawOutline(g, g->Interfaces[INTERFACE_RADAR].x - 10, g->Interfaces[INTERFACE_RADAR].y - 10, 63 + 20, 200, 0, 0, 0, 1);
+	// Panel Image
+	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_PANEL],
+		g->Interfaces[INTERFACE_RADAR].x - 20,
+		g->Interfaces[INTERFACE_RADAR].y - 18, 0);
 
 	// Text size ratio
 	float r_x = (float)g->s_x / (float)g->BWIDTH;
@@ -158,7 +159,7 @@ void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 		int y_offset = (-44 * g->radar.scale) / 2;
 		DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR],
 			g->Interfaces[INTERFACE_RADAR].x + x_offset,
-			g->Interfaces[INTERFACE_RADAR].y + y_offset,
+			g->Interfaces[INTERFACE_RADAR].y + y_offset - 2,
 			63.0 * g->radar.scale, 44.0 * g->radar.scale, 0, g->radar.opacity);
 	}
 	if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
@@ -171,7 +172,7 @@ void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 			// Image
 			DrawRotatedImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR + 1],
 				g->Interfaces[INTERFACE_RADAR].x + 32,
-				g->Interfaces[INTERFACE_RADAR].y + 22,
+				g->Interfaces[INTERFACE_RADAR].y + 20,
 				g->radar.angle, 0);
 		} else {
 			DrawText(font[2], 50, 50, 50,
