@@ -197,8 +197,8 @@ void HandlePlayerMovementLogic(Game* g) {
 		}
 
 		// Check collision with idle grass for animation
-		for (std::list<MapObject>::iterator it = g->map.object.begin(); it != g->map.object.end(); it++) {
-			if (it->id == MapObject::MapObjectGrass_0) {
+		for (auto it = g->map.object.begin(); it != g->map.object.end(); it++) {
+			if (it->Type == MapObjectInfo::EMapObjectType::Grass_0) {
 				// Check collision
 				CollisionBox grass(it->x + 8, it->y + 8, 56, 56);
 				CollisionBox player(g->pl.x, g->pl.y, g->pl.w, g->pl.h);
@@ -211,8 +211,8 @@ void HandlePlayerMovementLogic(Game* g) {
 
 				// Animate if colliding
 				if (collide(grass, player)) {
-					it->id++;
-					it->anim_timer = SecondsToTicks(0.3);
+					it->Type = MapObjectInfo::EMapObjectType::Grass_1;
+					it->AnimTimer = SecondsToTicks(0.3);
 				}
 			}
 		}

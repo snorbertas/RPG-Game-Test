@@ -38,7 +38,7 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 			DrawText(font[4], 255, 255, 255, g->map.bone[i].x + g->camera.x + 4, g->map.bone[i].y + g->camera.y,
 				ALLEGRO_ALIGN_LEFT, "Bone: #%i", i);
 			DrawText(font[4], 255, 255, 255, g->map.bone[i].x + g->camera.x + 4, g->map.bone[i].y + g->camera.y + 12,
-				ALLEGRO_ALIGN_LEFT, "%f", g->map.bone[i].distance);
+				ALLEGRO_ALIGN_LEFT, "%f", g->map.bone[i].Distance);
 		}
 	}
 

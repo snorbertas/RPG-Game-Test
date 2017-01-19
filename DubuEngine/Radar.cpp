@@ -20,7 +20,7 @@ void CalculateBoneDistances(Game* g) {
 		if (distance_x < 0) distance_x *= -1;
 		if (distance_y < 0) distance_y *= -1;
 		double distance = fabs(sqrt(pow(distance_x, 2) + pow(distance_y, 2)));
-		g->map.bone[i].distance = distance;
+		g->map.bone[i].Distance = distance;
 	}
 }
 
@@ -30,14 +30,14 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	/* =======================	*/
 	if (g->radar.mode == Radar::Mode::DISTANCE_SNIFF) {
 		// Scan for closest bone (within radar range)
-		MapObject* closest_bone = NULL;
+		MapObjectInfo::MapObject* closest_bone = NULL;
 		for (int i = 0; i < g->map.bone.size(); i++) {
-			if (g->map.bone[i].distance <= g->radar.range) {
+			if (g->map.bone[i].Distance <= g->radar.range) {
 				if (closest_bone == NULL) {
 					closest_bone = &g->map.bone[i];
 				}
 				else {
-					if (closest_bone->distance > g->map.bone[i].distance) {
+					if (closest_bone->Distance > g->map.bone[i].Distance) {
 						closest_bone = &g->map.bone[i];
 					}
 				}
@@ -57,11 +57,11 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 			g->radar.bone_detected = true;
 
 			// Remember distance (for text rendering)
-			g->radar.closest_distance = closest_bone->distance;
+			g->radar.closest_distance = closest_bone->Distance;
 
 			// Timer
 			g->radar.timer++;
-			int anim_duration = 8 + closest_bone->distance * 6;
+			int anim_duration = 8 + closest_bone->Distance * 6;
 			if (g->radar.timer > anim_duration) {
 				g->radar.timer = 0;
 			}
@@ -70,11 +70,11 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 			float animation_prog = (float)(g->radar.timer) / (float)(anim_duration);
 			float new_scale = (0.2 * animation_prog);
 			g->radar.scale = new_scale;
-			g->radar.opacity = 1.0 - 0.5 * (closest_bone->distance / g->radar.range);
+			g->radar.opacity = 1.0 - 0.5 * (closest_bone->Distance / g->radar.range);
 
 			// Sound
 			if (g->radar.timer == 0) {
-				float speed = 2.0 - (closest_bone->distance / g->radar.range);
+				float speed = 2.0 - (closest_bone->Distance / g->radar.range);
 				float volume = 0.5 + (speed - 1.5);
 				al_play_sample(sample_sfx[0], volume, 0.0, speed, ALLEGRO_PLAYMODE_ONCE, NULL);
 			}
@@ -86,12 +86,12 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	/* =======================	*/
 	if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
 		// Scan for closest bone
-		MapObject* closest_bone = NULL;
+		MapObjectInfo::MapObject* closest_bone = NULL;
 		for (int i = 0; i < g->map.bone.size(); i++) {
 			if (closest_bone == NULL) {
 				closest_bone = &g->map.bone[i];
 			} else {
-				if (closest_bone->distance > g->map.bone[i].distance) {
+				if (closest_bone->Distance > g->map.bone[i].Distance) {
 					closest_bone = &g->map.bone[i];
 				}
 			}
@@ -104,7 +104,7 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 		} else {
 			// Calculate angle
 			g->radar.bone_detected = true;
-			double hypotenuse = closest_bone->distance * Map::TILE_SIZE;
+			double hypotenuse = closest_bone->Distance * Map::TILE_SIZE;
 			double x_dist = g->pl.x - closest_bone->x;
 			double y_dist = g->pl.y - closest_bone->y;
 

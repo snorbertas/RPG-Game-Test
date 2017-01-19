@@ -27,8 +27,6 @@ bool Map::InMap(int x, int y) {
 	return x > -1 && y > -1 && x < MAP_SIZE_X && y < MAP_SIZE_Y;
 }
 
-static void PopulateRandomObjects(Map* map);
-
 void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	tile[0][0] = 4;
 	for (int i = 1; i < MAP_SIZE_X; ++i) {
@@ -61,7 +59,7 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 		}
 	}
 
-	PopulateRandomObjects(this);
+	PopulateRandomObjects();
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
@@ -370,6 +368,36 @@ void Map::AdjustDirtSides() {
 	}
 }
 
+bool Map::PlaceMapObject(int objectId) {
+	return false;
+}
+
+void Map::PopulateRandomObjects() {
+	// First reset the vector
+	object.clear();
+	bone.clear();
+
+	// Then add random poop
+	for (int i = 0; i < 500; i++) {
+		object.push_back(MapObjectInfo::GenerateGreenery(
+			rand() % (MAP_SIZE_X * TILE_SIZE), 
+			rand() % (MAP_SIZE_Y * TILE_SIZE)));
+	}
+
+	// Sort by y
+	object.sort([](const auto& a, const auto& b) {return a.y < b.y;});
+
+	// Temp 50 bones
+	for (int i = 0; i < 50; i++) {
+		bone.push_back(MapObjectInfo::GenerateBone(
+			rand() % (MAP_SIZE_X * TILE_SIZE),
+			rand() % (MAP_SIZE_Y * TILE_SIZE)));
+	}
+}
+
+void Map::GenerateForest() {
+}
+
 void Map::GenerateMapWithBaseBiome() {
 	// In this generation mode I will take a few steps
 	/* =================================================*/
@@ -518,75 +546,6 @@ void Map::GenerateRandomStamps(Biome zone[][MAP_SIZE_Y], Biome new_biome, int x,
 
 }
 
-// Temporary function to spawn and test object rendering/interaction
-static void PopulateRandomObjects(Map* map) {
-	// First reset the vector
-	map->object.clear();
-	map->bone.clear();
-
-	// Then add random poop
-	for (int i = 0; i < 500; i++) {
-		int random_id = rand() % (MapObject::MapObjectTree_SO + 4);
-		if (random_id > MapObject::MapObjectTree_SO) random_id += 6;
-		map->object.push_back(MapObject(
-			random_id,
-			rand() % (map->MAP_SIZE_X * map->TILE_SIZE),
-			rand() % (map->MAP_SIZE_Y * map->TILE_SIZE)));
-	}
-
-	// Sort by y
-	map->object.sort([](MapObject& a, MapObject& b) {return a.y < b.y;});
-
-	// Temp 50 bones
-	for (int i = 0; i < 50; i++) {
-		int rand_x = rand() % Map::MAP_SIZE_X * Map::TILE_SIZE;
-		int rand_y = rand() % Map::MAP_SIZE_Y * Map::TILE_SIZE;
-		MapObject rand_bone(MapObject::MapObjectBone, rand_x, rand_y);
-		map->bone.push_back(rand_bone);
-	}
-}
-
-static bool ObjectHasCollision(int object_id) {
-	// Tress have collision
-	if (object_id >= MapObject::MapObjectTree_BG &&
-		object_id <= MapObject::MapObjectTree_SO) return true;
-	return false;
-}
-
-static CollisionBox GetCollisionFromObject(MapObject map_object) {
-	// Working with id
-	auto id = map_object.id;
-
-	// Initial x/y values
-	int ini_x = map_object.x;
-	int ini_y = map_object.y;
-	int ini_w = 7;
-	int ini_h = 7;
-
-	// Create a CollisionBox to return and set it to the initial x/y position
-	CollisionBox cb(ini_x, ini_y, ini_w, ini_h);
-
-	// Re-size for specific objects
-	if (id == MapObject::MapObjectTree_BG ||
-		id == MapObject::MapObjectTree_BD ||
-		id == MapObject::MapObjectTree_BO) {
-		cb.x += 15;
-		cb.y += 54;
-		cb.w = 34;
-		cb.h = 9;
-	} else
-	if (id == MapObject::MapObjectTree_SG ||
-		id == MapObject::MapObjectTree_SD ||
-		id == MapObject::MapObjectTree_SO) {
-		cb.x += 17;
-		cb.y += 56;
-		cb.w = 28;
-		cb.h = 7;
-	}
-
-	return cb;
-}
-
 static bool TileHasExceptBox(int tile_id) {
 	// Water tiles have collision
 	if (tile_id == 28 || tile_id == 30 ||
@@ -670,9 +629,9 @@ void Map::CreateSolids() {
 	}
 
 	// Then objects
-	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
-		if (ObjectHasCollision(it->id)) {
-			solid.push_back(GetCollisionFromObject(*it));
+	for (auto it = object.begin(); it != object.end(); it++) {
+		if (it->HasCollision()) {
+			solid.push_back(it->GetCollisionBox());
 		}
 	}
 }
@@ -697,7 +656,7 @@ void Map::GenerateRandom(int alg) {
 	case 2:
 		// Generation mode C
 		GenerateMapWithBaseBiome();
-		PopulateRandomObjects(this);
+		PopulateRandomObjects();
 		break;
 	}
 
@@ -722,25 +681,25 @@ void Map::SortPlayerObjects(Game* g) {
 	}
 
 	// Sort them by their y value
-	sort(players.begin(), players.end(), [](const Player* a, const Player* b) { return a->y < b->y; });
+	sort(players.begin(), players.end(), [](const auto& a, const auto& b) { return a->y < b->y; });
 
 	// Boolean to store which players are already inserted
 	bool* inserted_player = new bool[players.size()];
 	for (int i = 0; i < players.size(); i++) { inserted_player[i] = false; }
 
 	// First remove all player objects
-	object.remove_if([](MapObject& a) { return (a.id >= MapObject::MapObjectPlayer_L); });
+	object.remove_if([](auto& a) { return a.IsPlayer(); });
 
 	// Loop trough each object to check where we can insert player objects
-	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
-		for (int i = 0; i < players.size(); i++) {
+	for (auto it = object.begin(); it != object.end(); it++) {
+		for (size_t i = 0; i < players.size(); i++) {
 			if (!inserted_player[i]) {
 				if (it->y + it->h > players[i]->y + players[i]->h) {
 					// Insert player object
-					MapObject player_object = MapObject(
-						MapObject::MapObjectPlayer_M_0 + players[i]->pID,
-						players[i]->x, players[i]->y);
-					object.insert(it, player_object);
+					if (players[i]->pID == -1)
+						object.insert(it, MapObjectInfo::GenerateLocalPlayer(players[i]->x, players[i]->y));
+					else
+						object.insert(it, MapObjectInfo::GenerateMultiPlayer(players[i]->x, players[i]->y, players[i]->pID));
 					inserted_player[i] = true;
 				}
 			}
@@ -749,13 +708,14 @@ void Map::SortPlayerObjects(Game* g) {
 
 	// The rest of player objects are on bottom of all objects
 	// Todo: maybe reverse order? can't test since there's a weird bug
-	for (int i = 0; i < players.size(); i++) {
+	for (size_t i = 0; i < players.size(); i++) {
 		if (!inserted_player[i]) {
-			// Insert player object
-			MapObject player_object = MapObject(
-				MapObject::MapObjectPlayer_M_0 + players[i]->pID,
-				players[i]->x, players[i]->y);
-			object.push_front(player_object);
+			// Insert player object			
+			if (players[i]->pID == -1)
+				object.push_front(MapObjectInfo::GenerateLocalPlayer(players[i]->x, players[i]->y));
+			else
+				object.push_front(MapObjectInfo::GenerateMultiPlayer(players[i]->x, players[i]->y, players[i]->pID));
+			inserted_player[i] = true;
 		}
 	}
 
@@ -764,38 +724,8 @@ void Map::SortPlayerObjects(Game* g) {
 }
 
 void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
-	auto img_object = sprites->img_object;
-	for (std::list<MapObject>::iterator it = object.begin(); it != object.end(); it++) {
-		if (it->id == MapObject::MapObjectGrass_0 ||
-			it->id == MapObject::MapObjectGrass_1) {
-			// Tall Grass
-			DrawImage(g,
-				img_object[GetObjectSprite(*it)],
-				it->x + g->camera.x - 18,
-				it->y + g->camera.y - 36, 0);
-		} else if (it->id < MapObject::MapObjectPlayer_L) {
-			// Rendering immobile objects
-			DrawImage(g,
-				img_object[GetObjectSprite(*it)],
-				it->x + g->camera.x,
-				it->y + g->camera.y, 0);
-
-			// If it's a tree
-			if (it->id >= MapObject::MapObjectTree_BG &&
-				it->id <= MapObject::MapObjectTree_SO) {
-
-				// Draw the top of tree
-				DrawImage(g,
-					img_object[GetObjectSprite(*it, 1)],
-					it->x + g->camera.x,
-					it->y - (it->h) + g->camera.y, 0);
-			}
-		} else if (it->id == MapObject::MapObjectPlayer_L) {
-			// Rendering Players/NPCs
-			RenderPlayer(g, g->pl, sprites);
-		} else if (it->id >= MapObject::MapObjectPlayer_M_0) {
-			RenderPlayer(g, g->Players[it->id - MapObject::MapObjectPlayer_M_0], sprites);
-		}
+	for (auto& obj : object) {
+		obj.Draw(g, sprites);
 	}
 }
 
@@ -978,15 +908,16 @@ void Map::SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]) {
 }
 
 void UpdateMapAnimations(Game* g) {
-	for (std::list<MapObject>::iterator it = g->map.object.begin(); it != g->map.object.end(); it++) {
-		if (it->id == MapObject::MapObjectGrass_1) {
+	using EType = MapObjectInfo::EMapObjectType;
+	for (auto& obj : g->map.object) {
+		if (obj.Type == EType::Grass_1) {
 			// Decrement timer
-			it->anim_timer--;
+			obj.AnimTimer--;
 
 			// Revert to idle grass if timer ran out
-			if (it->anim_timer == 0) {
-				it->anim_timer = -1;
-				it->id = MapObject::MapObjectGrass_0;
+			if (obj.AnimTimer == 0) {
+				obj.AnimTimer = -1;
+				obj.Type = EType::Grass_0;
 			}
 		}
 	}

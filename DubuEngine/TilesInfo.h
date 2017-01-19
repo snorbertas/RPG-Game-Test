@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sprites.h"
+
 #include <vector>
 
 class TilesInfo {
@@ -29,21 +30,20 @@ public:
 	};
 	class Biom {
 	public:
-		Biom(ESubstance innerSubstance, ESubstance outerSubstance) : InnerSubstance(innerSubstance), OuterSubstance(outerSubstance) {}
+		Biom(ESubstance innerSubstance, ESubstance outerSubstance) : 
+			InnerSubstance(innerSubstance), 
+			OuterSubstance(outerSubstance) {}
 		void CreateTiles(Tile* tiles) const;
 
 	public:
 		ESubstance InnerSubstance;
 		ESubstance OuterSubstance;
 	};
-	static const int BIOM_CNT = 3;
-	static const int BIOM_TILE_CNT = 13;
+public:
+	static const size_t BIOM_CNT = 3;
+	static const size_t BIOM_TILE_CNT = 13;
 	static const Biom Bioms[BIOM_CNT];
 	static Tile BiomTiles[BIOM_CNT][BIOM_TILE_CNT];
-
-private:
-	static void AdjustNeighboursLeftRight(const Tile& l, const Tile& r);
-	static void AdjustNeighboursUpDown(const Tile& u, const Tile& d);
 
 public:
 	static void AdjustTilesInfo();
@@ -51,6 +51,9 @@ public:
 	static int GetSpriteIdByTile(const Tile& tileWithoutSprite);
 	static const Tile& GetTileBySpriteId(int spriteId);
 	static ESubstance GetSubstanceBySpriteId(int spriteId);
+private:
+	static void AdjustNeighboursLeftRight(const Tile& l, const Tile& r);
+	static void AdjustNeighboursUpDown(const Tile& u, const Tile& d);
 
 public:
 	enum {TILE_NEIGHBOUR_LEFT = 0, TILE_NEIGHBOUR_RIGHT, TILE_NEIGHBOUR_UP, TILE_NEIGHBOUR_DOWN, TILE_NEIGHBOUR_SIZE};

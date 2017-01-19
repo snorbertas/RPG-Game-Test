@@ -214,6 +214,24 @@ private:
 	 *	@return true if 2x2 dirt patch has been placed, false if tile turned into grass
 	 */
 		bool AdjustDirtPlacePatch(int x, int y);
+
+	/* ======================= PlaceGroundObject ========================
+	 *	Tries to place object on the ground
+	 *
+	 *	@param objectId map object id
+	 *	@return false/true if object hasn't/has been placed
+	 */
+		bool PlaceMapObject(int objectId);
+
+	/* ===================== PopulateRandomObjects ======================
+	 *	Generates random flowers, trees, bushes, etc.
+	 */
+		void PopulateRandomObjects();
+
+	/* ========================= GenerateForest =========================
+	 *	Generates forest bioms
+	 */
+		void GenerateForest();
 		
 	/* ============================= InMap ==============================
 	 *	Checks whether point is within map or not
@@ -226,12 +244,12 @@ private:
 		TilesInfo::Tile BuildTileBySides(int x, int y);
 
 public:
-	int tile[MAP_SIZE_X][MAP_SIZE_Y];		// tile[x][y]
-	std::list<MapObject> object;			// Map objects (fauna, etc.)
-	std::vector<CollisionBox> solid;		// Solids (collisions/can't pass trough)
-	std::vector<CollisionBox> except_solid;	// Special collision boxes to except solid collision
-	std::vector<MapObject> bone;			// Bones hidden on the map
-	int seed;								// Seed for random generation
+	int tile[MAP_SIZE_X][MAP_SIZE_Y];			// tile[x][y]
+	std::list<MapObjectInfo::MapObject> object;	// Map objects (fauna, etc.)
+	std::vector<CollisionBox> solid;			// Solids (collisions/can't pass trough)
+	std::vector<CollisionBox> except_solid;		// Special collision boxes to except solid collision
+	std::vector<MapObjectInfo::MapObject> bone;	// Bones hidden on the map
+	int seed;									// Seed for random generation
 	int render_mode = 0;
 
 private:

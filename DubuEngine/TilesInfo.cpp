@@ -3,8 +3,8 @@
 #include <algorithm>
 
 const TilesInfo::Biom TilesInfo::Bioms[TilesInfo::BIOM_CNT] = {Biom(TilesInfo::GRASS, TilesInfo::DIRT),
-															  Biom(TilesInfo::DIRT,  TilesInfo::GRASS),
-															  Biom(TilesInfo::WATER, TilesInfo::GRASS)};
+															   Biom(TilesInfo::DIRT,  TilesInfo::GRASS),
+															   Biom(TilesInfo::WATER, TilesInfo::GRASS)};
 
 TilesInfo::Tile TilesInfo::BiomTiles[BIOM_CNT][BIOM_TILE_CNT]{};
 

@@ -1,56 +1,96 @@
 #pragma once
 
-// Map objects
-class MapObject {
+#include "CollisionBox.h"
+
+class Game;
+struct SpriteStruct;
+
+class MapObjectInfo {
+private:
+	MapObjectInfo() {}
+
 public:
-	MapObject() {}
-	MapObject(int ID, int X, int Y) : id(ID), x(X), y(Y) {}
-	int id = -1;
-	int x = 0;
-	int y = 0;
-	int w = 64;
-	int h = 64;
-	double distance = 0;
-	int anim_timer = -1;	// -1 = Disabled, 0 = Done, 0 > Frames left
-
-	// Map object types
-	/*	Key:
-		S = Small
-		B = Big
-		G = Green
-		D = Dark Green
-		O = Orange
-		R = Red
-		C = Cyan
-		P = Purple
-		Player_L = Local player
-		Player_M = Multi player
-	*/
-	enum MapObjectType {
-		MapObjectBush_SG,
-		MapObjectBush_BG,
-		MapObjectBush_SD,
-		MapObjectBush_BD,
-		MapObjectBush_SO,
-		MapObjectBush_BO,
-		MapObjectTree_BG,
-		MapObjectTree_SG,
-		MapObjectTree_BD,
-		MapObjectTree_SD,
-		MapObjectTree_BO,
-		MapObjectTree_SO,
-		MapObjectFlower_R = 18,
-		MapObjectFlower_C,
-		MapObjectFlower_P,
-		MapObjectGrass_0,
-		MapObjectGrass_1,
-		MapObjectPlayer_L = 199,
-		MapObjectPlayer_M_0,
-		MapObjectBone = 300
+	//	Map object types
+	//	Key:
+	//	S = Small
+	//	B = Big
+	//	G = Green
+	//	D = Dark Green
+	//	O = Orange
+	//	R = Red
+	//	C = Cyan
+	//	P = Purple
+	//	Player_L = Local player
+	//	Player_M = Multi player
+	enum class EMapObjectType {
+		Bush_SG = 0,
+		Bush_BG,
+		Bush_SD,
+		Bush_BD,
+		Bush_SO,
+		Bush_BO,
+		Tree_BG,
+		Tree_SG,
+		Tree_BD,
+		Tree_SD,
+		Tree_BO,
+		Tree_SO,
+		Flower_R,
+		Flower_C,
+		Flower_P,
+		Grass_0,
+		Grass_1,
+		Bone,
+		Player_L,
+		Player_M
 	};
-};
 
-// Return sprite ID for the given object
-int GetObjectSprite(
-	MapObject map_object,	// Map object to return sprite for
-	int part = 0);			// Specify part of the sprite (for multi-sprite objects)
+	class MapObject {
+	friend class MapObjectInfo;
+	private:
+		MapObject(int spriteId, int numberOfSprites, int type) :
+			_SpriteId(spriteId), 
+			_NumberOfSprites(numberOfSprites),
+			Type(static_cast<EMapObjectType>(type)) {}
+
+	public:
+		bool IsBush();
+		bool IsTree();
+		bool IsBigTree();
+		bool IsGrass();
+		bool IsPlayer();
+		bool HasCollision();
+		CollisionBox GetCollisionBox();
+		void Draw(Game* g, SpriteStruct* sprites);
+
+	public:
+		int x = 0;
+		int y = 0;
+		double Distance = 0;
+		int ID; // for multi player objects
+		int AnimTimer = -1;	// -1 = Disabled, 0 = Done, 0 > Frames left
+
+	public:
+		int w = 64;
+		int h = 64;
+		EMapObjectType Type;
+	private:
+		int _SpriteId = -1;
+		int _NumberOfSprites = 0;
+		static const int MIN_ID = -1;
+	};
+
+public:
+	static MapObjectInfo::MapObject GenerateGreenery(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GenerateBone(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GenerateLocalPlayer(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
+
+private:
+	static CollisionBox GenerateBigTreeBox(int x, int y);
+	static CollisionBox GenerateSmallTreeBox(int x, int y);
+
+private:
+	static const size_t _ObjectsCount = 20;
+	static const MapObject _Objects[_ObjectsCount];
+};
