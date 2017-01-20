@@ -129,7 +129,7 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 	// Panel Image
 	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_PANEL],
-		g->Interfaces[INTERFACE_RADAR].x - 20,
+		g->Interfaces[INTERFACE_RADAR].x - 48,
 		g->Interfaces[INTERFACE_RADAR].y - 18, 0);
 
 	// Text size ratio
@@ -141,16 +141,16 @@ void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 		if (g->radar.bone_detected) {
 			if (g->radar.closest_distance < 0.5) {
 				DrawText(font[2], 10, 200, 10,
-					g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+					g->Interfaces[INTERFACE_RADAR].x + 3, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
 					"Bone!!!");
 			} else {
 				DrawText(font[2], 200, 200, 10,
-					g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+					g->Interfaces[INTERFACE_RADAR].x + 3, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
 					"Sniff...");
 			}
 		} else {
 			DrawText(font[2], 50, 50, 50,
-				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+				g->Interfaces[INTERFACE_RADAR].x + 3, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
 				"No bones");
 		}
 
@@ -158,7 +158,7 @@ void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 		int x_offset = (-63 * g->radar.scale) / 2;
 		int y_offset = (-44 * g->radar.scale) / 2;
 		DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR],
-			g->Interfaces[INTERFACE_RADAR].x + x_offset,
+			g->Interfaces[INTERFACE_RADAR].x - 28 + x_offset,
 			g->Interfaces[INTERFACE_RADAR].y + y_offset - 2,
 			63.0 * g->radar.scale, 44.0 * g->radar.scale, 0, g->radar.opacity);
 	}
@@ -166,17 +166,17 @@ void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
 		if (g->radar.bone_detected) {
 			// Text
 			DrawText(font[2], 200, 200, 10,
-				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+				g->Interfaces[INTERFACE_RADAR].x + 3, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
 				"This way!");
 
 			// Image
 			DrawRotatedImage(g, sprites->img_interface[SPRITE_INTERFACE_RADAR + 1],
-				g->Interfaces[INTERFACE_RADAR].x + 32,
+				g->Interfaces[INTERFACE_RADAR].x + 4,
 				g->Interfaces[INTERFACE_RADAR].y + 20,
 				g->radar.angle, 0);
 		} else {
 			DrawText(font[2], 50, 50, 50,
-				g->Interfaces[INTERFACE_RADAR].x + 31, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
+				g->Interfaces[INTERFACE_RADAR].x + 3, g->Interfaces[INTERFACE_RADAR].y + 40, ALLEGRO_ALIGN_CENTER,
 				"No bones");
 		}
 	}
