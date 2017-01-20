@@ -910,14 +910,14 @@ void Map::SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]) {
 void UpdateMapAnimations(Game* g) {
 	using EType = MapObjectInfo::EMapObjectType;
 	for (auto& obj : g->map.object) {
-		if (obj.Type == EType::Grass_1) {
+		if (obj.Type == EType::Grass_0) {
 			// Decrement timer
 			obj.AnimTimer--;
 
 			// Revert to idle grass if timer ran out
 			if (obj.AnimTimer == 0) {
 				obj.AnimTimer = -1;
-				obj.Type = EType::Grass_0;
+				obj.ChangeSpriteID(21); // <- TODO: change with Sprites.h enum
 			}
 		}
 	}

@@ -3,28 +3,30 @@
 #include "Game.h"
 #include "GameRenderer.h"
 #include "ScaledDraw.h"
-
 const MapObjectInfo::MapObject MapObjectInfo::_Objects[_ObjectsCount] = {
-	MapObject(0,  1, 0),
-	MapObject(1,  1, 1),
-	MapObject(2,  1, 2),
-	MapObject(3,  1, 3),
-	MapObject(4,  1, 4),
-	MapObject(5,  1, 5),
-	MapObject(6,  2, 6),
-	MapObject(8,  2, 7),
-	MapObject(10, 2, 8),
-	MapObject(12, 2, 9),
-	MapObject(14, 2, 10),
-	MapObject(16, 2, 11),
-	MapObject(18, 1, 12),
-	MapObject(19, 1, 13),
-	MapObject(20, 1, 14),
-	MapObject(21, 1, 15),
-	MapObject(22, 1, 16),
-	MapObject(-1, 1, 17), // bone without sprite
-	MapObject(-1, 1, 18), // local player
-	MapObject(-1, 1, 19), // multi player
+	/* Todo, create an enum in sprites.h to store sprite IDs for objects
+	// Perhaps we don't need this once we do that ^
+	// # of sprites isn't very helpful so we could take this whole thing into the draw function
+	// Type, sprite, # of sprites*/
+	MapObject((int)EMapObjectType::Bush_SG, 0, 1),
+	MapObject((int)EMapObjectType::Bush_BG, 1, 1),
+	MapObject((int)EMapObjectType::Bush_SD, 2, 1),
+	MapObject((int)EMapObjectType::Bush_BD, 3, 1),
+	MapObject((int)EMapObjectType::Bush_SO, 4, 1),
+	MapObject((int)EMapObjectType::Bush_BO, 5, 1),
+	MapObject((int)EMapObjectType::Tree_BG, 6, 2),
+	MapObject((int)EMapObjectType::Tree_SG, 8, 2),
+	MapObject((int)EMapObjectType::Tree_BD, 10, 2),
+	MapObject((int)EMapObjectType::Tree_SD, 12, 2),
+	MapObject((int)EMapObjectType::Tree_BO, 14, 2),
+	MapObject((int)EMapObjectType::Tree_SO, 16, 2),
+	MapObject((int)EMapObjectType::Flower_R, 18, 1),
+	MapObject((int)EMapObjectType::Flower_C, 19, 1),
+	MapObject((int)EMapObjectType::Flower_P, 20, 1),
+	MapObject((int)EMapObjectType::Grass_0, 21, 1),
+	MapObject((int)EMapObjectType::Bone, -1, 0),
+	MapObject((int)EMapObjectType::Player_L, -1, 0),
+	MapObject((int)EMapObjectType::Player_M, -1, 0),
 };
 
 bool MapObjectInfo::MapObject::IsBush() {
@@ -42,7 +44,7 @@ bool MapObjectInfo::MapObject::IsBigTree() {
 }
 
 bool MapObjectInfo::MapObject::IsGrass() {
-	return EMapObjectType::Grass_0 <= Type && Type <= EMapObjectType::Grass_1;
+	return EMapObjectType::Grass_0 == Type;
 }
 
 bool MapObjectInfo::MapObject::IsPlayer() {
@@ -50,7 +52,7 @@ bool MapObjectInfo::MapObject::IsPlayer() {
 }
 
 bool MapObjectInfo::MapObject::HasCollision() {
-	return !IsTree();
+	return IsTree();
 }
 
 CollisionBox MapObjectInfo::MapObject::GetCollisionBox() {
@@ -65,7 +67,7 @@ CollisionBox MapObjectInfo::MapObject::GetCollisionBox() {
 void MapObjectInfo::MapObject::Draw(Game* g, SpriteStruct* sprites) {
 	using EType = EMapObjectType;
 	auto& img_object = sprites->img_object;
-	if (Type == EType::Grass_0 || Type == EType::Grass_1) {
+	if (Type == EType::Grass_0) {
 		// Tall Grass
 		DrawImage(g,
 			img_object[_SpriteId],
@@ -94,7 +96,7 @@ void MapObjectInfo::MapObject::Draw(Game* g, SpriteStruct* sprites) {
 		RenderPlayer(g, g->pl, sprites);
 	} else {
 		// Rendering multi player
-		RenderPlayer(g, g->Players[ID - MIN_ID], sprites);
+		RenderPlayer(g, g->Players[ID], sprites);
 	}
 }
 
@@ -106,21 +108,21 @@ MapObjectInfo::MapObject MapObjectInfo::GenerateGreenery(int x, int y) {
 }
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateBone(int x, int y) {
-	MapObject object = _Objects[17];
+	MapObject object = _Objects[(int)EMapObjectType::Bone];
 	object.x = x;
 	object.y = y;
 	return object;
 }
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateLocalPlayer(int x, int y) {
-	MapObject object = _Objects[18];
+	MapObject object = _Objects[(int)EMapObjectType::Player_L];
 	object.x = x;
 	object.y = y;
 	return object;
 }
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateMultiPlayer(int x, int y, int id) {
-	MapObject object = _Objects[19];
+	MapObject object = _Objects[(int)EMapObjectType::Player_M];
 	object.x = x;
 	object.y = y;
 	object.ID = id;

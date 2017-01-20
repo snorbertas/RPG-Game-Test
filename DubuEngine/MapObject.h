@@ -39,19 +39,23 @@ public:
 		Flower_C,
 		Flower_P,
 		Grass_0,
-		Grass_1,
 		Bone,
 		Player_L,
-		Player_M
+		Player_M,
+		EMapObjectType_Count
 	};
 
 	class MapObject {
 	friend class MapObjectInfo;
 	private:
-		MapObject(int spriteId, int numberOfSprites, int type) :
+		MapObject(int type, int spriteId, int numberOfSprites) :
 			_SpriteId(spriteId), 
 			_NumberOfSprites(numberOfSprites),
 			Type(static_cast<EMapObjectType>(type)) {}
+
+	public:
+		int GetSpriteID() { return _SpriteId; }
+		void ChangeSpriteID(int sprite_id) { _SpriteId = sprite_id; }
 
 	public:
 		bool IsBush();
@@ -91,6 +95,6 @@ private:
 	static CollisionBox GenerateSmallTreeBox(int x, int y);
 
 private:
-	static const size_t _ObjectsCount = 20;
+	static const size_t _ObjectsCount = (size_t)EMapObjectType::EMapObjectType_Count;
 	static const MapObject _Objects[_ObjectsCount];
 };
