@@ -917,7 +917,7 @@ void UpdateMapAnimations(Game* g) {
 			// Revert to idle grass if timer ran out
 			if (obj.AnimTimer == 0) {
 				obj.AnimTimer = -1;
-				obj.ChangeSpriteID(21); // <- TODO: change with Sprites.h enum
+				obj.ChangeSpriteID(ObjectSprite::Grass_0);
 			}
 		}
 	}
