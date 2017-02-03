@@ -1,6 +1,5 @@
 #include "Collision.h"
 #include "Game.h"
-#include "GameRenderer.h"
 #include "ScaledDraw.h"
 
 #include <algorithm>
@@ -59,7 +58,7 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 		}
 	}
 
-	PopulateRandomObjects();
+	GenerateForest();
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
@@ -176,6 +175,17 @@ void Map::BFSInitWater() {
 	for (size_t i = 0; i < MAP_SIZE_X; ++i)
 		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
 			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER)
+				_Dist[i][j] = 0;
+}
+
+void Map::BFSInitWaterDirt() {
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			_Dist[i][j] = _InfiniteDist;
+	for (size_t i = 0; i < MAP_SIZE_X; ++i)
+		for (size_t j = 0; j < MAP_SIZE_Y; ++j)
+			if (TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::WATER ||
+				TilesInfo::GetTileBySpriteId(tile[i][j]).GetSubstance() == TilesInfo::DIRT)
 				_Dist[i][j] = 0;
 }
 
@@ -368,34 +378,66 @@ void Map::AdjustDirtSides() {
 	}
 }
 
-bool Map::PlaceMapObject(int objectId) {
-	return false;
-}
-
 void Map::PopulateRandomObjects() {
 	// First reset the vector
-	object.clear();
-	bone.clear();
+	Objects.clear();
+	Bones.clear();
 
 	// Then add random poop
 	for (int i = 0; i < 500; i++) {
-		object.push_back(MapObjectInfo::GenerateGreenery(
+		Objects.push_back(MapObjectInfo::GenerateGreenery(
 			rand() % (MAP_SIZE_X * TILE_SIZE), 
 			rand() % (MAP_SIZE_Y * TILE_SIZE)));
 	}
 
-	// Sort by y
-	object.sort([](const auto& a, const auto& b) {return a.y < b.y;});
-
 	// Temp 50 bones
 	for (int i = 0; i < 50; i++) {
-		bone.push_back(MapObjectInfo::GenerateBone(
+		Bones.push_back(MapObjectInfo::GenerateBone(
 			rand() % (MAP_SIZE_X * TILE_SIZE),
 			rand() % (MAP_SIZE_Y * TILE_SIZE)));
 	}
 }
 
 void Map::GenerateForest() {
+	BFSInitWaterDirt();
+	BFSMarkTiles(_WaterDirtToForestSpawnDist);
+
+	for (int i = 0; i < MAP_SIZE_X; ++i) {
+		for (int j = 0; j < MAP_SIZE_Y; ++j) {
+			if (_Dist[i][j] != _InfiniteDist)
+				continue;
+			int freeSpaceSize = ViewForestPlace(i, j);
+			if (freeSpaceSize < _MinForestTiles)
+				continue;
+			/*int chance = rand() % (freeSpaceSize + _ForestChanceAddition);
+			if (chance >= freeSpaceSize)
+				continue;*/
+
+			for (const auto& curTile : _Queue) {
+				Objects.push_back(MapObjectInfo::GenerateTree(curTile.first * TILE_SIZE, curTile.second * TILE_SIZE));
+			}
+		}
+	}
+}
+
+int Map::ViewForestPlace(int xs, int ys) {
+	_Queue.clear();
+	_Queue.push_back(std::make_pair(xs, ys));
+	_Dist[xs][ys] = 0;
+	
+	for (size_t i = 0; i < _Queue.size(); ++i) {
+		int x = _Queue[i].first;
+		int y = _Queue[i].second;
+		for (size_t j = 0; j < _NeighbourWayCnt; ++j) {
+			int xn = x + _NeighbourWay[j].first;
+			int yn = y + _NeighbourWay[j].second;
+			if (InMap(xn, yn) && _Dist[xn][yn] == _InfiniteDist) {
+				_Queue.push_back(std::make_pair(xn, yn));
+				_Dist[xn][yn] = 0;
+			}
+		}
+	}
+	return static_cast<int>(_Queue.size());
 }
 
 void Map::GenerateMapWithBaseBiome() {
@@ -415,7 +457,7 @@ void Map::GenerateMapWithBaseBiome() {
 	corners. */
 	/* =================================================*/
 	// This generation mode will use render mode 0 (Literal)
-	render_mode = 0;
+	_RenderMode = 0;
 
 	// Choose base biome and create a virtual zone
 	Biome base = Biome_Grass;
@@ -611,6 +653,38 @@ static CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	return cb;
 }
 
+inline std::pair<int, int> Map::BlockForObject(const MapObjectInfo::MapObject& obj) {
+	return BlockForPoint(obj.x, obj.y);
+}
+
+inline std::pair<int, int> Map::BlockForPoint(int x, int y) {
+	x = max(0, x);
+	x = min(MAP_SIZE_X * TILE_SIZE - 1, x);
+	y = max(0, y);
+	y = min(MAP_SIZE_Y * TILE_SIZE - 1, y);
+	return std::make_pair((x * OBJECT_BLOCKS_CNT) / (TILE_SIZE * MAP_SIZE_X),
+						  (y * OBJECT_BLOCKS_CNT) / (TILE_SIZE * MAP_SIZE_Y));
+}
+
+void Map::OrganizeObjects() {
+	std::sort(Objects.begin(), Objects.end(), ([](const auto& a, const auto& b) {return a.y < b.y;}));
+
+	// Add all grass objects to vector
+	GrassObjects.clear();
+	for (size_t i = 0; i < Objects.size(); ++i)
+		if (Objects[i].IsGrass())
+			GrassObjects.push_back(&Objects[i]);
+
+	// Put all objects in appropriate blocks
+	for (size_t i = 0; i < OBJECT_BLOCKS_CNT; ++i)
+		for (size_t j = 0; j < OBJECT_BLOCKS_CNT; ++j)
+			ObjectBlock[i][j].clear();
+	for (auto& obj : Objects) {
+		auto block = BlockForObject(obj);
+		ObjectBlock[block.first][block.second].push_back(&obj);
+	}
+}
+
 void Map::CreateSolids() {
 	// First reset the vectors
 	solid.clear();
@@ -618,7 +692,7 @@ void Map::CreateSolids() {
 
 	// First tiles
 	for (int x = 0; x < MAP_SIZE_X; x++) {
-		for (int y = 0; y < MAP_SIZE_X; y++) {
+		for (int y = 0; y < MAP_SIZE_Y; y++) {
 			if (TileHasCollision(tile[x][y])) {
 				solid.push_back(GetCollisionFromTile(tile[x][y], x, y));
 			}
@@ -629,7 +703,7 @@ void Map::CreateSolids() {
 	}
 
 	// Then objects
-	for (auto it = object.begin(); it != object.end(); it++) {
+	for (auto it = Objects.begin(); it != Objects.end(); it++) {
 		if (it->HasCollision()) {
 			solid.push_back(it->GetCollisionBox());
 		}
@@ -639,6 +713,8 @@ void Map::CreateSolids() {
 void Map::GenerateRandom(int alg) {
 	// Seed
 	srand(seed);
+
+	Objects.clear();
 
 	switch (alg) {
 	case 0:
@@ -660,72 +736,84 @@ void Map::GenerateRandom(int alg) {
 		break;
 	}
 
+	// Sort down objects
+	OrganizeObjects();
 	// Create colission boxes for solids
 	CreateSolids();
 }
 
 void Map::SortPlayerObjects(Game* g) {
-	// Create a vector to store player pointers
-	vector<Player*> players;
+	Players.clear();
 
 	// Local player
-	players.push_back(&g->pl);
-
+	Players.push_back(MapObjectInfo::GenerateLocalPlayer(g->pl.x, g->pl.y));
 	// Multi players
-	if (g->connected) {
-		for (int i = 0; i < Game::MAX_PLAYERS; i++) {
-			if (g->Players[i].connected) {
-				players.push_back(&g->Players[i]);
-			}
-		}
-	}
+	if (g->connected)
+		for (int i = 0; i < Game::MAX_PLAYERS; ++i)
+			if (g->Players[i].connected)
+				Players.push_back(MapObjectInfo::GenerateMultiPlayer(g->Players[i].x, g->Players[i].y, g->Players[i].pID));
 
 	// Sort them by their y value
-	sort(players.begin(), players.end(), [](const auto& a, const auto& b) { return a->y < b->y; });
+	sort(Players.begin(), Players.end(), [](const auto& a, const auto& b) { return a.y < b.y; });
+}
 
-	// Boolean to store which players are already inserted
-	bool* inserted_player = new bool[players.size()];
-	for (int i = 0; i < players.size(); i++) { inserted_player[i] = false; }
-
-	// First remove all player objects
-	object.remove_if([](auto& a) { return a.IsPlayer(); });
-
-	// Loop trough each object to check where we can insert player objects
-	for (auto it = object.begin(); it != object.end(); it++) {
-		for (size_t i = 0; i < players.size(); i++) {
-			if (!inserted_player[i]) {
-				if (it->y + it->h > players[i]->y + players[i]->h) {
-					// Insert player object
-					if (players[i]->pID == -1)
-						object.insert(it, MapObjectInfo::GenerateLocalPlayer(players[i]->x, players[i]->y));
-					else
-						object.insert(it, MapObjectInfo::GenerateMultiPlayer(players[i]->x, players[i]->y, players[i]->pID));
-					inserted_player[i] = true;
-				}
-			}
-		}
+bool Map::ChangeRenderMode(int newRenderMode) {
+	if (newRenderMode >= 0 && newRenderMode < _RenderModeCnt) {
+		_RenderMode = newRenderMode;
+		return true;
+	} else {
+		return false;
 	}
+}
 
-	// The rest of player objects are on bottom of all objects
-	// Todo: maybe reverse order? can't test since there's a weird bug
-	for (size_t i = 0; i < players.size(); i++) {
-		if (!inserted_player[i]) {
-			// Insert player object			
-			if (players[i]->pID == -1)
-				object.push_front(MapObjectInfo::GenerateLocalPlayer(players[i]->x, players[i]->y));
-			else
-				object.push_front(MapObjectInfo::GenerateMultiPlayer(players[i]->x, players[i]->y, players[i]->pID));
-			inserted_player[i] = true;
-		}
-	}
-
-	// Release dynamic memory
-	delete[] inserted_player;
+int Map::GetRenderMode() {
+	return _RenderMode;
 }
 
 void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
-	for (auto& obj : object) {
-		obj.Draw(g, sprites);
+	std::pair<int, int> blockMin = BlockForPoint(-g->camera.x - TILE_SIZE, -g->camera.y - TILE_SIZE);
+	std::pair<int, int> blockMax = BlockForPoint(-g->camera.x + g->BWIDTH + TILE_SIZE, -g->camera.y + g->BHEIGHT + TILE_SIZE);
+
+	size_t playerIndex = 0;
+	for (int y = blockMin.second; y <= blockMax.second; ++y) {
+		RenderObjectsOnBlockY(g, sprites, y, blockMin.first, blockMax.first, playerIndex);
+	}
+}
+
+void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin, int xMax, size_t& playerIndex) {
+	_TemporaryVector.resize(xMax + 1);
+	for (int x = xMin; x <= xMax; ++x)
+		_TemporaryVector[x] = 0;
+	
+	while (true) {
+		int yMin = _InfiniteDist * TILE_SIZE;
+		int xDraw = -1;
+
+		for (int x = xMin; x <= xMax; ++x) {
+			int& ind = _TemporaryVector[x];
+			if (ind != (int) ObjectBlock[x][y].size() && 
+				ObjectBlock[x][y][ind]->y < yMin) {
+				yMin = ObjectBlock[x][y][ind]->y;
+				xDraw = x;
+			}
+		}
+		if (playerIndex != Players.size() &&
+			Players[playerIndex].y < yMin) {
+			yMin = Players[playerIndex].y;
+			xDraw = xMax + 1;
+		}
+
+		if (xDraw == -1)
+			break;
+
+		if (xDraw != xMax + 1) {
+			int& ind = _TemporaryVector[xDraw];
+			ObjectBlock[xDraw][y][ind]->Draw(g, sprites);
+			++ind;
+		} else {
+			Players[playerIndex].Draw(g, sprites);
+			++playerIndex;
+		}
 	}
 }
 
@@ -756,11 +844,29 @@ void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 
 void Map::RenderTiles(Game* g, SpriteStruct* sprites) {
 	auto img_tile = sprites->img_tile;
-	for (int x = 0; x < MAP_SIZE_X; x++) {
-		for (int y = 0; y < MAP_SIZE_Y; y++) {
-			DrawImage(g, img_tile[tile[x][y]],
-				(x * TILE_SIZE) + g->camera.x,
-				(y * TILE_SIZE) + g->camera.y, 0);
+	if (_RenderMode == 0) {
+		for (int x = 0; x < MAP_SIZE_X; ++x) {
+			for (int y = 0; y < MAP_SIZE_Y; ++y) {
+				DrawImage(g, img_tile[tile[x][y]],
+					(x * TILE_SIZE) + g->camera.x,
+					(y * TILE_SIZE) + g->camera.y, 0);
+			}
+		}
+	} else {
+		int xMin = (-g->camera.x) / TILE_SIZE - 2;
+		int xMax = (-g->camera.x + g->BWIDTH) / TILE_SIZE + 2;
+		int yMin = (-g->camera.y) / TILE_SIZE - 2;
+		int yMax = (-g->camera.y + g->BHEIGHT) / TILE_SIZE + 2;
+		xMin = std::max(xMin, 0);
+		xMax = std::min(xMax, MAP_SIZE_X - 1);
+		yMin = std::max(yMin, 0);
+		yMax = std::min(yMax, MAP_SIZE_Y - 1);
+		for (int x = xMin; x <= xMax; ++x) {
+			for (int y = yMin; y <= yMax; ++y) {
+				DrawImage(g, img_tile[tile[x][y]],
+					(x * TILE_SIZE) + g->camera.x,
+					(y * TILE_SIZE) + g->camera.y, 0);
+			}
 		}
 	}
 }
@@ -908,17 +1014,14 @@ void Map::SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]) {
 }
 
 void UpdateMapAnimations(Game* g) {
-	using EType = MapObjectInfo::EMapObjectType;
-	for (auto& obj : g->map.object) {
-		if (obj.Type == EType::Grass_0) {
-			// Decrement timer
-			obj.AnimTimer--;
+	for (auto& obj : g->map.GrassObjects) {
+		// Decrement timer
+		obj->AnimTimer--;
 
-			// Revert to idle grass if timer ran out
-			if (obj.AnimTimer == 0) {
-				obj.AnimTimer = -1;
-				obj.ChangeSpriteID(ObjectSprite::Grass_0);
-			}
+		// Revert to idle grass if timer ran out
+		if (obj->AnimTimer == 0) {
+			obj->AnimTimer = -1;
+			obj->SpriteId = EObjectSprite::EObjectSpriteGrass_0;
 		}
 	}
 }

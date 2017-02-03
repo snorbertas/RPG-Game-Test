@@ -79,6 +79,9 @@ public:
 		}
 	}
 
+	// Sort objects and create blocks
+	void OrganizeObjects();
+
 	// Writes all the solid CollisionBoxes into a vector
 	void CreateSolids();
 
@@ -87,45 +90,45 @@ public:
 
 	
 	/* ====================== SortPlayerObjects =========================
-	 * Sorts the map object list in a way so all players are in correct
-	 * locations. This function assumes that all current objects are already
-	 * sorted by their y coordinate (smallest to highest).
+	 *	Sorts the map object list in a way so all players are in correct
+	 *	locations. This function assumes that all current objects are already
+	 *	sorted by their y coordinate (smallest to highest).
 	 */
 		void SortPlayerObjects(Game* g);
 
 
 	/* ======================== RenderObjects ===========================
-	 * Renders all objects on map (fauna, players, etc.)
+	 *	Renders all objects on map (fauna, players, etc.)
 	 */
 		void RenderObjects(Game* g, SpriteStruct* sprites);
 
 
 	/* ========================== RenderGird ============================
-	 * Renders the grid (for debug only)
+	 *	Renders the grid (for debug only)
 	 */
 		void RenderGrid(Game* g, SpriteStruct* sprites);
 
 
 	/* ========================= RenderTiles ============================
-	 * Renders the map's tiles
+	 *	Renders the map's tiles
 	 */
 		void RenderTiles(Game* g, SpriteStruct* sprites);
 
 
 	/* ========= GenerateRandomMapWithAppropriateNeighbours =============
-	 * Generates a random map with appropiate neighbour tiles
+	 *	Generates a random map with appropiate neighbour tiles
 	 */
 		void GenerateRandomMapWithAppropriateNeighbours();
 
 
 	/* =================== GenerateMapWithBaseBiome =====================
-	 * Generates a random map with a random base biome
+	 *	Generates a random map with a random base biome
 	 */
 		void GenerateMapWithBaseBiome();
 
 
 	/* ====================== GenerateRandomShape =======================
-	 * Generates a random shape in a biome matrix within the square specified
+	 *	Generates a random shape in a biome matrix within the square specified
 	 */
 		void GenerateRandomStamps(Biome zone[][MAP_SIZE_Y],
 			Biome new_biome,					// Desired biome to generate
@@ -134,11 +137,29 @@ public:
 
 
 	/* ====================== SortSpritesFromZone =======================
-	 * Sorts all sprites in the map based on the zone specified
+	 *	Sorts all sprites in the map based on the zone specified
 	 */
 		void SortSpritesFromZone(Biome zone[][MAP_SIZE_Y]);
 
+	/* ======================== ChangeRenderMode ========================
+	 *	Changes render mode
+	 *
+	 *	@param newRenderMode new render mode for assign
+	 *	@return false/true whether new render mode wasn't/was set
+	 */
+		bool ChangeRenderMode(int newRenderMode);
+
+	/* ========================= GetRenderMode ==========================
+	 *	Returns current render mode
+	 */
+		int GetRenderMode();
+
 private:
+	/* ======================== RenderObjectsOnBlockY ===========================
+	 *	Renders all objects corresponding to block y (fauna, players, etc.)
+	 */
+		void RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin, int xMax, size_t& playerIndex);
+
 	/* =========================== BuildRoads ===========================
 	 *	Generates roads from already generated water bioms map
 	 */
@@ -149,7 +170,7 @@ private:
 	 *
 	 *	@param a first junction
 	 *	@param b second junction
-	 *	@return false/true if road hasn't/has been built
+	 *	@return false/true if road wasn't/was built
 	 */
 		bool BuildRoad(std::pair<int, int> a, std::pair<int, int> b);
 
@@ -179,6 +200,14 @@ private:
 	 *	Starting tiles are water tiles
 	 */
 		void BFSInitWater();
+		
+	/* ======================== BFSInitWaterDirt ========================
+	 *	Initializes map dist array for BFSMarkTiles
+	 *	Marks starting tiles with 0
+	 *	Marks non-starting tiles with _InfiniteDist
+	 *	Starting tiles are water/dirt tiles
+	 */
+		void BFSInitWaterDirt();
 
 	 /* ======================== PutRoadSegment =========================
 	 *	Puts road tile with a thickness
@@ -215,14 +244,6 @@ private:
 	 */
 		bool AdjustDirtPlacePatch(int x, int y);
 
-	/* ======================= PlaceGroundObject ========================
-	 *	Tries to place object on the ground
-	 *
-	 *	@param objectId map object id
-	 *	@return false/true if object hasn't/has been placed
-	 */
-		bool PlaceMapObject(int objectId);
-
 	/* ===================== PopulateRandomObjects ======================
 	 *	Generates random flowers, trees, bushes, etc.
 	 */
@@ -233,6 +254,16 @@ private:
 	 */
 		void GenerateForest();
 		
+	/* ======================== ViewForestPlace =========================
+	 *	Walks on free grass territory starting from (xs, ys)
+	 *	All free tiles are in _Queue after this function
+	 *
+	 *	@param xs x for starting tile
+	 *	@param ys y for starting tile
+	 *	@return number of tiles in free space
+	 */
+		int ViewForestPlace(int xs, int ys);
+		
 	/* ============================= InMap ==============================
 	 *	Checks whether point is within map or not
 	 */
@@ -242,28 +273,49 @@ private:
 	 *	Builds simplified tile by 4 sides
 	 */
 		TilesInfo::Tile BuildTileBySides(int x, int y);
+		
+	/* ========================= BlockForObject =========================
+	 *	Finds appropriate block for object
+	 */
+		inline std::pair<int, int> BlockForObject(const MapObjectInfo::MapObject& obj);
+		
+	/* ========================= BlockForPoint ==========================
+	 *	Finds appropriate block for point on map
+	 */
+		inline std::pair<int, int> BlockForPoint(int x, int y);
 
 public:
-	int tile[MAP_SIZE_X][MAP_SIZE_Y];			// tile[x][y]
-	std::list<MapObjectInfo::MapObject> object;	// Map objects (fauna, etc.)
-	std::vector<CollisionBox> solid;			// Solids (collisions/can't pass trough)
-	std::vector<CollisionBox> except_solid;		// Special collision boxes to except solid collision
-	std::vector<MapObjectInfo::MapObject> bone;	// Bones hidden on the map
-	int seed;									// Seed for random generation
-	int render_mode = 0;
+	static const int OBJECT_BLOCKS_CNT = 10;		// Blocks per axis
+public:
+	int tile[MAP_SIZE_X][MAP_SIZE_Y];				// tile[x][y]
+	std::vector<CollisionBox> solid;				// Solids (collisions/can't pass trough)
+	std::vector<CollisionBox> except_solid;			// Special collision boxes to except solid collision
+	std::vector<MapObjectInfo::MapObject> Objects;	// Map objects (fauna, etc.)
+	std::vector<MapObjectInfo::MapObject*> ObjectBlock[OBJECT_BLOCKS_CNT][OBJECT_BLOCKS_CNT]; // Map objects in block
+	std::vector<MapObjectInfo::MapObject*> GrassObjects; // Map grass objects
+	std::vector<MapObjectInfo::MapObject> Players;	// Players
+	std::vector<MapObjectInfo::MapObject> Bones;	// Bones hidden on the map
+	int seed;										// Seed for random generation
+private:
+	int _RenderMode = 0;
+	int _RenderModeCnt = 2;
 
 private:
 	int _Dist[MAP_SIZE_X][MAP_SIZE_Y];					// Distance to tile array
 	std::vector<std::pair<int, int>> _Queue;			// Tile queue
 	std::vector<std::pair<int, int>> _TemporaryQueue;	// Tile queue for temporary needs
+	std::vector<int> _TemporaryVector;					// Vector for temporary needs
 
 private:
 	static const int _NeighbourWayCnt = 4;
 	static const std::pair<int, int> _NeighbourWay[_NeighbourWayCnt];
 	static const int _LakesToRoadsSpawnDist = 1;
+	static const int _WaterDirtToForestSpawnDist = 2;
 	static const int _JunctionChance = 70;
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
+	static const int _MinForestTiles = 10;
+	static const int _ForestChanceAddition = 10;
 	static const int _InfiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
 };
 

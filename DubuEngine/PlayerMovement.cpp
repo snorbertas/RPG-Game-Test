@@ -196,26 +196,24 @@ void HandlePlayerMovementLogic(Game* g) {
 			if (mov_x < 0) g->pl.facing = Player::FacingLeft;
 		}
 
+		using EType = MapObjectInfo::EMapObjectType;
 		// Check collision with idle grass for animation
-		for (auto it = g->map.object.begin(); it != g->map.object.end(); it++) {
-			if (it->Type == MapObjectInfo::EMapObjectType::Grass_0) {
-				if (it->GetSpriteID() == ObjectSprite::Grass_0) {
-					// Check collision
-					CollisionBox grass(it->x + 8, it->y + 8, 56, 56);
-					CollisionBox player(g->pl.x, g->pl.y, g->pl.w, g->pl.h);
+		for (auto& obj : g->map.GrassObjects) {
+			if (obj->SpriteId == EObjectSpriteGrass_0) {
+				// Check collision
+				CollisionBox grass(obj->x + 8, obj->y + 8, 56, 56);
+				CollisionBox player(g->pl.x, g->pl.y, g->pl.w, g->pl.h);
 
-					// Adjust the player box
-					player.x += 28;
-					player.y += 56;
-					player.w = 8;
-					player.h = 8;
+				// Adjust the player box
+				player.x += 28;
+				player.y += 56;
+				player.w = 8;
+				player.h = 8;
 
-					// Animate if colliding
-					if (collide(grass, player)) {
-						it->Type = MapObjectInfo::EMapObjectType::Grass_0;
-						it->ChangeSpriteID(ObjectSprite::Grass_1);
-						it->AnimTimer = SecondsToTicks(0.3);
-					}
+				// Animate if colliding
+				if (collide(grass, player)) {
+					obj->SpriteId = EObjectSpriteGrass_1;
+					obj->AnimTimer = SecondsToTicks(0.3);
 				}
 			}
 		}

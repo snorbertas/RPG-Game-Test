@@ -15,7 +15,7 @@
 		ALLEGRO_BITMAP* img,			// Image Pointer
 		int x, int y,					// x, y coordinates
 		int flags,						// 1 = flip horizontally
-		float opacity=1);				// Transperency 0 to 1 (0 = invisible)
+		float opacity=1);				// Transparency 0 to 1 (0 = invisible)
 
 
 /* =========================== DrawScaledImage ============================

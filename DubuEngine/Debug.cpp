@@ -35,6 +35,13 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 	// Press
 	// Register different keys to help change/debug variables live
 	if (!release && !g->chat.type_chat) {
+		if (g->debug.renderChange) {
+			g->debug.renderChange = false;
+			if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
+				g->map.ChangeRenderMode(kid - ALLEGRO_KEY_PAD_0);
+				return ;
+			}
+		}
 		if (kid == ALLEGRO_KEY_F1) {
 			// PANIC BUTTON
 			g->BWIDTH = 1280;
@@ -44,8 +51,10 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 		}
 		if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
 			g->map.seed = kid - ALLEGRO_KEY_PAD_0;
-		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_Z) {
+		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_H) {
 			g->map.GenerateRandom(kid - ALLEGRO_KEY_A);
+		} else if (kid == ALLEGRO_KEY_R) {
+			g->debug.renderChange = true;
 		} else if (kid == ALLEGRO_KEY_F5) {
 			g->pl.ticks_to_move--;
 		} else if (kid == ALLEGRO_KEY_F6) {

@@ -3,6 +3,7 @@
 
 struct Debug {
 	bool grid = false;
+	bool renderChange = false;
 };
 
 int RegisterDebugEvents(TimerEventFunction* t, MouseEventFunction* c, KeyboardEventFunction* p);

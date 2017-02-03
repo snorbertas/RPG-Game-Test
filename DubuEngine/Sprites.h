@@ -27,23 +27,24 @@ struct SpriteStruct {
 	ALLEGRO_BITMAP *img_gfx[MAX_GFX_SPRITES];
 };
 
-enum ObjectSprite {
-	/* These are the Map object sprites*/
-	Bush_SG = 0,
-	Bush_BG = 1,
-	Bush_SD = 2,
-	Bush_BD = 3,
-	Bush_SO = 4,
-	Bush_BO = 5,
-	Tree_BG = 6,
-	Tree_SG = 8,
-	Tree_BD = 10,
-	Tree_SD = 12,
-	Tree_BO = 14,
-	Tree_SO = 16,
-	Flower_R = 18,
-	Flower_C = 19,
-	Flower_P = 20,
-	Grass_0 = 21,
-	Grass_1 = 22
+enum EObjectSprite {
+	/* Map object sprites*/
+	EObjectSpriteUndefined = -1, // for objects w/o sprite
+	EObjectSpriteBush_SG = 0,
+	EObjectSpriteBush_BG = 1,
+	EObjectSpriteBush_SD = 2,
+	EObjectSpriteBush_BD = 3,
+	EObjectSpriteBush_SO = 4,
+	EObjectSpriteBush_BO = 5,
+	EObjectSpriteTree_BG = 6,
+	EObjectSpriteTree_SG = 8,
+	EObjectSpriteTree_BD = 10,
+	EObjectSpriteTree_SD = 12,
+	EObjectSpriteTree_BO = 14,
+	EObjectSpriteTree_SO = 16,
+	EObjectSpriteFlower_R = 18,
+	EObjectSpriteFlower_C = 19,
+	EObjectSpriteFlower_P = 20,
+	EObjectSpriteGrass_0 = 21,
+	EObjectSpriteGrass_1 = 22
 };

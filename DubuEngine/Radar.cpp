@@ -10,9 +10,9 @@
 */
 
 void CalculateBoneDistances(Game* g) {
-	for (int i = 0; i < g->map.bone.size(); i++) {
-		int bone_x = g->map.bone[i].x + (Map::TILE_SIZE / 2);
-		int bone_y = g->map.bone[i].y + (Map::TILE_SIZE / 2);
+	for (int i = 0; i < g->map.Bones.size(); i++) {
+		int bone_x = g->map.Bones[i].x + (Map::TILE_SIZE / 2);
+		int bone_y = g->map.Bones[i].y + (Map::TILE_SIZE / 2);
 		double player_x = g->pl.x + (Map::TILE_SIZE / 2);
 		double player_y = g->pl.y + (Map::TILE_SIZE / 2);
 		double distance_x = (bone_x - player_x) / Map::TILE_SIZE;
@@ -20,7 +20,7 @@ void CalculateBoneDistances(Game* g) {
 		if (distance_x < 0) distance_x *= -1;
 		if (distance_y < 0) distance_y *= -1;
 		double distance = fabs(sqrt(pow(distance_x, 2) + pow(distance_y, 2)));
-		g->map.bone[i].Distance = distance;
+		g->map.Bones[i].Distance = distance;
 	}
 }
 
@@ -31,14 +31,14 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	if (g->radar.mode == Radar::Mode::DISTANCE_SNIFF) {
 		// Scan for closest bone (within radar range)
 		MapObjectInfo::MapObject* closest_bone = NULL;
-		for (int i = 0; i < g->map.bone.size(); i++) {
-			if (g->map.bone[i].Distance <= g->radar.range) {
+		for (int i = 0; i < g->map.Bones.size(); i++) {
+			if (g->map.Bones[i].Distance <= g->radar.range) {
 				if (closest_bone == NULL) {
-					closest_bone = &g->map.bone[i];
+					closest_bone = &g->map.Bones[i];
 				}
 				else {
-					if (closest_bone->Distance > g->map.bone[i].Distance) {
-						closest_bone = &g->map.bone[i];
+					if (closest_bone->Distance > g->map.Bones[i].Distance) {
+						closest_bone = &g->map.Bones[i];
 					}
 				}
 			}
@@ -87,12 +87,12 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
 		// Scan for closest bone
 		MapObjectInfo::MapObject* closest_bone = NULL;
-		for (int i = 0; i < g->map.bone.size(); i++) {
+		for (int i = 0; i < g->map.Bones.size(); i++) {
 			if (closest_bone == NULL) {
-				closest_bone = &g->map.bone[i];
+				closest_bone = &g->map.Bones[i];
 			} else {
-				if (closest_bone->Distance > g->map.bone[i].Distance) {
-					closest_bone = &g->map.bone[i];
+				if (closest_bone->Distance > g->map.Bones[i].Distance) {
+					closest_bone = &g->map.Bones[i];
 				}
 			}
 		}

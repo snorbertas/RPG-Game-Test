@@ -4,6 +4,7 @@
 
 class Game;
 struct SpriteStruct;
+enum EObjectSprite;
 
 class MapObjectInfo {
 private:
@@ -22,40 +23,44 @@ public:
 	//	P = Purple
 	//	Player_L = Local player
 	//	Player_M = Multi player
-	enum class EMapObjectType {
-		Bush_SG = 0,
-		Bush_BG,
-		Bush_SD,
-		Bush_BD,
-		Bush_SO,
-		Bush_BO,
-		Tree_BG,
-		Tree_SG,
-		Tree_BD,
-		Tree_SD,
-		Tree_BO,
-		Tree_SO,
-		Flower_R,
-		Flower_C,
-		Flower_P,
-		Grass_0,
-		Bone,
-		Player_L,
-		Player_M,
-		EMapObjectType_Count
+	enum EMapObjectType {
+		EMapObjectBush_SG = 0,
+		EMapObjectBush_BG,
+		EMapObjectBush_SD,
+		EMapObjectBush_BD,
+		EMapObjectBush_SO,
+		EMapObjectBush_BO,
+		EMapObjectTree_BG,
+		EMapObjectTree_SG,
+		EMapObjectTree_BD,
+		EMapObjectTree_SD,
+		EMapObjectTree_BO,
+		EMapObjectTree_SO,
+		EMapObjectFlower_R,
+		EMapObjectFlower_C,
+		EMapObjectFlower_P,
+		EMapObjectGrass,
+		EMapObjectBone,
+		EMapObjectPlayer_L,
+		EMapObjectPlayer_M,
+		EMapObjectCount
 	};
 
+private:
+	static const EMapObjectType BushLowestID = EMapObjectBush_SG;
+	static const EMapObjectType BushHighestID = EMapObjectBush_BO;
+	static const EMapObjectType TreeLowestID = EMapObjectTree_BG;
+	static const EMapObjectType TreeHighestID = EMapObjectTree_SO;
+	static const EMapObjectType GreeneryLowestID = EMapObjectBush_SG;
+	static const EMapObjectType GreeneryHighestID = EMapObjectFlower_P;
+
+public:
 	class MapObject {
 	friend class MapObjectInfo;
 	private:
-		MapObject(int type, int spriteId, int numberOfSprites) :
-			_SpriteId(spriteId), 
-			_NumberOfSprites(numberOfSprites),
-			Type(static_cast<EMapObjectType>(type)) {}
-
-	public:
-		int GetSpriteID() { return _SpriteId; }
-		void ChangeSpriteID(int sprite_id) { _SpriteId = sprite_id; }
+		MapObject(int type, EObjectSprite spriteId) :
+			Type(static_cast<EMapObjectType>(type)), 
+			SpriteId(spriteId) {}
 
 	public:
 		bool IsBush();
@@ -70,23 +75,20 @@ public:
 	public:
 		int x = 0;
 		int y = 0;
+		int w = 64; // sprite width
+		int h = 64; // sprite width
 		double Distance = 0;
 		int ID; // for multi player objects
 		int AnimTimer = -1;	// -1 = Disabled, 0 = Done, 0 > Frames left
-
-	public:
-		int w = 64;
-		int h = 64;
+		EObjectSprite SpriteId;
 		EMapObjectType Type;
-	private:
-		int _SpriteId = -1;
-		int _NumberOfSprites = 0;
-		static const int MIN_ID = -1;
 	};
 
 public:
+	static MapObjectInfo::MapObject GenerateObjectByType(EMapObjectType type, int x = 0, int y = 0, int id = -1);
 	static MapObjectInfo::MapObject GenerateGreenery(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateBone(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GenerateTree(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateLocalPlayer(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
 
@@ -95,6 +97,5 @@ private:
 	static CollisionBox GenerateSmallTreeBox(int x, int y);
 
 private:
-	static const size_t _ObjectsCount = (size_t)EMapObjectType::EMapObjectType_Count;
-	static const MapObject _Objects[_ObjectsCount];
+	static const MapObject _Objects[EMapObjectCount];
 };

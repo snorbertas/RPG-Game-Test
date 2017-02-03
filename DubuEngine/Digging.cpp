@@ -16,15 +16,15 @@ void HandleDigging(Game * g, Player* p) {
 		if (p->dig_timer <= 0) {
 			p->digging = false;
 			if (p->pID == -1) {
-				for (int i = 0; i < g->map.bone.size(); i++) {
+				for (int i = 0; i < g->map.Bones.size(); i++) {
 					CollisionBox col_player(
 						g->pl.x + g->pl.w / 2,
 						g->pl.y + g->pl.h / 2,
 						1, 1);
-					CollisionBox col_bone(g->map.bone[i].x, g->map.bone[i].y, 64, 64);
+					CollisionBox col_bone(g->map.Bones[i].x, g->map.Bones[i].y, 64, 64);
 					if (collide(col_player, col_bone)) {
-						g->map.bone[i] = g->map.bone.back();
-						g->map.bone.pop_back();
+						g->map.Bones[i] = g->map.Bones.back();
+						g->map.Bones.pop_back();
 						break;
 					}
 				}
