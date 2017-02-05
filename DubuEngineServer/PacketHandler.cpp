@@ -25,8 +25,6 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 			break;
 		}
 	} else if (deriv == DEP_DERIV_1BUFF) {
-		switch (type) {
-		}
 	} else if (deriv == DEP_DERIV_2BUFF) {
 		switch (type) {
 		case PACKET_TYPE_AUTHENTICATE:

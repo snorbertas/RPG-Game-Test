@@ -409,12 +409,13 @@ void Map::GenerateForest() {
 			int freeSpaceSize = ViewForestPlace(i, j);
 			if (freeSpaceSize < _MinForestTiles)
 				continue;
-			/*int chance = rand() % (freeSpaceSize + _ForestChanceAddition);
+			int chance = rand() % (freeSpaceSize + _ForestChanceAddition);
 			if (chance >= freeSpaceSize)
-				continue;*/
+				continue;
 
 			for (const auto& curTile : _Queue) {
-				Objects.push_back(MapObjectInfo::GenerateTree(curTile.first * TILE_SIZE, curTile.second * TILE_SIZE));
+				Objects.push_back(MapObjectInfo::GenerateTree(curTile.first * TILE_SIZE + (rand() % 21 - 10), 
+															  curTile.second * TILE_SIZE + (rand() % 21 - 10)));
 			}
 		}
 	}
@@ -821,12 +822,12 @@ void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 	// Temp (Draw grid and collision boxes for solids)
 
 	if (g->debug.grid) {
-		for (int i = 0; i < solid.size(); i++) {
+		for (size_t i = 0; i < solid.size(); i++) {
 			DrawRectangle(g,
 				solid[i].x + g->camera.x, solid[i].y + g->camera.y,
 				solid[i].w, solid[i].h, 255, 0, 0, 0.2);
 		}
-		for (int i = 0; i < except_solid.size(); i++) {
+		for (size_t i = 0; i < except_solid.size(); i++) {
 			DrawRectangle(g,
 				except_solid[i].x + g->camera.x, except_solid[i].y + g->camera.y,
 				except_solid[i].w, except_solid[i].h, 0, 0, 255, 0.2);
@@ -844,29 +845,19 @@ void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 
 void Map::RenderTiles(Game* g, SpriteStruct* sprites) {
 	auto img_tile = sprites->img_tile;
-	if (_RenderMode == 0) {
-		for (int x = 0; x < MAP_SIZE_X; ++x) {
-			for (int y = 0; y < MAP_SIZE_Y; ++y) {
-				DrawImage(g, img_tile[tile[x][y]],
-					(x * TILE_SIZE) + g->camera.x,
-					(y * TILE_SIZE) + g->camera.y, 0);
-			}
-		}
-	} else {
-		int xMin = (-g->camera.x) / TILE_SIZE - 2;
-		int xMax = (-g->camera.x + g->BWIDTH) / TILE_SIZE + 2;
-		int yMin = (-g->camera.y) / TILE_SIZE - 2;
-		int yMax = (-g->camera.y + g->BHEIGHT) / TILE_SIZE + 2;
-		xMin = std::max(xMin, 0);
-		xMax = std::min(xMax, MAP_SIZE_X - 1);
-		yMin = std::max(yMin, 0);
-		yMax = std::min(yMax, MAP_SIZE_Y - 1);
-		for (int x = xMin; x <= xMax; ++x) {
-			for (int y = yMin; y <= yMax; ++y) {
-				DrawImage(g, img_tile[tile[x][y]],
-					(x * TILE_SIZE) + g->camera.x,
-					(y * TILE_SIZE) + g->camera.y, 0);
-			}
+	int xMin = (-g->camera.x) / TILE_SIZE - 2;
+	int xMax = (-g->camera.x + g->BWIDTH) / TILE_SIZE + 2;
+	int yMin = (-g->camera.y) / TILE_SIZE - 2;
+	int yMax = (-g->camera.y + g->BHEIGHT) / TILE_SIZE + 2;
+	xMin = std::max(xMin, 0);
+	xMax = std::min(xMax, MAP_SIZE_X - 1);
+	yMin = std::max(yMin, 0);
+	yMax = std::min(yMax, MAP_SIZE_Y - 1);
+	for (int x = xMin; x <= xMax; ++x) {
+		for (int y = yMin; y <= yMax; ++y) {
+			DrawImage(g, img_tile[tile[x][y]],
+				(x * TILE_SIZE) + g->camera.x,
+				(y * TILE_SIZE) + g->camera.y, 0);
 		}
 	}
 }

@@ -10,7 +10,7 @@
 */
 
 void CalculateBoneDistances(Game* g) {
-	for (int i = 0; i < g->map.Bones.size(); i++) {
+	for (size_t i = 0; i < g->map.Bones.size(); i++) {
 		int bone_x = g->map.Bones[i].x + (Map::TILE_SIZE / 2);
 		int bone_y = g->map.Bones[i].y + (Map::TILE_SIZE / 2);
 		double player_x = g->pl.x + (Map::TILE_SIZE / 2);
@@ -31,7 +31,7 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	if (g->radar.mode == Radar::Mode::DISTANCE_SNIFF) {
 		// Scan for closest bone (within radar range)
 		MapObjectInfo::MapObject* closest_bone = NULL;
-		for (int i = 0; i < g->map.Bones.size(); i++) {
+		for (size_t i = 0; i < g->map.Bones.size(); i++) {
 			if (g->map.Bones[i].Distance <= g->radar.range) {
 				if (closest_bone == NULL) {
 					closest_bone = &g->map.Bones[i];
@@ -87,7 +87,7 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
 		// Scan for closest bone
 		MapObjectInfo::MapObject* closest_bone = NULL;
-		for (int i = 0; i < g->map.Bones.size(); i++) {
+		for (size_t i = 0; i < g->map.Bones.size(); i++) {
 			if (closest_bone == NULL) {
 				closest_bone = &g->map.Bones[i];
 			} else {

@@ -30,7 +30,7 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 	// Render sniff info (debug/temp)
 	if (g->debug.grid) {
-		for (int i = 0; i < g->map.Bones.size(); i++) {
+		for (size_t i = 0; i < g->map.Bones.size(); i++) {
 			DrawOutline(g, g->map.Bones[i].x + g->camera.x, g->map.Bones[i].y + g->camera.y,
 				Map::TILE_SIZE, Map::TILE_SIZE, 255, 255, 255, 3);
 			float r_x = (float)g->s_x / (float)g->BWIDTH;

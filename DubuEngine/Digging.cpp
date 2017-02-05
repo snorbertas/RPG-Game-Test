@@ -16,7 +16,7 @@ void HandleDigging(Game * g, Player* p) {
 		if (p->dig_timer <= 0) {
 			p->digging = false;
 			if (p->pID == -1) {
-				for (int i = 0; i < g->map.Bones.size(); i++) {
+				for (size_t i = 0; i < g->map.Bones.size(); i++) {
 					CollisionBox col_player(
 						g->pl.x + g->pl.w / 2,
 						g->pl.y + g->pl.h / 2,

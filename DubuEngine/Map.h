@@ -298,7 +298,7 @@ public:
 	int seed;										// Seed for random generation
 private:
 	int _RenderMode = 0;
-	int _RenderModeCnt = 2;
+	int _RenderModeCnt = 1;
 
 private:
 	int _Dist[MAP_SIZE_X][MAP_SIZE_Y];					// Distance to tile array

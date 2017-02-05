@@ -24,8 +24,6 @@ void HandlePacket(Game* g, Packet* p) {
 			break;
 		}
 	} else if (deriv == DEP_DERIV_1BUFF) {
-		switch (type) {
-		}
 	} else if (deriv == DEP_DERIV_2BUFF) {
 		switch (type) {
 			// Temp

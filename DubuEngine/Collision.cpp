@@ -11,11 +11,11 @@ bool PlayerMoveCollides(Player& pl, Map& map, double mov_x, double mov_y) {
 	o1.h = 8;
 
 	// Loop trough all collision objects
-	for (int i = 0; i < map.solid.size(); i++) {
+	for (size_t i = 0; i < map.solid.size(); i++) {
 		if (collide(o1, map.solid[i])) {
 			// Let's make sure it's not excepted
 			bool collision_found = true;
-			for (int e = 0; e < map.except_solid.size(); e++) {
+			for (size_t e = 0; e < map.except_solid.size(); e++) {
 				if (collide(o1, map.except_solid[e])) {
 					collision_found = false;
 				}
