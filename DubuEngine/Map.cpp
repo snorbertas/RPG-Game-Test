@@ -49,14 +49,14 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 		}
 	}
 
-	BuildRoads();
-
 	for (int i = 0; i < MAP_SIZE_X; ++i) {
 		for (int j = 0; j < MAP_SIZE_Y; ++j) {
 			if (tile[i][j] == 4)
 				tile[i][j] += rand() % 3;
 		}
 	}
+
+	BuildRoads();
 
 	GenerateForest();
 }
@@ -409,15 +409,23 @@ void Map::GenerateForest() {
 			int freeSpaceSize = ViewForestPlace(i, j);
 			if (freeSpaceSize < _MinForestTiles)
 				continue;
-			int chance = rand() % (freeSpaceSize + _ForestChanceAddition);
-			if (chance >= freeSpaceSize)
-				continue;
 
-			for (const auto& curTile : _Queue) {
-				Objects.push_back(MapObjectInfo::GenerateTree(curTile.first * TILE_SIZE + (rand() % 21 - 10), 
-															  curTile.second * TILE_SIZE + (rand() % 21 - 10)));
-			}
+			GenerateForestWithDensity(1);
 		}
+	}
+}
+
+void Map::GenerateForestWithDensity(double density) {
+	int trees = static_cast<int>(_Queue.size() * density + 1);
+	for (int i = 0; i < trees; ++i) {
+		int tileIndex = rand() % static_cast<int>(_Queue.size());
+		auto& t = _Queue[tileIndex];
+		if (_ForestMode == 0)
+			Objects.push_back(MapObjectInfo::GenerateTree(t.first * TILE_SIZE, 
+														  t.second * TILE_SIZE));
+		else
+			Objects.push_back(MapObjectInfo::GenerateTree(t.first  * TILE_SIZE + (rand() % TILE_SIZE - TILE_SIZE / 2), 
+														  t.second * TILE_SIZE - (rand() % TILE_SIZE)));
 	}
 }
 
@@ -769,6 +777,15 @@ bool Map::ChangeRenderMode(int newRenderMode) {
 
 int Map::GetRenderMode() {
 	return _RenderMode;
+}
+
+bool Map::ChangeForestMode(int newForestMode) {
+	if (newForestMode >= 0 && newForestMode < _ForestModeCnt) {
+		_ForestMode = newForestMode;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void Map::RenderObjects(Game* g, SpriteStruct* sprites) {

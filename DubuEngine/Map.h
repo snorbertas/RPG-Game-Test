@@ -154,6 +154,14 @@ public:
 	 */
 		int GetRenderMode();
 
+	/* ======================== ChangeForestMode ========================
+	 *	Changes forest generation mode
+	 *
+	 *	@param newForestMode new forest mode for assign
+	 *	@return false/true whether new forest mode wasn't/was set
+	 */
+		bool ChangeForestMode(int newForestMode);
+
 private:
 	/* ======================== RenderObjectsOnBlockY ===========================
 	 *	Renders all objects corresponding to block y (fauna, players, etc.)
@@ -253,6 +261,15 @@ private:
 	 *	Generates forest bioms
 	 */
 		void GenerateForest();
+
+	/* =================== GenerateForestWithDensity ====================
+	 *	Generates forest biom with given density
+	 *	All forest tiles should be put in _Queue before calling this function
+	 *	Density is related to tiles, density = 1 means there will be approximately 1 tree per tile
+	 *
+	 *	@param density forest density
+	 */
+		void GenerateForestWithDensity(double density);
 		
 	/* ======================== ViewForestPlace =========================
 	 *	Walks on free grass territory starting from (xs, ys)
@@ -299,6 +316,8 @@ public:
 private:
 	int _RenderMode = 0;
 	int _RenderModeCnt = 1;
+	int _ForestMode = 0;
+	int _ForestModeCnt = 2;
 
 private:
 	int _Dist[MAP_SIZE_X][MAP_SIZE_Y];					// Distance to tile array
@@ -315,7 +334,6 @@ private:
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
 	static const int _MinForestTiles = 10;
-	static const int _ForestChanceAddition = 10;
 	static const int _InfiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
 };
 
