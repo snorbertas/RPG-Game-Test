@@ -14,7 +14,7 @@
 #include "GameRenderer.h"
 #include "Digging.h"
 
-void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
+void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render Tiles
 	g->map.RenderTiles(g, sprites);
 
@@ -41,7 +41,6 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				ALLEGRO_ALIGN_LEFT, "%f", g->map.Bones[i].Distance);
 		}
 	}
-
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {

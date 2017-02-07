@@ -410,7 +410,7 @@ void Map::GenerateForest() {
 			if (freeSpaceSize < _MinForestTiles)
 				continue;
 
-			GenerateForestWithDensity(1);
+			GenerateForestWithDensity(0.75);
 		}
 	}
 }
@@ -802,6 +802,8 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 	_TemporaryVector.resize(xMax + 1);
 	for (int x = xMin; x <= xMax; ++x)
 		_TemporaryVector[x] = 0;
+
+	int yPlayerMax = static_cast<int>((MAP_SIZE_Y * TILE_SIZE) * ((y + 1) / double(OBJECT_BLOCKS_CNT)) + 1e-9) - 1;
 	
 	while (true) {
 		int yMin = _InfiniteDist * TILE_SIZE;
@@ -816,6 +818,7 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 			}
 		}
 		if (playerIndex != Players.size() &&
+			Players[playerIndex].y <= yPlayerMax &&
 			Players[playerIndex].y < yMin) {
 			yMin = Players[playerIndex].y;
 			xDraw = xMax + 1;
