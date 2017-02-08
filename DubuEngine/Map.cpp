@@ -804,36 +804,40 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 		_TemporaryVector[x] = 0;
 
 	int yPlayerMax = static_cast<int>((MAP_SIZE_Y * TILE_SIZE) * ((y + 1) / double(OBJECT_BLOCKS_CNT)) + 1e-9) - 1;
-	
-	while (true) {
-		int yMin = _InfiniteDist * TILE_SIZE;
-		int xDraw = -1;
+
+	bool draw = true;
+	while (draw) {
+		draw = false;
+		int yPrev = _InfiniteDist;
+		int yPlayer = _InfiniteDist;
+		if (playerIndex != Players.size() && Players[playerIndex].y <= yPlayerMax)
+			yPlayer = Players[playerIndex].y;
 
 		for (int x = xMin; x <= xMax; ++x) {
-			int& ind = _TemporaryVector[x];
-			if (ind != (int) ObjectBlock[x][y].size() && 
-				ObjectBlock[x][y][ind]->y < yMin) {
-				yMin = ObjectBlock[x][y][ind]->y;
-				xDraw = x;
+			int ind = _TemporaryVector[x];
+			if (yPrev != _InfiniteDist && (ind == (int) ObjectBlock[x][y].size() || yPrev <= ObjectBlock[x][y][ind]->y) && yPrev <= yPlayer) {
+				int& indPrev = _TemporaryVector[x - 1];
+				ObjectBlock[x - 1][y][indPrev]->Draw(g, sprites);
+				++indPrev;
+				yPrev = _InfiniteDist;
+				draw = true;
+			} else if (ind != (int) ObjectBlock[x][y].size()) {
+				yPrev = ObjectBlock[x][y][ind]->y;
+			} else {
+				yPrev = _InfiniteDist;
 			}
 		}
-		if (playerIndex != Players.size() &&
-			Players[playerIndex].y <= yPlayerMax &&
-			Players[playerIndex].y < yMin) {
-			yMin = Players[playerIndex].y;
-			xDraw = xMax + 1;
+		if (yPrev != _InfiniteDist && yPrev <= yPlayer) {
+			int& indPrev = _TemporaryVector[xMax];
+			ObjectBlock[xMax][y][indPrev]->Draw(g, sprites);
+			++indPrev;
+			draw = true;
 		}
 
-		if (xDraw == -1)
-			break;
-
-		if (xDraw != xMax + 1) {
-			int& ind = _TemporaryVector[xDraw];
-			ObjectBlock[xDraw][y][ind]->Draw(g, sprites);
-			++ind;
-		} else {
+		if (!draw && yPlayer != _InfiniteDist) {
 			Players[playerIndex].Draw(g, sprites);
 			++playerIndex;
+			draw = true;
 		}
 	}
 }

@@ -334,7 +334,7 @@ private:
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
 	static const int _MinForestTiles = 10;
-	static const int _InfiniteDist = MAP_SIZE_X + MAP_SIZE_Y + 5;
+	static const int _InfiniteDist = (MAP_SIZE_X + MAP_SIZE_Y + 5) * TILE_SIZE;
 };
 
 void UpdateMapAnimations(Game* g);
