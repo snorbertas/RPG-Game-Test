@@ -449,6 +449,10 @@ int Map::ViewForestPlace(int xs, int ys) {
 	return static_cast<int>(_Queue.size());
 }
 
+void Map::AddPeePuddle(int x, int y) {
+	PeePuddles.push_back(MapObjectInfo::GeneratePeePuddle(x, y));
+}
+
 void Map::GenerateMapWithBaseBiome() {
 	// In this generation mode I will take a few steps
 	/* =================================================*/

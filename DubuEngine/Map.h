@@ -161,6 +161,11 @@ public:
 	 *	@return false/true whether new forest mode wasn't/was set
 	 */
 		bool ChangeForestMode(int newForestMode);
+		
+	/* ========================== AddPeePuddle ==========================
+	 *	Adds pee puddle on (x, y)
+	 */
+		void AddPeePuddle(int x, int y);
 
 private:
 	/* ======================== RenderObjectsOnBlockY ===========================
@@ -302,17 +307,18 @@ private:
 		inline std::pair<int, int> BlockForPoint(int x, int y);
 
 public:
-	static const int OBJECT_BLOCKS_CNT = 10;		// Blocks per axis
+	static const int OBJECT_BLOCKS_CNT = 10;				// Blocks per axis
 public:
-	int tile[MAP_SIZE_X][MAP_SIZE_Y];				// tile[x][y]
-	std::vector<CollisionBox> solid;				// Solids (collisions/can't pass trough)
-	std::vector<CollisionBox> except_solid;			// Special collision boxes to except solid collision
-	std::vector<MapObjectInfo::MapObject> Objects;	// Map objects (fauna, etc.)
+	int tile[MAP_SIZE_X][MAP_SIZE_Y];						// tile[x][y]
+	std::vector<CollisionBox> solid;						// Solids (collisions/can't pass trough)
+	std::vector<CollisionBox> except_solid;					// Special collision boxes to except solid collision
+	std::vector<MapObjectInfo::MapObject> Objects;			// Map objects (fauna, etc.)
 	std::vector<MapObjectInfo::MapObject*> ObjectBlock[OBJECT_BLOCKS_CNT][OBJECT_BLOCKS_CNT]; // Map objects in block
-	std::vector<MapObjectInfo::MapObject*> GrassObjects; // Map grass objects
-	std::vector<MapObjectInfo::MapObject> Players;	// Players
-	std::vector<MapObjectInfo::MapObject> Bones;	// Bones hidden on the map
-	int seed;										// Seed for random generation
+	std::vector<MapObjectInfo::MapObject*> GrassObjects;	// Map grass objects
+	std::vector<MapObjectInfo::MapObject> Players;			// Players
+	std::vector<MapObjectInfo::MapObject> Bones;			// Bones hidden on the map
+	std::vector<MapObjectInfo::MapObject> PeePuddles;		// Bones hidden on the map
+	int seed;												// Seed for random generation
 private:
 	int _RenderMode = 0;
 	int _RenderModeCnt = 1;
@@ -320,10 +326,10 @@ private:
 	int _ForestModeCnt = 2;
 
 private:
-	int _Dist[MAP_SIZE_X][MAP_SIZE_Y];					// Distance to tile array
-	std::vector<std::pair<int, int>> _Queue;			// Tile queue
-	std::vector<std::pair<int, int>> _TemporaryQueue;	// Tile queue for temporary needs
-	std::vector<int> _TemporaryVector;					// Vector for temporary needs
+	int _Dist[MAP_SIZE_X][MAP_SIZE_Y];						// Distance to tile array
+	std::vector<std::pair<int, int>> _Queue;				// Tile queue
+	std::vector<std::pair<int, int>> _TemporaryQueue;		// Tile queue for temporary needs
+	std::vector<int> _TemporaryVector;						// Vector for temporary needs
 
 private:
 	static const int _NeighbourWayCnt = 4;

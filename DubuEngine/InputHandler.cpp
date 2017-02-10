@@ -15,6 +15,7 @@
 #include "PlayerMovement.h"
 #include "DEText.h"
 #include "Digging.h"
+#include "Peeing.h"
 
 using namespace std;
 
@@ -306,7 +307,17 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 					// If true, there was a movement key bind handled
 					// Otherwise (false) look for next binds
 				} else if (kid == g->keys.dig_bind) {
-					StartDigging(g, &g->pl);
+					if (!g->pl.digging && !g->pl.peeing) {
+						StartDigging(g, &g->pl);
+					}
+				} else if (kid == g->keys.pee_bind) {
+					if (!g->pl.digging && !g->pl.peeing) {
+						if (g->pl.pee_ammo == 0) {
+							AddChatMessage(g->chat, "__SYSTEM__", 139, 49, 121, "Empty Bladder");
+						} else {
+							StartPeeing(g, &g->pl);
+						}
+					}
 				} else if (kid == g->keys.sniff_bind) {
 					if (g->radar.mode == Radar::Mode::DIRECTION_SNIFF) {
 						g->radar.mode = Radar::Mode::DISTANCE_SNIFF;

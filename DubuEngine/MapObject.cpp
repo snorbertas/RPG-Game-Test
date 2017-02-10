@@ -25,8 +25,9 @@ const MapObjectInfo::MapObject MapObjectInfo::_Objects[MapObjectInfo::EMapObject
 	MapObject(14, EObjectSpriteFlower_P), 
 	MapObject(15, EObjectSpriteGrass_0), 
 	MapObject(16, EObjectSpriteUndefined), // bone without sprite 
-	MapObject(17, EObjectSpriteUndefined), // local player
-	MapObject(18, EObjectSpriteUndefined), // multi player
+	MapObject(17, EObjectSpriteUndefined), // pee puddle without sprite 
+	MapObject(18, EObjectSpriteUndefined), // local player
+	MapObject(19, EObjectSpriteUndefined), // multi player
 };
 
 bool MapObjectInfo::MapObject::IsBush() {
@@ -115,6 +116,10 @@ MapObjectInfo::MapObject MapObjectInfo::GenerateGreenery(int x, int y) {
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateBone(int x, int y) {
 	return GenerateObjectByType(EMapObjectBone, x, y);
+}
+
+MapObjectInfo::MapObject MapObjectInfo::GeneratePeePuddle(int x, int y) {
+	return GenerateObjectByType(EMapObjectPeePuddle, x, y);
 }
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateTree(int x, int y) {

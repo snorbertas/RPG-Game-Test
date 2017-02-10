@@ -81,6 +81,9 @@
     <ClCompile Include="Radar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Peeing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -168,6 +171,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Radar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Peeing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

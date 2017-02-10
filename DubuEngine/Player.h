@@ -17,7 +17,8 @@ public:
 		FrameIdleDown_0 = 0, FrameIdleDown_1 = 9,
 		FrameIdleHor_0 = 4, FrameIdleHor_1 = 10,
 		FrameIdleUp_0 = 7, FrameIdleUp_1 = 11,
-		FrameDig_0 = 11, FrameDig_1
+		FrameDig_0 = 11, FrameDig_1,
+		FramePee = 13
 	};
 
 	// Facing directions
@@ -25,8 +26,11 @@ public:
 		FacingUp, FacingDown, FacingLeft, FacingRight
 	};
 
-	// Bladder
-	int pee_ammo = 0;
+	// Bladder & Pee
+	int pee_ammo = 10;
+	int pee_duration = TPS;
+	int pee_timer = 0;
+	bool peeing = false;			// Peeing indicator
 
 	// Location
 	double x = 0;					// x/y coordinates
@@ -49,7 +53,7 @@ public:
 	// Visual/Animation
 	int sprite_id = 0;				// Sprite start
 	int sprite_frame = 0;			// Sprite offset
-	bool digging = false;			// Digging
+	bool digging = false;			// Digging indicator
 
 	// Multi-player
 	bool connected = false;

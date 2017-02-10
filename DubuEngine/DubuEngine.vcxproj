@@ -39,6 +39,7 @@
     <ClCompile Include="MenuHandler.cpp" />
     <ClCompile Include="MenuRenderer.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="Peeing.cpp" />
     <ClCompile Include="PlayerMovement.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -63,6 +64,7 @@
     <ClInclude Include="Digging.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObject.h" />
+    <ClInclude Include="Peeing.h" />
     <ClInclude Include="PlayerMovement.h">
       <SubType>Header</SubType>
     </ClInclude>

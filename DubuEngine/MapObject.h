@@ -41,6 +41,7 @@ public:
 		EMapObjectFlower_P,
 		EMapObjectGrass,
 		EMapObjectBone,
+		EMapObjectPeePuddle,
 		EMapObjectPlayer_L,
 		EMapObjectPlayer_M,
 		EMapObjectCount
@@ -88,6 +89,7 @@ public:
 	static MapObjectInfo::MapObject GenerateObjectByType(EMapObjectType type, int x = 0, int y = 0, int id = -1);
 	static MapObjectInfo::MapObject GenerateGreenery(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateBone(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GeneratePeePuddle(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateTree(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateLocalPlayer(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
