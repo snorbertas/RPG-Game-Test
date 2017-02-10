@@ -317,7 +317,7 @@ public:
 	std::vector<MapObjectInfo::MapObject*> GrassObjects;	// Map grass objects
 	std::vector<MapObjectInfo::MapObject> Players;			// Players
 	std::vector<MapObjectInfo::MapObject> Bones;			// Bones hidden on the map
-	std::vector<MapObjectInfo::MapObject> PeePuddles;		// Bones hidden on the map
+	std::vector<MapObjectInfo::MapObject> PeePuddles;		// Pee puddles
 	int seed;												// Seed for random generation
 private:
 	int _RenderMode = 0;
