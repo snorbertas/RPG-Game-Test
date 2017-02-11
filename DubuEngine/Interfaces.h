@@ -127,15 +127,15 @@
 		const char* msg);					// Message command to handle
 
 
-/* ============================== DrawEmptyBar ============================
- *		Draws an empty progress bar.
+// =============================== Bar types ==============================
+	enum BarType { EMPTY, RED, YELLOW };
+/* ================================ DrawBar ===============================
+ *		Draws a progress bar with specified settings.
  *
  *		Called when drawing interfaces.
  */
-	void DrawEmptyBar(Game* g, 
+	void DrawBar(Game* g, 
 		SpriteStruct* sprites,				// Sprite struct
+		BarType type,						// Bar type
 		int x, int y,						// x, y start
 		int length);						// Lenght of bar (total)
-
-	// Other bars
-	void DrawRedBar(Game* g, SpriteStruct* sprites, int x, int y, int length);

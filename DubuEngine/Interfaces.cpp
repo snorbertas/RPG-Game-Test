@@ -381,11 +381,23 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						int y = g->BHEIGHT / 2 - 50;
 						int length_empty = 200;
 						int length_red = length_empty - ((float)g->pl.dig_timer / (float)g->pl.dig_duration) * length_empty;
-						DrawEmptyBar(g, sprites, x, y, length_empty);
-						DrawRedBar(g, sprites, x, y, length_red);
+						DrawBar(g, sprites, BarType::EMPTY, x, y, length_empty);
+						DrawBar(g, sprites, BarType::RED, x, y, length_red);
 
 						// Text
 						DrawText(font[3], 232, 106, 23, (g->BWIDTH / 2), y - 25, ALLEGRO_ALIGN_CENTER, "Digging...");
+					}
+					if (g->pl.pee_timer > 0) {
+						// Prog bar
+						int x = g->BWIDTH / 2 - 100;
+						int y = g->BHEIGHT / 2 - 50;
+						int length_empty = 200;
+						int length_yellow = length_empty - ((float)g->pl.pee_timer / (float)g->pl.pee_duration) * length_empty;
+						DrawBar(g, sprites, BarType::EMPTY, x, y, length_empty);
+						DrawBar(g, sprites, BarType::YELLOW, x, y, length_yellow);
+
+						// Text
+						DrawText(font[3], 232, 106, 23, (g->BWIDTH / 2), y - 25, ALLEGRO_ALIGN_CENTER, "Peeing...");
 					}
 					break;
 				}
@@ -617,16 +629,36 @@ void HandleCommand(Game* g, const char* msg) {
 	}
 }
 
-void DrawEmptyBar(Game* g, SpriteStruct* sprites, int x, int y, int length) {
-	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_EL], x, y, 0);
-	int wi = length - 36;
-	DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_EC], x + 9, y, wi, 0, 0);
-	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_ER], x + (length - 9), y, 0);
-}
+void DrawBar(Game* g, SpriteStruct* sprites, BarType type, int x, int y, int length) {
+	// Assign correct sprites according to bar type
+	int sprite_left, sprite_center, sprite_right;
+	switch (type) {
+	case BarType::EMPTY:
+		sprite_left = SPRITE_INTERFACE_BAR_EL;
+		sprite_center = SPRITE_INTERFACE_BAR_EC;
+		sprite_right = SPRITE_INTERFACE_BAR_ER;
+		break;
+	case BarType::RED:
+		sprite_left = SPRITE_INTERFACE_BAR_RL;
+		sprite_center = SPRITE_INTERFACE_BAR_RC;
+		sprite_right = SPRITE_INTERFACE_BAR_RR;
+		break;
+	case BarType::YELLOW:
+		sprite_left = SPRITE_INTERFACE_BAR_YL;
+		sprite_center = SPRITE_INTERFACE_BAR_YC;
+		sprite_right = SPRITE_INTERFACE_BAR_YR;
+		break;
+	default:
+		// Empty
+		sprite_left = SPRITE_INTERFACE_BAR_EL;
+		sprite_center = SPRITE_INTERFACE_BAR_EC;
+		sprite_right = SPRITE_INTERFACE_BAR_ER;
+		break;
+	}
 
-void DrawRedBar(Game* g, SpriteStruct* sprites, int x, int y, int length) {
-	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_RL], x, y, 0);
+	// Draw the bar
+	DrawImage(g, sprites->img_interface[sprite_left], x, y, 0);
 	int wi = length - 36;
-	DrawScaledImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_RC], x + 9, y, wi, 0, 0);
-	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_BAR_RR], x + (length - 9), y, 0);
+	DrawScaledImage(g, sprites->img_interface[sprite_center], x + 9, y, wi, 0, 0);
+	DrawImage(g, sprites->img_interface[sprite_right], x + (length - 9), y, 0);
 }
