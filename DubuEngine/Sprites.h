@@ -8,7 +8,7 @@
 #define MAX_INTERFACE_SPRITES 17
 #define MAX_BUTTON_SPRITES 28
 #define MAX_OBJECT_SPRITES 23
-#define MAX_GFX_SPRITES 4
+#define MAX_GFX_SPRITES 8
 
 #include <allegro5\allegro.h>
 

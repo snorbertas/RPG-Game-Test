@@ -13,13 +13,17 @@
 #include "ScaledDraw.h"
 #include "GameRenderer.h"
 #include "Digging.h"
+#include "Peeing.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render Tiles
 	g->map.RenderTiles(g, sprites);
 
-	// Render digging tiles
+	// Render digging animation
 	RenderDigging(g, sprites);
+
+	// Render peeing animation
+	RenderPeeing(g, sprites);
 
 	// Sort and render objects
 	g->map.SortPlayerObjects(g);

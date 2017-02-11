@@ -1,6 +1,6 @@
 #include "Peeing.h"
-
 #include "Game.h"
+#include "ScaledDraw.h"
 
 void StartPeeing(Game* g, Player* p) {
 	// Local player
@@ -26,4 +26,16 @@ void HandlePeeing(Game* g, Player* p) {
 }
 
 void RenderPeeing(Game * g, SpriteStruct* sprites) {
+	// Decide orientation
+	int flags = 0;
+	if (g->pl.facing == Player::Facing::FacingRight) flags = ALLEGRO_FLIP_HORIZONTAL;
+
+	// Render pee animation
+	if (g->pl.peeing) {
+		int frame = g->pl.pee_timer - (g->pl.pee_timer / 8) * 8;
+		frame = 3 - (frame / 2);
+		DrawImage(g, sprites->img_gfx[frame + 4],
+			g->pl.x + g->camera.x,
+			g->pl.y + g->camera.y, flags);
+	}
 }
