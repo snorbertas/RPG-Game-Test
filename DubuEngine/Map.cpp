@@ -639,7 +639,12 @@ static bool TileHasCollision(int tile_id) {
 	return false;
 }
 
-static CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
+bool TileIsWater(int tile_id) {
+	if (tile_id >= 28 && tile_id <= 40) return true;
+	return false;
+}
+
+CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;
 	int ini_y = y * Map::TILE_SIZE;

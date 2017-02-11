@@ -18,7 +18,8 @@ public:
 		FrameIdleHor_0 = 4, FrameIdleHor_1 = 10,
 		FrameIdleUp_0 = 7, FrameIdleUp_1 = 11,
 		FrameDig_0 = 11, FrameDig_1,
-		FramePee = 13
+		FramePee = 13,
+		FrameDrink = 12
 	};
 
 	// Facing directions
@@ -31,6 +32,11 @@ public:
 	int pee_duration = TPS;
 	int pee_timer = 0;
 	bool peeing = false;			// Peeing indicator
+
+	// Drinking
+	int drink_duration = TPS;
+	int drink_timer = 0;
+	bool drinking = false;
 
 	// Location
 	double x = 0;					// x/y coordinates

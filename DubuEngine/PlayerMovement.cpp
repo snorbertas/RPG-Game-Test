@@ -4,6 +4,7 @@
 #include "GameHandler.h"
 #include "Digging.h"
 #include "Peeing.h"
+#include "Drinking.h"
 
 void UpdatePlayerMovementSprite(Player& pl) {
 	pl.sprite_frame++;
@@ -90,6 +91,8 @@ void HandlePlayerIdle(Game* g) {
 			}
 		} else if (g->pl.peeing) {
 			g->pl.sprite_frame = Player::FramePee;
+		} else if (g->pl.drinking) {
+			g->pl.sprite_frame = Player::FrameDrink;
 		} else if (g->pl.facing == Player::FacingDown) {
 			if (g->pl.sprite_frame != Player::FrameIdleDown_0) {
 				g->pl.sprite_frame = Player::FrameIdleDown_0;
@@ -252,6 +255,9 @@ static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 		HandlePlayerIdle(g);
 	} else if (g->pl.peeing) {
 		HandlePeeing(g, &g->pl);
+		HandlePlayerIdle(g);
+	} else if (g->pl.drinking) {
+		HandleDrinking(g, &g->pl);
 		HandlePlayerIdle(g);
 	} else {
 		if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {

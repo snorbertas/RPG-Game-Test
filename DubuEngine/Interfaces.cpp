@@ -397,7 +397,19 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						DrawBar(g, sprites, BarType::YELLOW, x, y, length_yellow);
 
 						// Text
-						DrawText(font[3], 232, 106, 23, (g->BWIDTH / 2), y - 25, ALLEGRO_ALIGN_CENTER, "Peeing...");
+						DrawText(font[3], 232, 210, 23, (g->BWIDTH / 2), y - 25, ALLEGRO_ALIGN_CENTER, "Peeing...");
+					}
+					if (g->pl.drink_timer > 0) {
+						// Prog bar
+						int x = g->BWIDTH / 2 - 100;
+						int y = g->BHEIGHT / 2 - 50;
+						int length_empty = 200;
+						int length_blue = length_empty - ((float)g->pl.drink_timer / (float)g->pl.drink_duration) * length_empty;
+						DrawBar(g, sprites, BarType::EMPTY, x, y, length_empty);
+						DrawBar(g, sprites, BarType::BLUE, x, y, length_blue);
+
+						// Text
+						DrawText(font[3], 23, 149, 232, (g->BWIDTH / 2), y - 25, ALLEGRO_ALIGN_CENTER, "Drinking...");
 					}
 					break;
 				}
@@ -647,6 +659,11 @@ void DrawBar(Game* g, SpriteStruct* sprites, BarType type, int x, int y, int len
 		sprite_left = SPRITE_INTERFACE_BAR_YL;
 		sprite_center = SPRITE_INTERFACE_BAR_YC;
 		sprite_right = SPRITE_INTERFACE_BAR_YR;
+		break;
+	case BarType::BLUE:
+		sprite_left = SPRITE_INTERFACE_BAR_BL;
+		sprite_center = SPRITE_INTERFACE_BAR_BC;
+		sprite_right = SPRITE_INTERFACE_BAR_BR;
 		break;
 	default:
 		// Empty

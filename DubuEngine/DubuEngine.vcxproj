@@ -28,6 +28,7 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DEText.cpp" />
     <ClCompile Include="Digging.cpp" />
+    <ClCompile Include="Drinking.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
@@ -62,6 +63,7 @@
     <ClInclude Include="DEText.h" />
     <ClInclude Include="DEDefinitions.h" />
     <ClInclude Include="Digging.h" />
+    <ClInclude Include="Drinking.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="Peeing.h" />

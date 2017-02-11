@@ -128,7 +128,7 @@
 
 
 // =============================== Bar types ==============================
-	enum BarType { EMPTY, RED, YELLOW };
+	enum BarType { EMPTY, RED, YELLOW, BLUE };
 /* ================================ DrawBar ===============================
  *		Draws a progress bar with specified settings.
  *

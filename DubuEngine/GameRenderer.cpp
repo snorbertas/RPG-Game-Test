@@ -14,6 +14,7 @@
 #include "GameRenderer.h"
 #include "Digging.h"
 #include "Peeing.h"
+#include "Drinking.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render Tiles
@@ -24,6 +25,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 
 	// Render peeing animation
 	RenderPeeing(g, sprites);
+
+	// Render drinking animation
+	RenderDrinking(g, sprites);
 
 	// Sort and render objects
 	g->map.SortPlayerObjects(g);

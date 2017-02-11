@@ -40,6 +40,7 @@
 		int dig_bind = ALLEGRO_KEY_Z;			// Binded key to dig
 		int sniff_bind = ALLEGRO_KEY_X;			// Binded key to sniff
 		int pee_bind = ALLEGRO_KEY_Q;			// Binded key to pee
+		int drink_bind = ALLEGRO_KEY_W;			// Binded key to drink
 		int chat_bind = ALLEGRO_KEY_ENTER;		// Binded key to chat/type
 		bool left = false;						// If true, then moving left key is inputted
 		bool right = false;						// If true, then moving right key is inputted
