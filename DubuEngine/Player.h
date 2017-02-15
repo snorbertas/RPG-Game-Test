@@ -18,8 +18,8 @@ public:
 		FrameIdleHor_0 = 4, FrameIdleHor_1 = 10,
 		FrameIdleUp_0 = 7, FrameIdleUp_1 = 11,
 		FrameDig_0 = 11, FrameDig_1,
-		FramePee = 13,
-		FrameDrink = 12
+		FramePee = 12,
+		FrameDrinkUp = 13, FrameDrinkDown = 14, FrameDrinkHor = 15
 	};
 
 	// Facing directions

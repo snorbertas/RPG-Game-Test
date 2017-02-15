@@ -39,6 +39,7 @@ void UpdatePlayerMovementSprite(Player& pl) {
 }
 
 bool HandlePlayerMovementKeyBinds(Game* g, int kid) {
+	if (g->pl.drinking || g->pl.peeing) return false;
 	if (kid == g->keys.left_bind) {
 		// Left bind
 		g->pl.facing = Player::FacingLeft;
@@ -92,7 +93,14 @@ void HandlePlayerIdle(Game* g) {
 		} else if (g->pl.peeing) {
 			g->pl.sprite_frame = Player::FramePee;
 		} else if (g->pl.drinking) {
-			g->pl.sprite_frame = Player::FrameDrink;
+			if (g->pl.facing == Player::FacingLeft ||
+				g->pl.facing == Player::FacingRight) {
+				g->pl.sprite_frame = Player::FrameDrinkHor;
+			} else if (g->pl.facing == Player::FacingUp) {
+				g->pl.sprite_frame = Player::FrameDrinkUp;
+			} else {
+				g->pl.sprite_frame = Player::FrameDrinkDown;
+			}
 		} else if (g->pl.facing == Player::FacingDown) {
 			if (g->pl.sprite_frame != Player::FrameIdleDown_0) {
 				g->pl.sprite_frame = Player::FrameIdleDown_0;
