@@ -8,6 +8,7 @@
 #define PACKET_TYPE_CHAT_MESSAGE 102
 #define PACKET_TYPE_PLAYER_INFO 103
 #define PACKET_TYPE_PLAYER_STATE 104
+#define PACKET_TYPE_PLAYER_ACTION 105
 #include <iostream>
 #include <string.h>
 using namespace std;
@@ -19,6 +20,7 @@ using namespace std;
 #define DEP_DERIV_2BUFF 3
 #define DEP_DERIV_PINFO 4
 #define DEP_DERIV_PSTATE 5
+#define DEP_DERIV_PACTION 6
 
 // The base packet class, contains no information except the type and deriv
 class Packet {
@@ -89,6 +91,20 @@ public:
 	// Visual
 	uint8_t frame = 0;
 	uint8_t facing = 0;
+};
+
+// Packet derivative for player actions update
+class PacketPlayerAction : public Packet {
+public:
+	PacketPlayerAction(uint16_t type) : Packet(type, DEP_DERIV_PACTION) {}
+	// Player ID
+	uint8_t p_id = 0;
+
+	// States
+	bool digging = false;
+	int dig_timer = 0;
+	bool peeing = false;
+	int pee_timer = 0;
 };
 
 int GetPacketSize(uint16_t deriv_id);

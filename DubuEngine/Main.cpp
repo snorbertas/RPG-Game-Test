@@ -636,6 +636,12 @@ unsigned int __stdcall ClientThread(void *data) {
 					HandlePacket(g, &p);
 					break;
 				}
+			case DEP_DERIV_PACTION: {
+					PacketPlayerAction p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
 			}
 
 			// Unblock our socket again

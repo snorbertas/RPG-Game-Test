@@ -11,6 +11,7 @@
 #define p2b ((PacketBuffer2*)p)
 #define ppi ((PacketPlayerInfo*)p)
 #define pps ((PacketPlayerState*)p)
+#define ppa ((PacketPlayerAction*)p)
 
 void HandlePacket(Game* g, Packet* p) {
 	int deriv = p->deriv();
@@ -60,5 +61,29 @@ void HandlePacket(Game* g, Packet* p) {
 		g->Players[player_id].y = pps->y;
 		g->Players[player_id].sprite_frame = pps->frame;
 		g->Players[player_id].facing = pps->facing;
+	} else if (deriv == DEP_DERIV_PACTION) {
+		// Update player actions
+		int player_id = ppa->p_id;
+		g->Players[player_id].digging = ppa->digging;
+		g->Players[player_id].dig_timer = ppa->dig_timer;
+		g->Players[player_id].peeing = ppa->peeing;
+		g->Players[player_id].pee_timer = ppa->pee_timer;
+	}
+}
+
+void QueueActionsPacket(Game* g) {
+	if (g->connected) {
+		PacketPlayerAction* packet = new PacketPlayerAction(PACKET_TYPE_PLAYER_ACTION);
+
+		// Digging
+		packet->digging = g->pl.digging;
+		packet->dig_timer = g->pl.dig_timer;
+
+		// Peeing
+		packet->peeing = g->pl.peeing;
+		packet->pee_timer = g->pl.pee_timer;
+
+		// Add packet to queue
+		AddPacketToQueue(g, packet);
 	}
 }

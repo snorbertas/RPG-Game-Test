@@ -202,6 +202,12 @@ unsigned int __stdcall ClientThread(void *data)
 					HandlePacket(g, pID, &p);
 					break;
 				}
+			case DEP_DERIV_PACTION: {
+					PacketPlayerAction p(DEP_EMPTY);
+					nReadBytes = recv_s(Client, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, pID, &p);
+					break;
+				}
 			}
 
 			// Unblock our socket again

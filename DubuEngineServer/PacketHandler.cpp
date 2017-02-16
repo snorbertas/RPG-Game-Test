@@ -12,6 +12,7 @@ class, it's easier to use a macro */
 #define p2b ((PacketBuffer2*)p)
 #define ppi ((PacketPlayerInfo*)p)
 #define pps ((PacketPlayerState*)p)
+#define ppa ((PacketPlayerAction*)p)
 
 void HandlePacket(Game* g, int pID, Packet* p) {
 	int deriv = p->deriv();
@@ -68,6 +69,19 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 				pstate->facing = pps->facing;
 				pstate->p_id = i;
 				AddPacketToQueue(&g->players[i], pstate);
+			}
+		}
+	} else if (deriv == DEP_DERIV_PACTION) {
+		// Share action with all clients
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			if (g->SocketUsed[i] && i != pID) {
+				PacketPlayerAction* paction = new PacketPlayerAction(PACKET_TYPE_PLAYER_ACTION);
+				paction->digging = ppa->digging;
+				paction->dig_timer = ppa->dig_timer;
+				paction->peeing = ppa->peeing;
+				paction->pee_timer = ppa->pee_timer;
+				paction->p_id = i;
+				AddPacketToQueue(&g->players[i], paction);
 			}
 		}
 	}

@@ -7,6 +7,8 @@
 #include "Game.h"
 #include "GameHandler.h"
 #include "Collision.h"
+#include "Digging.h"
+#include "Peeing.h"
 
 void NewGame(Game* g){
 	g->scene = 1;
@@ -20,6 +22,17 @@ void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Game handling code here
 	HandleGamePackets(g);
 	UpdateMapAnimations(g);
+
+	// Handle multi-player timers, animations, etc.
+	if (g->connected) {
+		for (int i = 0; i < g->MAX_PLAYERS; i++) {
+			// Digging timer and animation
+			HandleDigging(g, &g->Players[i]);
+
+			// Peeing timer and animation
+			HandlePeeing(g, &g->Players[i]);
+		}
+	}
 }
 
 void HandleGamePackets(Game* g) {
