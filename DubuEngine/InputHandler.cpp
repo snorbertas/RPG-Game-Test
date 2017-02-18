@@ -203,6 +203,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									HideAllInterfaces(g, INTERFACE_VERSION);
 									g->Interfaces[INTERFACE_CHAT].visible = true;
 									g->Interfaces[INTERFACE_RADAR].visible = true;
+									g->Interfaces[INTERFACE_SCORE].visible = true;
 									//
 									g->scene = 1;
 									done = true;
@@ -371,7 +372,8 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 			} else {
 				switch (kid) {
 				case ALLEGRO_KEY_TAB:
-					g->chat.show_chat = true;
+					//g->chat.show_chat = true;
+					g->score.show_score = true;
 					break;
 				case ALLEGRO_KEY_LCTRL:
 					g->keys.CTRL = true;
@@ -407,10 +409,11 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 					g->chat.backspace_timer_wait = 30;
 					break;
 				case ALLEGRO_KEY_TAB:
-					if (!g->chat.type_chat) {
+					/*if (!g->chat.type_chat) {
 						g->chat.show_chat = false;
 						g->chat.ghost = 0;
-					}
+					}*/
+					g->score.show_score = false;
 					break;
 				case ALLEGRO_KEY_LCTRL:
 					g->keys.CTRL = false;

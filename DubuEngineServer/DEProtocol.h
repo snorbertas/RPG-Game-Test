@@ -9,8 +9,12 @@
 #define PACKET_TYPE_PLAYER_INFO 103
 #define PACKET_TYPE_PLAYER_STATE 104
 #define PACKET_TYPE_PLAYER_ACTION 105
+#define PACKET_TYPE_SCORE 106
+#define PACKET_TYPE_PLAYER_DISCONNECT 107
+
 #include <iostream>
 #include <string.h>
+#include "Score.h"
 using namespace std;
 
 // DubuEngine Packet Derivatives
@@ -21,6 +25,7 @@ using namespace std;
 #define DEP_DERIV_PINFO 4
 #define DEP_DERIV_PSTATE 5
 #define DEP_DERIV_PACTION 6
+#define DEP_DERIV_SCORE 7
 
 // The base packet class, contains no information except the type and deriv
 class Packet {
@@ -105,6 +110,17 @@ public:
 	int dig_timer = 0;
 	bool peeing = false;
 	int pee_timer = 0;
+};
+
+// Packet derivative for score update
+class PacketScore : public Packet {
+public:
+	PacketScore(uint16_t type) : Packet(type, DEP_DERIV_SCORE) {}
+	// Player ID
+	uint8_t p_id = 0;
+
+	// Score info
+	ScoreInfo score;
 };
 
 int GetPacketSize(uint16_t deriv_id);

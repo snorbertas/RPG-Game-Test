@@ -8,6 +8,7 @@
 #include "../DubuEngineServer/DEProtocol.h"
 #include "Sprites.h"
 #include "Chat.h"
+#include "../DubuEngineServer/Score.h"
 #include "Camera.h"
 #include "Player.h"
 #include "Map.h"
@@ -132,6 +133,7 @@
 			bool gameover = false;				// If true, the game is over, different handling
 			bool allow_input = true;			// Wether input is allowed or not
 			Chat chat;							// Chat object
+			ScoreBoard score;					// Scoreboard object
 			LoginInterface logini;				// Login Interface
 			Button* Buttons;					// Pointer to array of buttons
 			Interface* Interfaces;				// Pointer to array of interfaces

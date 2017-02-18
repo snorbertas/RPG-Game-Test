@@ -1,7 +1,8 @@
 #include "../DubuEngineServer/DEProtocol.h"
 #include "PacketHandler.h"
 #include "GameHandler.h"
-#include "Chat.h"
+#include "Game.h"
+#include <sstream>
 
 /* I use these macros in HandlePacket function
    Instead of accessing p trough a conversion to its derivative
@@ -12,6 +13,7 @@
 #define ppi ((PacketPlayerInfo*)p)
 #define pps ((PacketPlayerState*)p)
 #define ppa ((PacketPlayerAction*)p)
+#define ps ((PacketScore*)p)
 
 void HandlePacket(Game* g, Packet* p) {
 	int deriv = p->deriv();
@@ -20,11 +22,21 @@ void HandlePacket(Game* g, Packet* p) {
 	// Each deriv
 	if (deriv == DEP_DERIV_PING) {
 		switch (type) {
+		case PACKET_TYPE_PING:
+			AddPacketToQueue(g, new Packet(PACKET_TYPE_PING_ECHO));
+			break;
 		case PACKET_TYPE_PING_ECHO:
 			g->ping = (int)((al_get_time() - g->time_sent_ping) * 1000);
 			break;
 		}
 	} else if (deriv == DEP_DERIV_1BUFF) {
+		switch (type) {
+			case PACKET_TYPE_PLAYER_DISCONNECT:
+				int pID = stoi(p1b->buffer_1);
+				g->Players[pID].connected = false;
+				g->score.score_info[pID].active = false;
+			break;
+		}
 	} else if (deriv == DEP_DERIV_2BUFF) {
 		switch (type) {
 			// Temp
@@ -68,6 +80,10 @@ void HandlePacket(Game* g, Packet* p) {
 		g->Players[player_id].dig_timer = ppa->dig_timer;
 		g->Players[player_id].peeing = ppa->peeing;
 		g->Players[player_id].pee_timer = ppa->pee_timer;
+
+	} else if (deriv == DEP_DERIV_SCORE) {
+		// Update score
+		g->score.score_info[ps->p_id] = ps->score;
 	}
 }
 

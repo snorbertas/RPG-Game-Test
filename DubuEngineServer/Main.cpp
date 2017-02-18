@@ -230,6 +230,11 @@ unsigned int __stdcall ClientThread(void *data)
 					// Then send the actual packet
 					if (send_packet_deriv != DEP_EMPTY) {
 						nSendBytes = send_s(Client, g->players[pID].PacketQueue[i].p(), GetPacketSize(send_packet_deriv), 0);
+
+						// Ping
+						if (g->players[pID].PacketQueue[i].p()->deriv() == DEP_DERIV_PING) {
+							g->players[pID].time_sent_ping = al_get_time();
+						}
 					} else {
 						cout << "Error: Can't send empty packet.\n";
 					}
@@ -244,6 +249,19 @@ unsigned int __stdcall ClientThread(void *data)
 					if (nSendBytes == SOCKET_ERROR) {
 						g->SocketUsed[pID] = false;
 						cout << "Client disconnected! (" << pID << ") \n";
+
+						// Reset score info for this player
+						g->score.score_info[pID].Reset();
+
+						// Inform other clients that player has disconnected
+						for (int i = 0; i < MAX_PLAYERS; i++) {
+							if (g->SocketUsed[i]) {
+								PacketBuffer1* p = new PacketBuffer1(PACKET_TYPE_PLAYER_DISCONNECT);
+								AddToBuffer(p->buffer_1, pID);
+								AddPacketToQueue(&g->players[i], p);
+							}
+						}
+
 						shutdown(Client, SD_SEND); // Shutdown our socket		
 						closesocket(Client); // Close our socket entirely
 						return 0;

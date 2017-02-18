@@ -108,6 +108,10 @@ void LoadInterfaces(Game* g){
 	// Interface 29 - Chat/Console
 	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 480);
 
+	// Interface 30 - Scoreboard
+	NewInterface(&g->Interfaces[INTERFACE_SCORE], NO_SPRITE, (g->BWIDTH / 2) - 210, (g->BHEIGHT / 2) - 300);
+	g->Interfaces[INTERFACE_SCORE].visible = true;
+
 	// Interface 99 (on-top)
 	temp_x = g->BWIDTH / 2 - 250;
 	temp_y = g->BHEIGHT / 2 - 84;
@@ -450,6 +454,92 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						}
 					}
 					break;
+				case INTERFACE_SCORE:
+				{
+					if (g->score.show_score) {
+						int x = g->Interfaces[i].x;
+						int y = g->Interfaces[i].y;
+						int width = 420;
+						int height = 525;
+
+						// Draw frame
+						DrawRectangle(g, x, y, width, height, 0, 0, 0, 0.3);
+						DrawRectangle(g, x, y, width, 25, 64, 0, 64, 0.3);
+						DrawOutline(g, x, y, width, height, 0, 0, 0, 1);
+
+						// Draw columns
+						DrawOutline(g, x, y, 155, height, 0, 0, 0, 1, 128);
+						DrawOutline(g, x, y, 205, height, 0, 0, 0, 1, 128);
+						DrawOutline(g, x, y, 270, height, 0, 0, 0, 1, 128);
+						DrawOutline(g, x, y, 360, height, 0, 0, 0, 1, 128);
+
+						// Draw rows
+						for (int iy = 0; iy < g->MAX_PLAYERS + 2; iy++) {
+							DrawOutline(g, x, y, width, 25 * iy, 0, 0, 0, 1, 128);
+						}
+
+						// Draw key
+						x += 5;
+						DrawText(font[1], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "Player");
+						x += 155;
+						DrawText(font[1], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "Ping");
+						x += 50;
+						DrawText(font[1], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "Bones");
+						x += 65;
+						DrawText(font[1], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "Territory");
+						x += 90;
+						DrawText(font[1], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "Score");
+
+						// Error message if not in multiplayer
+						if (!g->connected) {
+							x = g->Interfaces[i].x + (width / 2);
+							y += (height / 2) - 4;
+							DrawRectangle(g, x - 180, y - 3, 360, 40, 5, 0, 0, 0.8);
+							DrawOutline(g, x - 180, y - 3, 360, 40, 0, 0, 0, 1);
+							DrawText(font[0], 255, 64, 64, x, y, ALLEGRO_ALIGN_CENTER, "Not Connected To Multiplayer");
+							break;
+						}
+
+						// Draw scores
+						// Set starting point
+						y += 28;
+						x = g->Interfaces[i].x + 4;
+
+						// Loop trough all score
+						for (int sid = 0; sid < g->MAX_PLAYERS; sid++) {
+							ScoreInfo* sinfo = &g->score.score_info[sid];
+							if (sinfo->active) {
+								// Draw Icon
+								DrawImage(g, sprites->img_icon[sinfo->icon_id], x, y, 0);
+
+								// Write name
+								x += 20;
+								DrawText(font[2], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, sinfo->name);
+
+								// Write ping
+								x += 135;
+								DrawText(font[2], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "%i", sinfo->ping);
+
+								// Write bones
+								x += 50;
+								DrawText(font[2], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "%i", sinfo->bones);
+
+								// Write territory
+								x += 65;
+								DrawText(font[2], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "%i", sinfo->territory);
+
+								// Write score
+								x += 90;
+								DrawText(font[2], 255, 255, 255, x, y, ALLEGRO_ALIGN_LEFT, "%i", sinfo->score);
+
+								// Reset x and Vertical bump for next row
+								y += 25;
+								x = g->Interfaces[i].x + 4;
+							}
+						}
+					}
+				}
+					break;
 				case 99:
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 20, ALLEGRO_ALIGN_CENTER, g->Message1);
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 52, ALLEGRO_ALIGN_CENTER, g->Message2);
@@ -489,7 +579,7 @@ bool InterfaceIsOnTop(Game* g, int id) {
 			if (i != 6 && i != 2 && i != 7 && i != 12 &&
 				i != 31 && i != 32 && i != 33 && i != 29 &&
 				i != 27 && i != 28 && i != 34 && i != 35 &&
-				i != 26) {
+				i != 26 && i != 30) {
 				top_i = i;
 			}
 		}

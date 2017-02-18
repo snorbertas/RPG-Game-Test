@@ -1,4 +1,5 @@
 #include <iostream>
+#include "allegro5\allegro.h"
 #include "DEProtocol.h"
 #include "PacketHandler.h"
 #include "GameHandler.h"
@@ -24,6 +25,10 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 		case PACKET_TYPE_PING:
 			AddPacketToQueue(&g->players[pID], new Packet(PACKET_TYPE_PING_ECHO));
 			break;
+		case PACKET_TYPE_PING_ECHO:
+			g->players[pID].ping = (int)((al_get_time() - g->players[pID].time_sent_ping) * 1000);
+			g->score.score_info[pID].ping = g->players[pID].ping;
+			break;
 		}
 	} else if (deriv == DEP_DERIV_1BUFF) {
 	} else if (deriv == DEP_DERIV_2BUFF) {
@@ -35,6 +40,10 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 			AddToBuffer(test->buffer_1, "Hey! I heard you :)");
 			AddToBuffer(test->buffer_2, "Congratulations, working 100%!");
 			AddPacketToQueue(&g->players[pID], test);
+
+			// Setup
+			g->score.score_info[pID].active = true;
+			AddToBuffer(g->score.score_info[pID].name, p2b->buffer_1);
 			break;
 		}
 		case PACKET_TYPE_CHAT_MESSAGE:
