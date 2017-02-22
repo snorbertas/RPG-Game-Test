@@ -105,6 +105,10 @@ void LoadInterfaces(Game* g){
 	NewInterface(&g->Interfaces[INTERFACE_RADAR], NO_SPRITE, g->BWIDTH / 2, g->BHEIGHT- 60);
 	g->Interfaces[INTERFACE_RADAR].visible = true;
 
+	// Interface 13
+	NewInterface(&g->Interfaces[INTERFACE_STATS], NO_SPRITE, 200, 200);
+	g->Interfaces[INTERFACE_STATS].visible = true;
+
 	// Interface 29 - Chat/Console
 	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 480);
 
@@ -417,6 +421,10 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					}
 					break;
 				}
+				case INTERFACE_STATS:
+					// WILL FINISH THIS NEXT DAY
+					// DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, g->Interfaces[i].x, g->Interfaces[i].y, 0, 0);
+					break;
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
 						DrawRectangle(g, g->Interfaces[i].x + 2, g->Interfaces[i].y + 2, 500 - 4, 400 - 4, 0, 0, 0, 0.3);
@@ -579,7 +587,7 @@ bool InterfaceIsOnTop(Game* g, int id) {
 			if (i != 6 && i != 2 && i != 7 && i != 12 &&
 				i != 31 && i != 32 && i != 33 && i != 29 &&
 				i != 27 && i != 28 && i != 34 && i != 35 &&
-				i != 26 && i != 30) {
+				i != 26 && i != 30 && i != 13) {
 				top_i = i;
 			}
 		}
@@ -768,4 +776,95 @@ void DrawBar(Game* g, SpriteStruct* sprites, BarType type, int x, int y, int len
 	int wi = length - 36;
 	DrawScaledImage(g, sprites->img_interface[sprite_center], x + 9, y, wi, 0, 0);
 	DrawImage(g, sprites->img_interface[sprite_right], x + (length - 9), y, 0);
+}
+
+void DrawInterfaceBox(Game* g, SpriteStruct* sprites, InterfaceBoxType type, int x, int y, int w, int h, float opacity) {
+	// Subtract the corner sprites (they're 8x8)
+	w -= 16;
+	h -= 16;
+
+	// Correct minimum sizes
+	if (w < 1) w = 1;
+	if (h < 1) h = 1;
+
+	// Assign correct sprites and colours according to type
+	int sprite_corner, sprite_hor, sprite_ver, re, gr, bl;
+	switch (type) {
+	case InterfaceBoxType::BROWN:
+		sprite_corner = SPRITE_INTERFACE_BOX_BC;
+		sprite_hor = SPRITE_INTERFACE_BOX_BH;
+		sprite_ver = SPRITE_INTERFACE_BOX_BV;
+		re = 151;
+		gr = 113;
+		bl = 74;
+		break;
+	default:
+		// Default will be brown
+		sprite_corner = SPRITE_INTERFACE_BOX_BC;
+		sprite_hor = SPRITE_INTERFACE_BOX_BH;
+		sprite_ver = SPRITE_INTERFACE_BOX_BV;
+		re = 151;
+		gr = 113;
+		bl = 74;
+		break;
+	}
+	/* ======================
+	    Draw the interface box
+		First draw 4 corners 
+	   ====================== */
+	// Top-left
+	DrawImage(g, sprites->img_interface[sprite_corner],
+		x,
+		y,
+		0, opacity);
+
+	// Top-right
+	DrawImage(g, sprites->img_interface[sprite_corner],
+		x + 8 + w,
+		y,
+		ALLEGRO_FLIP_HORIZONTAL, opacity);
+
+	// Bottom-left
+	DrawImage(g, sprites->img_interface[sprite_corner],
+		x,
+		y + 8 + h,
+		ALLEGRO_FLIP_VERTICAL, opacity);
+
+	// Bottom-right
+	DrawImage(g, sprites->img_interface[sprite_corner],
+		x + 8 + w,
+		y + 8 + h,
+		ALLEGRO_FLIP_HORIZONTAL + ALLEGRO_FLIP_VERTICAL, opacity);
+
+	/* ======================
+		Then draw the sides
+	   ====================== */
+	// Top
+	DrawScaledImage(g, sprites->img_interface[sprite_hor],
+		x + 8,
+		y,
+		w - 1, 0, 0, opacity);
+
+	// Bottom
+	DrawScaledImage(g, sprites->img_interface[sprite_hor],
+		x + 8,
+		y + 8 + h,
+		w - 1, 0, ALLEGRO_FLIP_VERTICAL, opacity);
+
+	// Left
+	DrawScaledImage(g, sprites->img_interface[sprite_ver],
+		x,
+		y + 8,
+		0, h - 1, 0, opacity);
+
+	// Right
+	DrawScaledImage(g, sprites->img_interface[sprite_ver],
+		x + 8 + w,
+		y + 8,
+		0, h - 1, ALLEGRO_FLIP_HORIZONTAL, opacity);
+
+	/* ==========================
+		Then fill middle colour
+	============================= */
+	DrawRectangle(g, x + 8, y + 8, w, h, re, gr, bl, opacity);
 }

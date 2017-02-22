@@ -139,3 +139,18 @@
 		BarType type,						// Bar type
 		int x, int y,						// x, y start
 		int length);						// Lenght of bar (total)
+
+
+// ========================== Interface box types =========================
+	enum InterfaceBoxType { BROWN };
+/* =========================== DrawInterfaceBox ===========================
+ *		Draws a progress bar with specified settings.
+ *
+ *		Called when drawing interfaces.
+ */
+	void DrawInterfaceBox(Game* g,
+		SpriteStruct* sprites,				// Sprite struct
+		InterfaceBoxType type,				// Interface box type
+		int x, int y,						// x, y start
+		int w, int h,						// Width and height
+		float opacity = 1.0);				// Opacity

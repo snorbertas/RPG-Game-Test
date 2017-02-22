@@ -203,6 +203,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									HideAllInterfaces(g, INTERFACE_VERSION);
 									g->Interfaces[INTERFACE_CHAT].visible = true;
 									g->Interfaces[INTERFACE_RADAR].visible = true;
+									g->Interfaces[INTERFACE_STATS].visible = true;
 									g->Interfaces[INTERFACE_SCORE].visible = true;
 									//
 									g->scene = 1;

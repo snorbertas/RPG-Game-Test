@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Radar.h"
 #include "ScaledDraw.h"
+#include "Interfaces.h"
 
 /* ============================= Event Functions ==========================
 *		Used according to the event triggered. (Do NOT define in header)
@@ -127,10 +128,11 @@ void UpdateRadar(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 }
 
 void RenderRadar(Game* g, ALLEGRO_FONT** font, SpriteStruct* sprites) {
-	// Panel Image
-	DrawImage(g, sprites->img_interface[SPRITE_INTERFACE_PANEL],
+	// Panel box
+	DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN,
 		g->Interfaces[INTERFACE_RADAR].x - 48,
-		g->Interfaces[INTERFACE_RADAR].y - 18, 0);
+		g->Interfaces[INTERFACE_RADAR].y - 18,
+		100, 100);
 
 	// Text size ratio
 	float r_x = (float)g->s_x / (float)g->BWIDTH;
