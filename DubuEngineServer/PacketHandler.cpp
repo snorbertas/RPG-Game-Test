@@ -44,6 +44,14 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 			// Setup
 			g->score.score_info[pID].active = true;
 			AddToBuffer(g->score.score_info[pID].name, p2b->buffer_1);
+
+			/* TODO: Inform this new client of all vital information including:
+					- Map matrix
+					- Map objects
+					- Player names
+					- Player coordinates
+					- More?
+			*/
 			break;
 		}
 		case PACKET_TYPE_CHAT_MESSAGE:
@@ -72,11 +80,11 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			if (g->SocketUsed[i] && i != pID) {
 				PacketPlayerState* pstate = new PacketPlayerState(PACKET_TYPE_PLAYER_STATE);
+				pstate->p_id = pID;
 				pstate->x = pps->x;
 				pstate->y = pps->y;
 				pstate->frame = pps->frame;
 				pstate->facing = pps->facing;
-				pstate->p_id = i;
 				AddPacketToQueue(&g->players[i], pstate);
 			}
 		}
@@ -85,11 +93,11 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			if (g->SocketUsed[i] && i != pID) {
 				PacketPlayerAction* paction = new PacketPlayerAction(PACKET_TYPE_PLAYER_ACTION);
+				paction->p_id = pID;
 				paction->digging = ppa->digging;
 				paction->dig_timer = ppa->dig_timer;
 				paction->peeing = ppa->peeing;
 				paction->pee_timer = ppa->pee_timer;
-				paction->p_id = i;
 				AddPacketToQueue(&g->players[i], paction);
 			}
 		}

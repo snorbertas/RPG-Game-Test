@@ -35,6 +35,7 @@ void HandlePacket(Game* g, Packet* p) {
 				int pID = stoi(p1b->buffer_1);
 				g->Players[pID].connected = false;
 				g->score.score_info[pID].active = false;
+				AddChatMessage(g->chat, "__SYSTEM__", 139, 49, 121, (g->Players[pID].name + " has has left the game.").c_str());
 			break;
 		}
 	} else if (deriv == DEP_DERIV_2BUFF) {
@@ -80,7 +81,6 @@ void HandlePacket(Game* g, Packet* p) {
 		g->Players[player_id].dig_timer = ppa->dig_timer;
 		g->Players[player_id].peeing = ppa->peeing;
 		g->Players[player_id].pee_timer = ppa->pee_timer;
-
 	} else if (deriv == DEP_DERIV_SCORE) {
 		// Update score
 		g->score.score_info[ps->p_id] = ps->score;
