@@ -115,6 +115,12 @@ public:
 		void RenderTiles(Game* g, SpriteStruct* sprites);
 
 
+	/* ======================== RenderBorders ===========================
+	 *	Renders the map's borders
+	 */
+		void RenderBorders(Game* g, SpriteStruct* sprites);
+
+
 	/* ========= GenerateRandomMapWithAppropriateNeighbours =============
 	 *	Generates a random map with appropiate neighbour tiles
 	 */

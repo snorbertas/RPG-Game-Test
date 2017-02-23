@@ -17,8 +17,12 @@
 #include "Drinking.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
+	// Render parallax
+	RenderParallaxBackground(g, sprites);
+
 	// Render Tiles
 	g->map.RenderTiles(g, sprites);
+	g->map.RenderBorders(g, sprites);
 
 	// Render digging animation
 	RenderDigging(g, sprites);
@@ -59,4 +63,16 @@ void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {
 		sprites->img_body[pl.sprite_id + pl.sprite_frame],
 		pl.x + g->camera.x,
 		pl.y + g->camera.y, flag);
+}
+
+void RenderParallaxBackground(Game* g, SpriteStruct* sprites) {
+	int x_offset = 0;
+	while ((x_offset + g->camera.x * 0.4 - 1800) < -1800) {
+		x_offset += 1800;
+	}
+	int x = x_offset + g->camera.x * 0.4;
+	int y = -150 + g->camera.y * 0.2;
+	if (y > 0) y = 0;
+	DrawImage(g, sprites->img_background[BACKGROUND_SKY], x - 1800, y, 0);
+	DrawImage(g, sprites->img_background[BACKGROUND_SKY], x, y, 0);
 }

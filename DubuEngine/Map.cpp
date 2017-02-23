@@ -905,6 +905,64 @@ void Map::RenderTiles(Game* g, SpriteStruct* sprites) {
 	}
 }
 
+void Map::RenderBorders(Game* g, SpriteStruct* sprites) {
+	// This one is for an island
+	// Left border
+	if (g->camera.x > 0) {
+		int hor_blocks = (g->camera.x / Map::TILE_SIZE) + 1;
+		int ver_blocks = (g->BHEIGHT / Map::TILE_SIZE) + 2;
+		int start_y = (-g->camera.y / Map::TILE_SIZE);
+		if (start_y < 0) start_y = 0;
+
+		for (int x = 0; x < hor_blocks; x++) {
+			for (int y = start_y; y < start_y + ver_blocks; y++) {
+				DrawImage(g, sprites->img_tile[32],
+					((x - hor_blocks) * TILE_SIZE) + g->camera.x,
+					(y * TILE_SIZE) + g->camera.y, 0);
+			}
+		}
+	}
+
+	// Right border
+	if (g->camera.x < -((Map::MAP_SIZE_X * Map::TILE_SIZE) - g->BWIDTH)) {
+		int new_cam_x = -g->camera.x - ((Map::MAP_SIZE_X * Map::TILE_SIZE) - g->BWIDTH);
+		int hor_blocks = (new_cam_x / Map::TILE_SIZE) + 1;
+		int ver_blocks = (g->BHEIGHT / Map::TILE_SIZE) + 2;
+		int start_y = (-g->camera.y / Map::TILE_SIZE);
+		if (start_y < 0) start_y = 0;
+
+		for (int x = 0; x < hor_blocks; x++) {
+			for (int y = start_y; y < start_y + ver_blocks; y++) {
+				DrawImage(g, sprites->img_tile[32],
+					((x + Map::MAP_SIZE_X) * TILE_SIZE) + g->camera.x,
+					(y * TILE_SIZE) + g->camera.y, 0);
+			}
+		}
+	}
+
+	// Bottom border
+	if (g->camera.y < -((Map::MAP_SIZE_Y * Map::TILE_SIZE) - g->BHEIGHT)) {
+		int hor_blocks = (g->BWIDTH / Map::TILE_SIZE) + 1;
+		int ver_blocks = (g->BHEIGHT / Map::TILE_SIZE) + 2;
+		int new_cam_y = -g->camera.y - ((Map::MAP_SIZE_Y * Map::TILE_SIZE) - g->BHEIGHT);
+		int start_y = Map::MAP_SIZE_Y + ((new_cam_y - g->BHEIGHT)/ Map::TILE_SIZE);
+		if (start_y < Map::MAP_SIZE_Y) start_y = Map::MAP_SIZE_Y;
+		int start_x = -g->camera.x / Map::TILE_SIZE;
+		if (start_x < 0) start_x = 0;
+		if (start_x > Map::MAP_SIZE_X - hor_blocks) {
+			start_x = Map::MAP_SIZE_X - hor_blocks;
+		}
+
+		for (int x = start_x; x < start_x + hor_blocks; x++) {
+			for (int y = start_y; y < start_y + ver_blocks; y++) {
+				DrawImage(g, sprites->img_tile[32],
+					(x * TILE_SIZE) + g->camera.x,
+					(y * TILE_SIZE) + g->camera.y, 0);
+			}
+		}
+	}
+}
+
 int GetTileSprite(Biome biome, BlockLocation location) {
 	switch (biome) {
 	case Biome_Grass:

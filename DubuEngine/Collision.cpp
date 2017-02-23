@@ -24,6 +24,12 @@ bool PlayerMoveCollides(Player& pl, Map& map, double mov_x, double mov_y) {
 		}
 	}
 
+	// Check collision with map boundary
+	if (o1.x < 0 || o1.x + o1.w > (Map::MAP_SIZE_X * Map::TILE_SIZE) ||
+		o1.y < 0 || o1.y + o1.h > (Map::MAP_SIZE_Y * Map::TILE_SIZE)) {
+		return true;
+	}
+
 	return false;
 }
 

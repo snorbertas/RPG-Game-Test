@@ -19,3 +19,11 @@
  *		Called once per tick from the RenderGame() function.
  */
 	void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites);
+
+
+/* ======================= RenderParallaxBackground =======================
+ *		Renders the background.
+ *
+ *		Called once per tick from the RenderGame() function.
+ */
+	void RenderParallaxBackground(Game* g, SpriteStruct* sprites);
