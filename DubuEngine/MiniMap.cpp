@@ -22,8 +22,15 @@ void DrawMiniMapTree(Game* g, int x, int y) {
 void DrawMiniMap(Game* g, SpriteStruct* sprites, int x, int y, int w, int h) {
 	// Variables
 	static int block_size = 5;
-	int start_x = -g->camera.x / Map::TILE_SIZE;
-	int start_y = -g->camera.y / Map::TILE_SIZE;
+	int start_x = -((g->camera.x + (g->BWIDTH / 2)) / Map::TILE_SIZE);
+	int start_y = -((g->camera.y + (g->BWIDTH / 2)) / Map::TILE_SIZE);
+
+	/* Offset to center player
+	  (this is due to camera being fitted for different resolution and visiblity */
+	start_x += 6;
+	start_y += 1;
+
+	//int start_y = -g->camera.y / Map::TILE_SIZE;
 	int width = w;
 	int height = h;
 	int hor_blocks = width / block_size;
@@ -53,8 +60,8 @@ void DrawMiniMap(Game* g, SpriteStruct* sprites, int x, int y, int w, int h) {
 	// Establish boundaries (using real values for faster comparison)
 	int start_x_real = start_x * Map::TILE_SIZE;
 	int start_y_real = start_y * Map::TILE_SIZE;
-	int end_x_real = (start_x + hor_blocks) * Map::TILE_SIZE;
-	int end_y_real = (start_y + ver_blocks) * Map::TILE_SIZE;
+	int end_x_real = (start_x + hor_blocks - 1) * Map::TILE_SIZE;
+	int end_y_real = (start_y + ver_blocks - 1) * Map::TILE_SIZE;
 
 	// Loop trough all map objects (is there a faster way?)
 	for (int i = 0; i < g->map.Objects.size(); i++) {
