@@ -27,8 +27,16 @@ public:
 		FacingUp, FacingDown, FacingLeft, FacingRight
 	};
 
+	// Stamina
+	int stamina_max = 100;
+	int stamina_left = 100;
+
+	// Score
+	int bones_found = 0;
+
 	// Bladder & Pee
-	int pee_ammo = 10;
+	int pee_max = 10;
+	int pee_ammo = pee_max;
 	int pee_duration = TPS;
 	int pee_timer = 0;
 	bool peeing = false;			// Peeing indicator

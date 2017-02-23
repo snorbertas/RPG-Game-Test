@@ -49,6 +49,8 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									NewGame(g);
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
 									g->Interfaces[INTERFACE_CHAT].visible = true;
+									g->Interfaces[INTERFACE_RADAR].visible = true;
+									g->Interfaces[INTERFACE_STATS].visible = true;
 									done = true;
 									break;
 								case 1: // Options (Main Menu)
@@ -436,7 +438,7 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				g->Interfaces[INTERFACE_PAUSE].visible = true;
 				g->Interfaces[6].visible = true;
 				g->Interfaces[INTERFACE_CHAT].x = 0;
-				g->Interfaces[INTERFACE_CHAT].y = g->BHEIGHT - 480;
+				g->Interfaces[INTERFACE_CHAT].y = g->BHEIGHT - 496;
 			} else {
 				g->scene = 0;
 				HideAllInterfaces(g, 0);

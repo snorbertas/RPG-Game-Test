@@ -103,14 +103,12 @@ void LoadInterfaces(Game* g){
 
 	// Interface 12
 	NewInterface(&g->Interfaces[INTERFACE_RADAR], NO_SPRITE, g->BWIDTH / 2, g->BHEIGHT- 60);
-	g->Interfaces[INTERFACE_RADAR].visible = true;
 
 	// Interface 13
-	NewInterface(&g->Interfaces[INTERFACE_STATS], NO_SPRITE, 200, 200);
-	g->Interfaces[INTERFACE_STATS].visible = true;
+	NewInterface(&g->Interfaces[INTERFACE_STATS], NO_SPRITE, -8, g->BHEIGHT - 94);
 
 	// Interface 29 - Chat/Console
-	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 480);
+	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 496);
 
 	// Interface 30 - Scoreboard
 	NewInterface(&g->Interfaces[INTERFACE_SCORE], NO_SPRITE, (g->BWIDTH / 2) - 210, (g->BHEIGHT / 2) - 300);
@@ -159,6 +157,11 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				g->Interfaces[i].x,
 				g->Interfaces[i].y,
 				0, g->Interfaces[i].opacity);
+
+			// Darken for pause menu
+			if (i == INTERFACE_PAUSE) DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.8);
+
+			// Loop trough all buttons
 			for(int j = 0; j < MAX_BUTTONS; j++){
 				if(g->Buttons[j].interface_id == i){
 					if (g->Buttons[j].visible) {
@@ -422,9 +425,40 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					break;
 				}
 				case INTERFACE_STATS:
-					// WILL FINISH THIS NEXT DAY
-					// DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, g->Interfaces[i].x, g->Interfaces[i].y, 0, 0);
+				{
+					int x = g->Interfaces[i].x;
+					int y = g->Interfaces[i].y;
+					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 306, 106);
+
+					// Player avatar
+					// TODO: Perhaps make it customizable? etc.
+					x += 2;
+					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x + 10, y + 10, 80, 80, 0.8);
+					DrawImage(g, sprites->img_body[0], x + 18, y + 16, 0);
+
+					// Player name
+					x += 95;
+					DrawText(font[0], 64, 32, 64, x, y, ALLEGRO_ALIGN_LEFT, g->pl.name.c_str());
+
+					// Bones found
+					y += 6;
+					DrawText(font[2], 255, 255, 255, x, y + 22, ALLEGRO_ALIGN_LEFT, "Bones Found: %i", g->pl.bones_found);
+
+					// Bladder
+					float bladder_fraction = ((float)g->pl.pee_ammo / (float)g->pl.pee_max);
+					int bladder_lenght = bladder_fraction * 200;
+					DrawBar(g, sprites, BarType::EMPTY, x, y + 44, 200);
+					if(bladder_lenght > 0) DrawBar(g, sprites, BarType::BLUE, x, y + 44, bladder_lenght);
+					DrawText(font[2], 64, 64, 255, x + 100, y + 42, ALLEGRO_ALIGN_CENTER, "Bladder");
+
+					// Stamina
+					float stamina_fraction = ((float)g->pl.stamina_left / (float)g->pl.stamina_max);
+					int stamina_lenght = stamina_fraction * 200;
+					DrawBar(g, sprites, BarType::EMPTY, x, y + 66, 200);
+					DrawBar(g, sprites, BarType::RED, x, y + 66, stamina_lenght);
+					DrawText(font[2], 170, 64, 64, x + 100, y + 64, ALLEGRO_ALIGN_CENTER, "Stamina");
 					break;
+				}
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
 						DrawRectangle(g, g->Interfaces[i].x + 2, g->Interfaces[i].y + 2, 500 - 4, 400 - 4, 0, 0, 0, 0.3);

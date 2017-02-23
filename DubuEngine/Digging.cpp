@@ -35,6 +35,7 @@ void HandleDigging(Game * g, Player* p) {
 					if (collide(col_player, col_bone)) {
 						g->map.Bones[i] = g->map.Bones.back();
 						g->map.Bones.pop_back();
+						g->pl.bones_found++;
 						break;
 					}
 				}
