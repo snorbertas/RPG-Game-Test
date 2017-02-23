@@ -345,4 +345,6 @@ private:
 
 void UpdateMapAnimations(Game* g);
 bool TileIsWater(int tile_id);
+bool TileIsGrass(int tile_id);
+bool TileIsDirt(int tile_id);
 CollisionBox GetCollisionFromTile(int tile_id, int x, int y);

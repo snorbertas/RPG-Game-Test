@@ -248,8 +248,12 @@ void MainLoop() {
 		if (g.remake_display) {
 			RecreateDisplay();
 		}
+
+		// Wait for event
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
+
+		// Once event found
 		if (ev.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN && g.window_mode == ALLEGRO_FULLSCREEN) {
 			g.remake_display = true;
 		}

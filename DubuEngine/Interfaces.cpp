@@ -10,6 +10,7 @@
 #include "ScaledDraw.h"
 #include "Interfaces.h"
 #include "Radar.h"
+#include "MiniMap.h"
 
 inline const char * const BoolToString(bool b)
 {
@@ -107,12 +108,14 @@ void LoadInterfaces(Game* g){
 	// Interface 13
 	NewInterface(&g->Interfaces[INTERFACE_STATS], NO_SPRITE, -8, g->BHEIGHT - 94);
 
+	// Interface 14
+	NewInterface(&g->Interfaces[INTERFACE_MINI_MAP], NO_SPRITE, g->BWIDTH - 176, g->BHEIGHT - 176);
+
 	// Interface 29 - Chat/Console
 	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 496);
 
 	// Interface 30 - Scoreboard
 	NewInterface(&g->Interfaces[INTERFACE_SCORE], NO_SPRITE, (g->BWIDTH / 2) - 210, (g->BHEIGHT / 2) - 300);
-	g->Interfaces[INTERFACE_SCORE].visible = true;
 
 	// Interface 99 (on-top)
 	temp_x = g->BWIDTH / 2 - 250;
@@ -224,6 +227,9 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[2], 255, 255, 10, 0, 75, ALLEGRO_ALIGN_LEFT, "Ticks To Move: %i", g->pl.ticks_to_move);
 					DrawText(font[2], 255, 255, 10, 0, 90, ALLEGRO_ALIGN_LEFT, "Velocity: %i", g->pl.velocity);
 					DrawText(font[2], 255, 255, 10, 0, 105, ALLEGRO_ALIGN_LEFT, "Ticks To Anim: %i", g->pl.ticks_to_anim);
+					if (g->debug.showMegaMap) {
+						DrawMiniMap(g, sprites, (g->BWIDTH - 500) / 2, (g->BHEIGHT - 500 ) / 2, 500, 500);
+					}
 					break;
 				}
 				case 7:
@@ -459,6 +465,11 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[2], 170, 64, 64, x + 100, y + 64, ALLEGRO_ALIGN_CENTER, "Stamina");
 					break;
 				}
+				case INTERFACE_MINI_MAP:
+				{
+					DrawMiniMap(g, sprites, g->Interfaces[i].x, g->Interfaces[i].y);
+					break;
+				}
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
 						DrawRectangle(g, g->Interfaces[i].x + 2, g->Interfaces[i].y + 2, 500 - 4, 400 - 4, 0, 0, 0, 0.3);
@@ -621,7 +632,7 @@ bool InterfaceIsOnTop(Game* g, int id) {
 			if (i != 6 && i != 2 && i != 7 && i != 12 &&
 				i != 31 && i != 32 && i != 33 && i != 29 &&
 				i != 27 && i != 28 && i != 34 && i != 35 &&
-				i != 26 && i != 30 && i != 13) {
+				i != 26 && i != 30 && i != 13 && i != 14) {
 				top_i = i;
 			}
 		}
@@ -761,9 +772,12 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "List of usable commands:");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/help");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/grid");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/megamap");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 		} else if (type == "/seed") {
 			args >> g->map.seed;
+		} else if (type == "/megamap") {
+			g->debug.showMegaMap = !g->debug.showMegaMap;
 		} else if (type == "/grid") {
 			g->debug.grid = !g->debug.grid;
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Toggled grid.");

@@ -644,6 +644,16 @@ bool TileIsWater(int tile_id) {
 	return false;
 }
 
+bool TileIsGrass(int tile_id) {
+	if (tile_id >= 0 && tile_id <= 14) return true;
+	return false;
+}
+
+bool TileIsDirt(int tile_id) {
+	if ((tile_id >= 15 && tile_id <= 27) || (tile_id >= 41 && tile_id <= 44)) return true;
+	return false;
+}
+
 CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	// Initial x/y values
 	int ini_x = x * Map::TILE_SIZE;

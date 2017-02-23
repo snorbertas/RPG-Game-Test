@@ -51,6 +51,8 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->Interfaces[INTERFACE_CHAT].visible = true;
 									g->Interfaces[INTERFACE_RADAR].visible = true;
 									g->Interfaces[INTERFACE_STATS].visible = true;
+									g->Interfaces[INTERFACE_SCORE].visible = true;
+									g->Interfaces[INTERFACE_MINI_MAP].visible = true;
 									done = true;
 									break;
 								case 1: // Options (Main Menu)
@@ -207,6 +209,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->Interfaces[INTERFACE_RADAR].visible = true;
 									g->Interfaces[INTERFACE_STATS].visible = true;
 									g->Interfaces[INTERFACE_SCORE].visible = true;
+									g->Interfaces[INTERFACE_MINI_MAP].visible = true;
 									//
 									g->scene = 1;
 									done = true;
