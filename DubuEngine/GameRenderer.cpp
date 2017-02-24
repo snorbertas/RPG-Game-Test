@@ -15,6 +15,7 @@
 #include "Digging.h"
 #include "Peeing.h"
 #include "Drinking.h"
+#include "Weather.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render parallax
@@ -53,6 +54,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 				ALLEGRO_ALIGN_LEFT, "%f", g->map.Bones[i].Distance);
 		}
 	}
+
+	// Render clouds
+	g->weather.RenderClouds(g, sprites);
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {

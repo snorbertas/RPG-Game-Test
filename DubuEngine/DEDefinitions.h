@@ -6,6 +6,8 @@
 	//Background Sprites
 	#define BACKGROUND_FOREST 1
 	#define BACKGROUND_SKY 2
+	#define BACKGROUND_CLOUD 3
+	#define BACKGROUND_CLOUD_SHADOW 4
 
 	//Interface Sprites
 	#define SPRITE_INTERFACE_OPTIONS 1

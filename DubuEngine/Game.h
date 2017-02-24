@@ -14,6 +14,7 @@
 #include "Map.h"
 #include "Debug.h"
 #include "Radar.h"
+#include "Weather.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -143,4 +144,5 @@
 			Map map = Map(0);					// Map
 			Debug debug;						// Temp debug
 			Radar radar;						// Radar interface
+			Weather weather;					// Weather
 	};

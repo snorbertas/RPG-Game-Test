@@ -36,6 +36,7 @@
 #include "TilesInfo.h"
 #include "PlayerMovement.h"
 #include "Radar.h"
+#include "Weather.h"
 using namespace std;
 
 int main(){
@@ -76,6 +77,7 @@ int main(){
 	RegisterDebugEvents(TimerEvents, MouseEvents, KeyboardEvents);
 	RegisterPlayerMovementEvents(TimerEvents, MouseEvents, KeyboardEvents);
 	RegisterRadarEvents(TimerEvents, MouseEvents, KeyboardEvents);
+	RegisterWeatherEvents(TimerEvents, MouseEvents, KeyboardEvents);
 
 	// Initiate allegro addons, registed mouse, keyboard, etc.
 	al_init_primitives_addon();

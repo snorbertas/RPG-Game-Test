@@ -64,7 +64,7 @@ void DrawMiniMap(Game* g, SpriteStruct* sprites, int x, int y, int w, int h) {
 	int end_y_real = (start_y + ver_blocks - 1) * Map::TILE_SIZE;
 
 	// Loop trough all map objects (is there a faster way?)
-	for (int i = 0; i < g->map.Objects.size(); i++) {
+	for (size_t i = 0; i < g->map.Objects.size(); i++) {
 		MapObjectInfo::MapObject* mapobj = &g->map.Objects[i];
 		if (mapobj->x >= start_x_real && mapobj->x <= end_x_real &&
 			mapobj->y >= start_y_real && mapobj->y <= end_y_real) {
