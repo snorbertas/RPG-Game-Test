@@ -9,10 +9,20 @@
 void HandleMenu(Game* g, ALLEGRO_SAMPLE** sample_sfx){
 	HandleIntro(g);
 	HandleMenuBackground(g);
+	g->weather.HandleClouds(g, Weather::CloudMode::MODE_MENU);
 
 	// Check if we're quitting game and we fully faded-out
 	if (g->menu.quitting == true && g->fade_out == 1) {
 		g->done = true;
+	}
+
+	// Loading timer
+	if (g->Interfaces[INTERFACE_GENERATING].visible == true) {
+		g->menu.loading_timer--;
+		if (g->menu.loading_timer < 0) g->menu.loading_timer = SecondsToTicks(1.0);
+		if (g->menu.done_loading) {
+			if (g->menu.done_loading > 0) g->menu.ticks_since_done_loading++;
+		}
 	}
 }
 

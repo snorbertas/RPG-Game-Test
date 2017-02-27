@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "GameHandler.h"
 #include "Debug.h"
 
 /* ============================= Event Functions ==========================
@@ -55,6 +56,11 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 			g->BHEIGHT = 720;
 			g->camera.x = 0;
 			g->camera.y = 0;
+		}
+		if (kid == ALLEGRO_KEY_F2) {
+			// Skip cinematics
+			NewGame(g);
+
 		}
 		if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
 			g->map.seed = kid - ALLEGRO_KEY_PAD_0;

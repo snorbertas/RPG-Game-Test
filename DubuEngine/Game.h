@@ -60,13 +60,17 @@
 		float bg_y = -20;						// Background y position
 		float bg_x_vel = 0.2;					// Background horizontal velocity
 		float bg_y_vel = 0.3;					// Background vertical velocity
+		int loading_timer = 0;					// Timer for loading animation
+		bool done_loading = false;				// Wether generation loading finished or not
+		int ticks_since_done_loading = -1;		// Ticks since done generation loading (For animation)
+		int tip_id = 0;							// ID number for the tip during loading screen
 	};
 
 
 // Button structure
 	struct Button {
 		bool visible = true;					// If true, button is rendered and active
-		int sprite_id = 5;						// Sprite ID for button (sprite_id + 1 is highlighted when mouse is colliding)
+		int sprite_id;							// Sprite ID for button (sprite_id + 1 is highlighted when mouse is colliding)
 		int w, h;								// Width and height for button (hitbox)
 		int interface_id;						// Interface ID the button belongs to
 		int x = -1;								// x position for button relative to interface
@@ -76,7 +80,7 @@
 
 // Interface structure
 	struct Interface {
-		int sprite_id;							// Sprite ID for interface
+		int sprite_id;						// Sprite ID for interface
 		int x, y;								// x, y coordinates
 		bool visible;							// If true, interface is visible and active
 		float opacity = 1.0;					// Transperency

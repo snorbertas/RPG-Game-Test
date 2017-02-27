@@ -18,12 +18,14 @@ class Weather {
 public:
 	// Variables
 	static const int MAX_CLOUDS = 20;
+	static const int MAX_CLOUDS_MENU = 20;
 	std::vector<Cloud> cloud;
+	enum CloudMode { MODE_GAME, MODE_MENU };
 
 	// Functions
-	Weather();
-	void HandleClouds(Game* g);							// Handles clouds
-	void RenderClouds(Game* g, SpriteStruct* sprites);	// Renders clouds
+	Weather(Weather::CloudMode mode = MODE_MENU);
+	void HandleClouds(Game* g, CloudMode = MODE_MENU);								// Handles clouds
+	void RenderClouds(Game* g, SpriteStruct* sprites, CloudMode mode = MODE_MENU);	// Renders clouds
 };
 
 int RegisterWeatherEvents(TimerEventFunction* t, MouseEventFunction* c, KeyboardEventFunction* p);

@@ -144,3 +144,11 @@
  */
 	int* KeyIsBound(Game* g,
 		int key_id);					// The key to check whether it's bound or not
+
+
+/* =========================== MapGenerationThread ========================
+ *		Thread to generate a map (and/or load other stuff to prepare)
+ *
+ *		Called before starting a new game.
+ */
+	unsigned int __stdcall MapGenerationThread(void *data);

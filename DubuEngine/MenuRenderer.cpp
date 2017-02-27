@@ -31,11 +31,28 @@ void RenderMenu(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 	DrawImage(g, img_background[BACKGROUND_FOREST], -g->menu_x, -g->menu_y, 0);
 
+	// Mode choice
+	//if (g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible == true ||
+	//	g->Interfaces[INTERFACE_GENERATING].visible == true) {
+
+		// Adjust camera
+		g->camera.x = -g->menu_x;
+		if (!g->menu.done_loading) {
+			g->camera.y = -(Map::MAP_SIZE_Y * Map::TILE_SIZE) - g->menu_y;
+		} else {
+			g->camera.y -= (g->menu.ticks_since_done_loading * 5);
+		}
+		g->map.RenderBorders(g, sprites);
+		g->weather.RenderClouds(g, sprites);
+	//}
+
 	// Game Title/Logo
 	if (g->intro_a == 0
 		&& g->Interfaces[INTERFACE_OPTIONS].visible == false
 		&& g->Interfaces[INTERFACE_KEYBOARD].visible == false) {
-		DrawImage(g, img_sprite[SPRITE_LOGO], (g->BWIDTH / 2) - 132, 10, 0);
+		if (!g->menu.done_loading) {
+			DrawImage(g, img_sprite[SPRITE_LOGO], (g->BWIDTH / 2) - 132, 10, 0);
+		}
 	}
 
 	// Fade

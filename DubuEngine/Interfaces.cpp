@@ -5,12 +5,14 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <sstream>
+#include <fstream>
 #include "Game.h"
 #include "GameHandler.h"
 #include "ScaledDraw.h"
 #include "Interfaces.h"
 #include "Radar.h"
 #include "MiniMap.h"
+#include "Tips.h"
 
 inline const char * const BoolToString(bool b)
 {
@@ -21,7 +23,7 @@ void LoadInterfaces(Game* g){
 	g->Interfaces = new Interface[MAX_INTERFACES];
 	g->Buttons = new Button[MAX_BUTTONS];
 	for (int i = 0; i < MAX_INTERFACES; i++) {
-		g->Interfaces[i].sprite_id = 5;
+		g->Interfaces[i].sprite_id = -1;
 		g->Interfaces[i].visible = false;
 		g->Interfaces[i].x = g->BWIDTH;
 		g->Interfaces[i].y = g->BHEIGHT;
@@ -45,6 +47,20 @@ void LoadInterfaces(Game* g){
 	NewButton(&g->Buttons[242], SPRITE_BUTTON_CREDITS, 0, 165, 270, 50, INTERFACE_MAIN_MENU, 0);	// Credits
 	NewButton(&g->Buttons[2], SPRITE_BUTTON_QUIT, 0, 220, 270, 50, INTERFACE_MAIN_MENU, 0);			// Quit
 	
+	// Interface 1 (Single player mode choice)
+	NewInterface(&g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE], NO_SPRITE, (g->BWIDTH / 2), (g->BHEIGHT / 2));
+	NewButton(&g->Buttons[15], SPRITE_BUTTON_CANCEL, 188, 236, 112, 45, INTERFACE_SINGLE_MODE_CHOICE);
+	temp_x = -320;
+	temp_y = -100;
+	NewButton(&g->Buttons[3], SPRITE_BUTTON_PLAY, temp_x + 27, temp_y + 250, 142, 35, INTERFACE_SINGLE_MODE_CHOICE);
+	temp_x += 220;
+	NewButton(&g->Buttons[4], SPRITE_BUTTON_PLAY, temp_x + 27, temp_y + 250, 142, 35, INTERFACE_SINGLE_MODE_CHOICE);
+	temp_x += 220;
+	NewButton(&g->Buttons[7], SPRITE_BUTTON_PLAY, temp_x + 27, temp_y + 250, 142, 35, INTERFACE_SINGLE_MODE_CHOICE);
+
+	// Interface 2 (Generating map)
+	NewInterface(&g->Interfaces[INTERFACE_GENERATING], NO_SPRITE, (g->BWIDTH / 2), (g->BHEIGHT / 2));
+
 	// Interface 3 //Options
 	NewInterface(&g->Interfaces[INTERFACE_OPTIONS], SPRITE_INTERFACE_OPTIONS, (g->BWIDTH/2) - 200, (g->BHEIGHT/2) - 200);
 	NewButton(&g->Buttons[5], SPRITE_BUTTON_RES, 215, 15, 168, 37, INTERFACE_OPTIONS);
@@ -156,13 +172,39 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 			if (i == 99) {
 				DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.75);
 			}
+
+			// Darken for pause menu
+			if (i == INTERFACE_PAUSE ||
+				(g->scene == 2 && (i == INTERFACE_OPTIONS || i == INTERFACE_KEYBOARD))) {
+				DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.8);
+			}
+
+			// Draw Interface image
 			DrawImage(g, img_interface[g->Interfaces[i].sprite_id],
 				g->Interfaces[i].x,
 				g->Interfaces[i].y,
 				0, g->Interfaces[i].opacity);
 
-			// Darken for pause menu
-			if (i == INTERFACE_PAUSE) DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.8);
+			// Draw interface boxes before buttons
+			if (i == INTERFACE_SINGLE_MODE_CHOICE) {
+				// Initial x/y
+				int x = g->Interfaces[i].x - 320;
+				int y = g->Interfaces[i].y - 100;
+
+				// Menu
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y + 320, 640, 80, 0.8);
+
+				// Bone Hunt
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 200, 300, 0.8);
+
+				// Bonesweeper
+				x += 220;
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 200, 300, 0.8);
+
+				// Surival
+				x += 220;
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 200, 300, 0.8);
+			}
 
 			// Loop trough all buttons
 			for(int j = 0; j < MAX_BUTTONS; j++){
@@ -188,6 +230,117 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 			float r_x = (float)g->s_x/(float)g->BWIDTH;
 			float r_y = (float)g->s_y/(float)g->BHEIGHT;
 			switch(i){
+				case INTERFACE_SINGLE_MODE_CHOICE:
+				{
+					// Initial x/y
+					int x = g->Interfaces[i].x - 320;
+					int y = g->Interfaces[i].y - 100;
+
+					// Menu
+					DrawText(font[9], 255, 255, 255, x + 10, y + 330, ALLEGRO_ALIGN_LEFT,
+						"TODO: Add <Customize> <Shop> <Achievements> buttons here");
+
+					// Bone Hunt
+					DrawText(font[6], 10, 255, 32, x + 100, y + 5, ALLEGRO_ALIGN_CENTER, "Bone Hunt");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 180, ALLEGRO_ALIGN_CENTER, "Claim all the territory and");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 195, ALLEGRO_ALIGN_CENTER, "find all the bones before it");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 210, ALLEGRO_ALIGN_CENTER, "gets dark. Wolves come out");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 225, ALLEGRO_ALIGN_CENTER, "when it's night time.");
+					
+					// Thumbnail
+					for (int yi = 0; yi < 2; yi++) {
+						for (int xi = 0; xi < 2; xi++) {
+							DrawImage(g, sprites->img_tile[4],
+								x + (xi * Map::TILE_SIZE) + 36,
+								y + (yi * Map::TILE_SIZE) + 45, 0);
+						}
+					}
+					DrawImage(g, sprites->img_object[13], x + 45, y + 26, 0);
+					DrawImage(g, sprites->img_object[12], x + 45, y + 90, 0);
+					DrawImage(g, sprites->img_gfx[4], x + 85, y + 92, 0);
+					DrawImage(g, sprites->img_body[12], x + 85, y + 92, 0);
+					DrawScaledImage(g, sprites->img_interface[5], x + 102, y + 132, -20, -20, 0);
+
+					// Bonesweeper
+					x += 220;
+					DrawText(font[0], 255, 188, 10, x + 100, y + 10, ALLEGRO_ALIGN_CENTER, "BoneSweeper");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 180, ALLEGRO_ALIGN_CENTER, "Find all the bones, but be");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 195, ALLEGRO_ALIGN_CENTER, "careful. The island is full");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 210, ALLEGRO_ALIGN_CENTER, "of bombs! Dig with caution");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 225, ALLEGRO_ALIGN_CENTER, "by marking the bombs.");
+
+					// Thumbnail
+					for (int yi = 0; yi < 2; yi++) {
+						for (int xi = 0; xi < 2; xi++) {
+							DrawImage(g, sprites->img_tile[19],
+								x + (xi * Map::TILE_SIZE) + 36,
+								y + (yi * Map::TILE_SIZE) + 45, 0);
+						}
+					}
+					DrawImage(g, sprites->img_object[5], x + 30, y + 26, 0);
+					DrawImage(g, sprites->img_object[4], x + 105, y + 95, 0);
+					DrawImage(g, sprites->img_gfx[3], x + 70, y + 85, 0);
+					DrawImage(g, sprites->img_body[14], x + 70, y + 85, 0);
+					DrawImage(g, sprites->img_gfx[2], x + 70, y + 90, ALLEGRO_FLIP_VERTICAL, 0.4);
+
+
+					//DrawRectangle(g, x + 8, y + 8, 200 - 16, 300 - 16, 0, 0, 0, 0.9);
+					//DrawText(font[0], 128, 0, 0, x + 100, y + 130, ALLEGRO_ALIGN_CENTER, "Coming Soon!");
+					//g->Buttons[4].visible = false;
+
+					// Surival
+					x += 220;
+					DrawText(font[6], 10, 143, 255, x + 100, y + 5, ALLEGRO_ALIGN_CENTER, "Survival");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 180, ALLEGRO_ALIGN_CENTER, "Interact with other canines");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 195, ALLEGRO_ALIGN_CENTER, "to survive in a dangerious");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 210, ALLEGRO_ALIGN_CENTER, "island. Claim all territory");
+					DrawText(font[9], 255, 255, 255, x + 100, y + 225, ALLEGRO_ALIGN_CENTER, "to become the alpha dog!");
+					//DrawRectangle(g, x + 8, y + 8, 200 - 16, 300 - 16, 0, 0, 0, 0.9);
+					//DrawText(font[0], 128, 0, 0, x + 100, y + 130, ALLEGRO_ALIGN_CENTER, "Coming Soon!");
+					//g->Buttons[7].visible = false;
+					
+					// Thumbnail
+					for (int xi = 0; xi < 2; xi++) {
+						DrawImage(g, sprites->img_tile[32],
+							x + (xi * Map::TILE_SIZE) + 36,
+							y + (0 * Map::TILE_SIZE) + 45, 0);
+					}
+					for (int xi = 0; xi < 2; xi++) {
+						DrawImage(g, sprites->img_tile[35],
+							x + (xi * Map::TILE_SIZE) + 36,
+							y + (1 * Map::TILE_SIZE) + 45, 0);
+					}
+					DrawImage(g, sprites->img_body[3], x + 70, y + 108, 0);
+
+
+					break;
+				}
+				case INTERFACE_GENERATING:
+					if (!g->menu.done_loading) {
+						// Initial x/y
+						int x = g->Interfaces[i].x - 150;
+						int y = g->Interfaces[i].y - 50;
+						DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 300, 60, 0.8);
+
+						// Calculate dots
+						x += 60;
+						if (g->menu.loading_timer > SecondsToTicks(0.75)) {
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map");
+						}
+						else if (g->menu.loading_timer > SecondsToTicks(0.5)) {
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map.");
+						}
+						else if (g->menu.loading_timer > SecondsToTicks(0.25)) {
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map..");
+						}
+						else {
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map...");
+						}
+
+						// Tips
+						DrawText(font[0], 255, 255, 255, g->Interfaces[i].x, g->BHEIGHT - 80, ALLEGRO_ALIGN_CENTER, GetTip(g->menu.tip_id));
+					}
+					break;
 				case 3:
 					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 222, g->Interfaces[i].y + 22, ALLEGRO_ALIGN_LEFT, "%i x %i", g->s_x, g->s_y);
 					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 222, g->Interfaces[i].y + 78, ALLEGRO_ALIGN_LEFT, GetWindowMode(g->window_mode));
@@ -758,6 +911,40 @@ void SubmitMessage(Game* g, const char* msg) {
 	}
 }
 
+void DumpData(Game* g) {
+	// This function is for debug purposes only
+
+	ofstream myfile;
+	myfile.open("dump.txt");
+
+	// Interfaces
+	myfile << "|===============================|\n";
+	myfile << "|========== INTERFACES =========|\n";
+	myfile << "|===============================|\n";
+	for (int i = 0; i < MAX_INTERFACES; i++) {
+		auto inter = g->Interfaces[i];
+		if (inter.sprite_id != -1) {
+			myfile << ("Interface[" + to_string(i) + "] is used, with sprite id " + to_string(inter.sprite_id) + "\n");
+		} else {
+			myfile << ("Interface[" + to_string(i) + "] is EMPTY!\n");
+		}
+	}
+
+	// Buttons
+	myfile << "|===============================|\n";
+	myfile << "|============ Buttons ==========|\n";
+	myfile << "|===============================|\n";
+	for (int i = 0; i < MAX_BUTTONS; i++) {
+		auto but = g->Buttons[i];
+		if (but.interface_id != -1) {
+			myfile << ("Button[" + to_string(i) + "] is bound to Interface[" + to_string(but.interface_id) + "]\n");
+		} else {
+			myfile << ("Button[" + to_string(i) + "] is EMPTY!\n");
+		}
+	}
+	myfile.close();
+}
+
 #define SYSTEM_COLOUR 139, 49, 121
 void HandleCommand(Game* g, const char* msg) {
 	if ((string)msg == "/version") {
@@ -773,11 +960,15 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/help");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/grid");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/megamap");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/dump");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 		} else if (type == "/seed") {
 			args >> g->map.seed;
 		} else if (type == "/megamap") {
 			g->debug.showMegaMap = !g->debug.showMegaMap;
+		} else if (type == "/dump") {
+			DumpData(g);
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Dumped data to 'dump.txt'");
 		} else if (type == "/grid") {
 			g->debug.grid = !g->debug.grid;
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Toggled grid.");

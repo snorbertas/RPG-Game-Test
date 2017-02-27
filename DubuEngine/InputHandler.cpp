@@ -46,13 +46,15 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 							switch(j){
 								case 0: // New Game (Main Menu)
 									//Fade(g, 0);
-									NewGame(g);
+									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
+									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
+									/*NewGame(g);
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
 									g->Interfaces[INTERFACE_CHAT].visible = true;
 									g->Interfaces[INTERFACE_RADAR].visible = true;
 									g->Interfaces[INTERFACE_STATS].visible = true;
 									g->Interfaces[INTERFACE_SCORE].visible = true;
-									g->Interfaces[INTERFACE_MINI_MAP].visible = true;
+									g->Interfaces[INTERFACE_MINI_MAP].visible = true;*/
 									done = true;
 									break;
 								case 1: // Options (Main Menu)
@@ -66,16 +68,12 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
 									done = true;
 									break;
-								case 3: // New Game (In-game)
-									NewGame(g);
-									g->Interfaces[1].visible = false;
-									g->Interfaces[2].visible = true;
+								case 3: // Play bone hunt
+									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = false;
+									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 									break;
-								case 4: // Quit (In-game)
-									g->scene = 0;
-									HideAllInterfaces(g, -1);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+								case 4: // Play bonesweeper
 									done = true;
 									break;
 								case 5: // Resolution drop-down
@@ -91,6 +89,9 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 										g->Interfaces[4].visible = false;
 										done = true;
 									}
+									break;
+								case 7: // Play survival
+									done = true;
 									break;
 								case 8: // 1024x576
 									g->Interfaces[4].visible = false;
@@ -147,10 +148,12 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 15: // Okay
+									HideAllInterfaces(g, 0);
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									/*g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
 									g->Interfaces[INTERFACE_OPTIONS].visible = false;
 									g->Interfaces[4].visible = false;
-									g->Interfaces[5].visible = false;
+									g->Interfaces[5].visible = false;*/
 									done = true;
 									break;
 								case 16: // Okay (Message Interface)
@@ -624,4 +627,59 @@ int* KeyIsBound(Game* g, int key_id) {
 	if (g->keys.camera_bind == key_id) return &g->keys.camera_bind;
 	if (g->keys.chat_bind == key_id) return &g->keys.chat_bind;
 	return NULL;
+}
+
+unsigned int __stdcall MapGenerationThread(void *data) {
+	Game* g = (Game*)data;
+
+	// Start loading screen
+	HideAllInterfaces(g, INTERFACE_GENERATING);
+	g->Interfaces[INTERFACE_GENERATING].visible = true;
+	srand(al_get_time() * 1000);
+	g->menu.tip_id = rand() % 2;
+
+	// Record time
+	double current_time = al_get_time();
+
+	// Generate map
+	g->map.seed = rand() % 133333337;
+	g->map.ChangeForestMode(1);
+	g->map.GenerateRandom(1);
+
+	// Record new time
+	double new_time = al_get_time();
+
+	// Delay until 4.5 seconds if needed
+	double const delay = 4.5;
+	double taken_time = new_time - current_time;
+	cout << "Seconds taken to generate map: " << taken_time << endl;
+	if (taken_time < delay) {
+		Sleep((delay - taken_time) * 1000);
+	}
+
+	// Fade out
+	Fade(g, 0);
+	g->menu.done_loading = true;
+	g->menu.ticks_since_done_loading = 0;
+
+	// Fade in
+	Sleep(2000);
+
+	// Set everything up
+	NewGame(g);
+	g->weather = Weather(Weather::CloudMode::MODE_GAME);
+	g->pl.x = 3200;
+	g->pl.y = 3200;
+	HideAllInterfaces(g, INTERFACE_CHAT);
+	g->Interfaces[INTERFACE_VERSION].visible = true;
+	g->Interfaces[INTERFACE_CHAT].visible = true;
+	g->Interfaces[INTERFACE_RADAR].visible = true;
+	g->Interfaces[INTERFACE_STATS].visible = true;
+	g->Interfaces[INTERFACE_SCORE].visible = true;
+	g->Interfaces[INTERFACE_MINI_MAP].visible = true;
+
+	// Reset, fade and done :)
+	g->menu.done_loading = false;
+	Fade(g, 1);
+	return 1;
 }

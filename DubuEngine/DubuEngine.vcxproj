@@ -50,6 +50,7 @@
     </ClCompile>
     <ClCompile Include="ScaledDraw.cpp" />
     <ClCompile Include="TilesInfo.cpp" />
+    <ClCompile Include="Tips.cpp" />
     <ClCompile Include="Weather.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +78,7 @@
       <SubType>Header</SubType>
     </ClInclude>
     <ClInclude Include="TilesInfo.h" />
+    <ClInclude Include="Tips.h" />
     <ClInclude Include="Weather.h" />
     <ClInclude Include="_EngineConfig.h" />
     <ClInclude Include="Game.h" />
