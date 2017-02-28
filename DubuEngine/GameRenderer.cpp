@@ -57,6 +57,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 
 	// Render clouds
 	g->weather.RenderClouds(g, sprites);
+
+	// Render day/night cycle
+	g->weather.RenderDayNightCycle(g);
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {

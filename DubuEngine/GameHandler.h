@@ -34,8 +34,24 @@
  *		Called from HandleGame function.
  */
 	void HandleGamePackets(Game* g);
+	
+	
+/* ========================== HandleGameDuration ==========================
+ *		Handles game duration timer calculations.
+ *
+ *		Called from HandleGame function.
+ */
+	void HandleGameDuration(Game* g);
 
 	
+/* ======================== HandleMultiplayerMisc =========================
+ *		Handles multiplayer timers, animations, etc.
+ *
+ *		Called from HandleGame function.
+ */
+	void HandleMultiplayerMisc(Game* g);
+
+
 /* ============================ SecondsToTicks ============================
  *		Coverts seconds into a number of game ticks.
  *		Returns the number of game ticks.
@@ -43,6 +59,7 @@
  *		Used when desired.
  */
 	int SecondsToTicks(float seconds);		// Seconds to convert into ticks
+	float TicksToSeconds(int ticks);		// Ticks to covnert into seconds
 
 
 /* ============================== ShowMessage =============================

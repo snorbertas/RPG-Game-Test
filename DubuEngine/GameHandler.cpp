@@ -22,17 +22,8 @@ void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Game handling code here
 	HandleGamePackets(g);
 	UpdateMapAnimations(g);
-
-	// Handle multi-player timers, animations, etc.
-	if (g->connected) {
-		for (int i = 0; i < g->MAX_PLAYERS; i++) {
-			// Digging timer and animation
-			HandleDigging(g, &g->Players[i]);
-
-			// Peeing timer and animation
-			HandlePeeing(g, &g->Players[i]);
-		}
-	}
+	HandleGameDuration(g);
+	HandleMultiplayerMisc(g);
 }
 
 void HandleGamePackets(Game* g) {
@@ -53,8 +44,47 @@ void HandleGamePackets(Game* g) {
 	}
 }
 
+void HandleGameDuration(Game* g) {
+	// Increment tick
+	g->game_duration.ticks++;
+
+	// Convert ticks into raw seconds
+	g->game_duration.seconds = TicksToSeconds(g->game_duration.ticks);
+	g->game_duration.minutes = 0;
+
+	// Invert if counting down
+	if (g->game_duration.inverted) {
+		g->game_duration.seconds = g->game_duration.seconds_start - g->game_duration.seconds;
+		if (g->game_duration.seconds < 0) g->game_duration.seconds = 0;
+	}
+
+
+	// Give 1 minutes for each 60 seconds
+	while (g->game_duration.seconds > 59) {
+		g->game_duration.minutes++;
+		g->game_duration.seconds -= 60;
+	}
+}
+
+void HandleMultiplayerMisc(Game* g) {
+	// Handle multi-player timers, animations, etc.
+	if (g->connected) {
+		for (int i = 0; i < g->MAX_PLAYERS; i++) {
+			// Digging timer and animation
+			HandleDigging(g, &g->Players[i]);
+
+			// Peeing timer and animation
+			HandlePeeing(g, &g->Players[i]);
+		}
+	}
+}
+
 void HandleGameInput(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	//
+}
+
+float TicksToSeconds(int ticks) {
+	return (float)(ticks / TPS);
 }
 
 int SecondsToTicks(float seconds) {

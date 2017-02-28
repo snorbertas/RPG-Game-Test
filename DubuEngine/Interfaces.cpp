@@ -616,6 +616,31 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawBar(g, sprites, BarType::EMPTY, x, y + 66, 200);
 					DrawBar(g, sprites, BarType::RED, x, y + 66, stamina_lenght);
 					DrawText(font[2], 170, 64, 64, x + 100, y + 64, ALLEGRO_ALIGN_CENTER, "Stamina");
+
+					// Timer
+					x = g->BWIDTH / 2;
+					y = -8;
+					int gb = 255;	// Green-Blue
+					string format = "%i:%i";
+
+					// Add extra 0 infront of seconds so we maintain the M:SS format
+					if (g->game_duration.seconds < 10) {
+						format = "%i:0%i";
+					}
+
+					// Turn last 10 seconds red
+					if (g->game_duration.inverted) {
+						if (g->game_duration.minutes == 0 && g->game_duration.seconds < 10) {
+							gb = 64;
+						}
+					}
+
+					// Draw frame
+					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x - 75, y, 150, 63, 0.8);
+
+					// Write the timer
+					DrawText(font[7], 255, gb, gb, x, y, ALLEGRO_ALIGN_CENTER,
+						format.c_str(), g->game_duration.minutes, g->game_duration.seconds);
 					break;
 				}
 				case INTERFACE_MINI_MAP:
@@ -961,14 +986,31 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/grid");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/megamap");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/dump");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/day");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/night");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/timer <seconds (0 = RESET)> ");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 		} else if (type == "/seed") {
 			args >> g->map.seed;
+		} else if (type == "/timer") {
+			args >> g->game_duration.seconds_start;
+			g->game_duration.ticks = 0;
+			if (g->game_duration.seconds_start == 0) {
+				g->game_duration.inverted = false;
+			} else {
+				g->game_duration.inverted = true;
+			}
 		} else if (type == "/megamap") {
 			g->debug.showMegaMap = !g->debug.showMegaMap;
 		} else if (type == "/dump") {
 			DumpData(g);
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Dumped data to 'dump.txt'");
+		} else if (type == "/day") {
+			g->weather.StartDay(g);
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Started day cycle.");
+		} else if (type == "/night") {
+			g->weather.StartNight(g);
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Started night cycle.");
 		} else if (type == "/grid") {
 			g->debug.grid = !g->debug.grid;
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Toggled grid.");

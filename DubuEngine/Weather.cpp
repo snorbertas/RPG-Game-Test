@@ -2,6 +2,7 @@
 #include "ScaledDraw.h"
 #include "Map.h"
 #include "Game.h"
+#include "GameHandler.h"
 #include <algorithm>
 
 Weather::Weather(CloudMode mode) {
@@ -77,9 +78,44 @@ void Weather::RenderClouds(Game* g, SpriteStruct* sprites, CloudMode mode) {
 	}
 }
 
+void Weather::HandleDayNightCycle(Game* g) {
+	// Nothing yet
+}
+
+void Weather::StartDay(Game* g) {
+	cycle.night = false;
+	cycle.timer = SecondsToTicks(10.0);
+}
+
+void Weather::StartNight(Game* g) {
+	cycle.night = true;
+	cycle.timer = SecondsToTicks(10.0);
+}
+
+void Weather::RenderDayNightCycle(Game* g) {
+	if (cycle.night) {
+		// Just darken everything
+		float a = 0.85;
+		if (cycle.timer > 0) {
+			cycle.timer--;
+			a -= (a * (TicksToSeconds(cycle.timer) / 10.0));
+		}
+		DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 16, a);
+	} else {
+		// Only darken if "morning"
+		if (cycle.timer > 0) {
+			float a = 0.85;
+			cycle.timer--;
+			a *= (TicksToSeconds(cycle.timer) / 10.0);
+			DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 16, a);
+		}
+	}
+}
+
 static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Tick
 	g->weather.HandleClouds(g, Weather::CloudMode::MODE_GAME);
+	g->weather.HandleDayNightCycle(g);
 }
 
 static void Click(Game* g, int button, bool release, ALLEGRO_SAMPLE** sample_sfx) {

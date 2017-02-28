@@ -80,10 +80,19 @@
 
 // Interface structure
 	struct Interface {
-		int sprite_id;						// Sprite ID for interface
+		int sprite_id;							// Sprite ID for interface
 		int x, y;								// x, y coordinates
 		bool visible;							// If true, interface is visible and active
 		float opacity = 1.0;					// Transperency
+	};
+
+// GameDuration structure
+	struct GameDuration {
+		int ticks = 0;							// Game duration in ticks
+		int minutes = 0;						// Minutes since game has started
+		int seconds = 0;						// Seconds (up to 59) since game has started
+		bool inverted = false;					// If true, we're counting down
+		int seconds_start = 120;				// Start counting down from here if inverted (in seconds)
 	};
 
 /* =============================== Game Class =============================
@@ -137,6 +146,7 @@
 			int server_port = 25565;			// Server port
 			bool gameover = false;				// If true, the game is over, different handling
 			bool allow_input = true;			// Wether input is allowed or not
+			GameDuration game_duration;			// Game duration object
 			Chat chat;							// Chat object
 			ScoreBoard score;					// Scoreboard object
 			LoginInterface logini;				// Login Interface

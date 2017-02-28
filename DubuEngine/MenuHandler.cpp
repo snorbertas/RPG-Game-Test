@@ -21,7 +21,7 @@ void HandleMenu(Game* g, ALLEGRO_SAMPLE** sample_sfx){
 		g->menu.loading_timer--;
 		if (g->menu.loading_timer < 0) g->menu.loading_timer = SecondsToTicks(1.0);
 		if (g->menu.done_loading) {
-			if (g->menu.done_loading > 0) g->menu.ticks_since_done_loading++;
+			if (g->menu.ticks_since_done_loading > 0) g->menu.ticks_since_done_loading++;
 		}
 	}
 }
