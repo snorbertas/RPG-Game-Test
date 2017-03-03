@@ -6,64 +6,112 @@ const TilesInfo::Biom TilesInfo::Bioms[TilesInfo::BIOM_CNT] = {Biom(TilesInfo::G
 															   Biom(TilesInfo::DIRT,  TilesInfo::GRASS),
 															   Biom(TilesInfo::WATER, TilesInfo::GRASS)};
 
-TilesInfo::Tile TilesInfo::BiomTiles[BIOM_CNT][BIOM_TILE_CNT]{};
+std::vector<TilesInfo::Tile> TilesInfo::BiomTiles[BIOM_CNT]{};
 
 std::vector<int> TilesInfo::TileNeighbours[TILE_NEIGHBOUR_SIZE][MAX_TILE_SPRITES]{};
 
 std::vector<int> TilesInfo::TempAppropriateTiles{};
 
-void TilesInfo::Biom::CreateTiles(Tile* tiles) const {
+void TilesInfo::Biom::CreateTiles(std::vector<Tile>& tiles) const {
 	Tile midTile;
-	for (int i = 0; i < 9; ++i)
+	for (size_t i = 0; i < 9; ++i)
 		midTile.Side[i] = InnerSubstance;
 
 	Tile tile = midTile;
 	tile.Side[0] = tile.Side[1] = tile.Side[2] = tile.Side[3] = tile.Side[6] = OuterSubstance;
-	tiles[0] = tile;
+	tiles.push_back(tile);
 	tile.Side[3] = tile.Side[6] = InnerSubstance;
-	tiles[1] = tile;
+	tiles.push_back(tile);
 	tile.Side[5] = tile.Side[8] = OuterSubstance;
-	tiles[2] = tile;
+	tiles.push_back(tile);
 
 	tile = midTile;
 	tile.Side[0] = tile.Side[3] = tile.Side[6] = OuterSubstance;
-	tiles[3] = tile;
-	tiles[4] = midTile;
+	tiles.push_back(tile);
+	tiles.push_back(midTile);
 	tile = midTile;
 	tile.Side[2] = tile.Side[5] = tile.Side[8] = OuterSubstance;
-	tiles[5] = tile;
+	tiles.push_back(tile);
 
 	tile = midTile;
 	tile.Side[0] = tile.Side[3] = tile.Side[6] = tile.Side[7] = tile.Side[8] = OuterSubstance;
-	tiles[6] = tile;
+	tiles.push_back(tile);
 	tile.Side[0] = tile.Side[3] = InnerSubstance;
-	tiles[7] = tile;
+	tiles.push_back(tile);
 	tile.Side[2] = tile.Side[5] = OuterSubstance;
-	tiles[8] = tile;
+	tiles.push_back(tile);
 
 	tile = midTile;
 	tile.Side[8] = OuterSubstance;
-	tiles[9] = tile;
+	tiles.push_back(tile);
 	tile = midTile;
 	tile.Side[6] = OuterSubstance;
-	tiles[10] = tile;
+	tiles.push_back(tile);
 	tile = midTile;
 	tile.Side[2] = OuterSubstance;
-	tiles[11] = tile;
+	tiles.push_back(tile);
 	tile = midTile;
 	tile.Side[0] = OuterSubstance;
-	tiles[12] = tile;
+	tiles.push_back(tile);
 
 	int spriteStart = 0;
 	if (InnerSubstance == DIRT)
 		spriteStart = 15;
 	if (InnerSubstance == WATER)
 		spriteStart = 28;
-	for (int i = 0; i < BIOM_TILE_CNT; ++i)
+	for (size_t i = 0; i < 13; ++i)
 		tiles[i].SpriteId = spriteStart + i;
 	if (InnerSubstance == GRASS)
-		for (int i = 5; i < BIOM_TILE_CNT; ++i)
+		for (size_t i = 5; i < 13; ++i)
 			tiles[i].SpriteId = i + 2;
+
+	if (InnerSubstance == DIRT) {
+		tile = tiles[0];
+		tile.Side[8] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[2];
+		tile.Side[6] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[6];
+		tile.Side[2] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[8];
+		tile.Side[0] = GRASS;
+		tiles.push_back(tile);
+		tile = midTile;
+		tile.Side[0] = tile.Side[8] = GRASS;
+		tiles.push_back(tile);
+		tile = midTile;
+		tile.Side[2] = tile.Side[6] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[1];
+		tile.Side[6] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[1];
+		tile.Side[8] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[3];
+		tile.Side[2] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[3];
+		tile.Side[8] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[5];
+		tile.Side[0] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[5];
+		tile.Side[6] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[7];
+		tile.Side[0] = GRASS;
+		tiles.push_back(tile);
+		tile = tiles[7];
+		tile.Side[2] = GRASS;
+		tiles.push_back(tile);
+
+		for (size_t i = 13; i < tiles.size(); ++i)
+			tiles[i].SpriteId = 41 + (i - 13);
+	}
 }
 
 void TilesInfo::AdjustNeighboursLeftRight(const Tile& l, const Tile& r) {
@@ -86,24 +134,27 @@ void TilesInfo::AdjustTilesInfo() {
 	}
 
 	for (int i = 0; i < BIOM_CNT; ++i) {
-		for (int ti = 0; ti < BIOM_TILE_CNT; ++ti) {
-			for (int tj = ti + 1; tj < BIOM_TILE_CNT; ++tj) {
+		int size = (int) BiomTiles[i].size();
+		for (int ti = 0; ti < size; ++ti) {
+			for (int tj = ti + 1; tj < size; ++tj) {
 				AdjustNeighboursLeftRight(BiomTiles[i][ti], BiomTiles[i][tj]);
 				AdjustNeighboursLeftRight(BiomTiles[i][tj], BiomTiles[i][ti]);
 				AdjustNeighboursUpDown(BiomTiles[i][ti], BiomTiles[i][tj]);
 				AdjustNeighboursUpDown(BiomTiles[i][tj], BiomTiles[i][ti]);
 			}
 		}
-		for (int ti = 0; ti < BIOM_TILE_CNT; ++ti) {
+		for (int ti = 0; ti < size; ++ti) {
 			AdjustNeighboursLeftRight(BiomTiles[i][ti], BiomTiles[i][ti]);
 			AdjustNeighboursUpDown(BiomTiles[i][ti], BiomTiles[i][ti]);
 		}
 	}
 
 	for (int i = 0; i < BIOM_CNT; ++i) {
+		int sizeI = (int) BiomTiles[i].size();
 		for (int j = i + 1; j < BIOM_CNT; ++j) {
-			for (int ti = 0; ti < BIOM_TILE_CNT; ++ti) {
-				for (int tj = 0; tj < BIOM_TILE_CNT; ++tj) {
+			int sizeJ = (int) BiomTiles[j].size();
+			for (int ti = 0; ti < sizeI; ++ti) {
+				for (int tj = 0; tj < sizeJ; ++tj) {
 					AdjustNeighboursLeftRight(BiomTiles[i][ti], BiomTiles[j][tj]);
 					AdjustNeighboursLeftRight(BiomTiles[j][tj], BiomTiles[i][ti]);
 					AdjustNeighboursUpDown(BiomTiles[i][ti], BiomTiles[j][tj]);
@@ -133,7 +184,8 @@ int TilesInfo::GetSpriteIdByTile(const Tile& tileWithoutSprite) {
 	default:
 		throw std::exception("GetSpriteByTile: unknown substance");
 	}
-	for (int i = 0; i < BIOM_TILE_CNT; ++i) {
+	int size = (int) BiomTiles[biomIndex].size();
+	for (int i = 0; i < size; ++i) {
 		if (BiomTiles[biomIndex][i] == tileWithoutSprite) {
 			return BiomTiles[biomIndex][i].SpriteId;
 		}
@@ -144,7 +196,10 @@ int TilesInfo::GetSpriteIdByTile(const Tile& tileWithoutSprite) {
 const TilesInfo::Tile& TilesInfo::GetTileBySpriteId(int spriteId) {
 	int biomIndex;
 	int tileIndex = spriteId;
-	if (spriteId >= 28) {
+	if (spriteId >= 41) {
+		biomIndex = 1;
+		tileIndex = 13 + (spriteId - 41);
+	} else if (spriteId >= 28) {
 		biomIndex = 2;
 		tileIndex -= 28;
 	} else if (spriteId >= 15) {

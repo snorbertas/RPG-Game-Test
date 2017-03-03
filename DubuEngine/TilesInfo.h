@@ -16,11 +16,10 @@ public:
 				Side[i] = GRASS;
 		}
 		bool operator == (const Tile& t) {
-			return Side[1] == t.Side[1] && 
-				   Side[3] == t.Side[3] && 
-				   Side[4] == t.Side[4] && 
-				   Side[5] == t.Side[5] && 
-				   Side[7] == t.Side[7];
+			for (size_t i = 0; i < 9; ++i)
+				if (Side[i] != t.Side[i])
+					return false;
+			return true;
 		}
 		ESubstance GetSubstance() const {
 			return Side[4];
@@ -33,7 +32,7 @@ public:
 		Biom(ESubstance innerSubstance, ESubstance outerSubstance) : 
 			InnerSubstance(innerSubstance), 
 			OuterSubstance(outerSubstance) {}
-		void CreateTiles(Tile* tiles) const;
+		void CreateTiles(std::vector<Tile>& tiles) const;
 
 	public:
 		ESubstance InnerSubstance;
@@ -41,9 +40,8 @@ public:
 	};
 public:
 	static const size_t BIOM_CNT = 3;
-	static const size_t BIOM_TILE_CNT = 13;
 	static const Biom Bioms[BIOM_CNT];
-	static Tile BiomTiles[BIOM_CNT][BIOM_TILE_CNT];
+	static std::vector<Tile> BiomTiles[BIOM_CNT];
 
 public:
 	static void AdjustTilesInfo();

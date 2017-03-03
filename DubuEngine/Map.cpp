@@ -301,25 +301,30 @@ bool Map::AdjustDirtPlacePatch(int x, int y) {
 
 TilesInfo::Tile Map::BuildTileBySides(int x, int y) {
 	TilesInfo::Tile t;
-	t.Side[4] = t.Side[1] = t.Side[3] = t.Side[5] = t.Side[7] = TilesInfo::GetSubstanceBySpriteId(tile[x][y]);
 
-	if (y > 0)
-		t.Side[1] = TilesInfo::GetSubstanceBySpriteId(tile[x][y - 1]);
-	if (x > 0)
-		t.Side[3] = TilesInfo::GetSubstanceBySpriteId(tile[x - 1][y]);
-	if (x < MAP_SIZE_X - 1)
-		t.Side[5] = TilesInfo::GetSubstanceBySpriteId(tile[x + 1][y]);
-	if (y < MAP_SIZE_Y - 1)
-		t.Side[7] = TilesInfo::GetSubstanceBySpriteId(tile[x][y + 1]);
+	int side = 0;
+	for (int yAdd = -1; yAdd <= 1; ++yAdd) {
+		for (int xAdd = -1; xAdd <= 1; ++xAdd, ++side) {
+			int xCur = x + xAdd;
+			int yCur = y + yAdd;
+			if (!InMap(xCur, yCur)) {
+				t.Side[side] = TilesInfo::GetSubstanceBySpriteId(tile[x][y]);
+				continue;
+			}
+			t.Side[side] = TilesInfo::GetSubstanceBySpriteId(tile[xCur][yCur]);
+			if (t.Side[side] == TilesInfo::WATER)
+				t.Side[side] = TilesInfo::GRASS;
+		}
+	}
 
-	if (t.Side[1] == TilesInfo::WATER)
-		t.Side[1] = TilesInfo::GRASS;
-	if (t.Side[3] == TilesInfo::WATER)
-		t.Side[3] = TilesInfo::GRASS;
-	if (t.Side[5] == TilesInfo::WATER)
-		t.Side[5] = TilesInfo::GRASS;
-	if (t.Side[7] == TilesInfo::WATER)
-		t.Side[7] = TilesInfo::GRASS;
+	if (InMap(x, y - 1) && t.Side[1] == TilesInfo::GRASS)
+		t.Side[0] = t.Side[2] = TilesInfo::GRASS;
+	if (InMap(x, y + 1) && t.Side[7] == TilesInfo::GRASS)
+		t.Side[6] = t.Side[8] = TilesInfo::GRASS;
+	if (InMap(x - 1, y) && t.Side[3] == TilesInfo::GRASS)
+		t.Side[0] = t.Side[6] = TilesInfo::GRASS;
+	if (InMap(x + 1, y) && t.Side[5] == TilesInfo::GRASS)
+		t.Side[2] = t.Side[8] = TilesInfo::GRASS;
 
 	return t;
 }
