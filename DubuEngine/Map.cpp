@@ -655,7 +655,7 @@ bool TileIsGrass(int tile_id) {
 }
 
 bool TileIsDirt(int tile_id) {
-	if ((tile_id >= 15 && tile_id <= 27) || (tile_id >= 41 && tile_id <= 44)) return true;
+	if ((tile_id >= 15 && tile_id <= 27) || (tile_id >= 41 && tile_id <= 54)) return true;
 	return false;
 }
 
