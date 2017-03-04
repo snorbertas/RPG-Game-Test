@@ -291,6 +291,11 @@ private:
 	 *	@return number of tiles in free space
 	 */
 		int ViewForestPlace(int xs, int ys);
+
+	/* ======================== GenerateGreenery ========================
+	 *	Generates additional greenery around the map
+	 */
+		void GenerateGreenery();
 		
 	/* ============================= InMap ==============================
 	 *	Checks whether point is within map or not
@@ -347,6 +352,7 @@ private:
 	static const int _MaxJunctionDistanceForRoad = 15;
 	static const int _MinForestTiles = 10;
 	static const int _MinPixelDistanceBetweenTrees = 42;
+	static const int _FlowersCntMultiplier = 2;
 	static const int _InfiniteDist = (MAP_SIZE_X + MAP_SIZE_Y + 5) * TILE_SIZE;
 };
 

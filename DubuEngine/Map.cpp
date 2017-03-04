@@ -59,6 +59,8 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 	BuildRoads();
 
 	GenerateForest();
+
+	GenerateGreenery();
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {
@@ -477,6 +479,21 @@ int Map::ViewForestPlace(int xs, int ys) {
 		}
 	}
 	return static_cast<int>(_Queue.size());
+}
+
+void Map::GenerateGreenery() {
+	int flowerCnt = static_cast<int>(sqrt(double(MAP_SIZE_X * MAP_SIZE_Y))) * _FlowersCntMultiplier;
+	for (int i = 0; i < flowerCnt; ++i) {
+		int x = rand() % MAP_SIZE_X;
+		int y = rand() % MAP_SIZE_Y;
+		if (TilesInfo::GetSubstanceBySpriteId(tile[x][y]) != TilesInfo::GRASS) {
+			--i;
+			continue;
+		}
+		x = x * TILE_SIZE + (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
+		y = y * TILE_SIZE - (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
+		Objects.push_back(MapObjectInfo::GenerateFlower(x, y));
+	}
 }
 
 void Map::AddPeePuddle(int x, int y) {

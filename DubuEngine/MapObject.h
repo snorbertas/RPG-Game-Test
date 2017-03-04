@@ -52,6 +52,8 @@ private:
 	static const EMapObjectType BushHighestID = EMapObjectBush_BO;
 	static const EMapObjectType TreeLowestID = EMapObjectTree_BG;
 	static const EMapObjectType TreeHighestID = EMapObjectTree_SO;
+	static const EMapObjectType FlowerLowestID = EMapObjectFlower_R;
+	static const EMapObjectType FlowerHighestID = EMapObjectFlower_P;
 	static const EMapObjectType GreeneryLowestID = EMapObjectBush_SG;
 	static const EMapObjectType GreeneryHighestID = EMapObjectFlower_P;
 
@@ -92,6 +94,7 @@ public:
 	static MapObjectInfo::MapObject GenerateBone(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GeneratePeePuddle(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateTree(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GenerateFlower(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateLocalPlayer(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
 

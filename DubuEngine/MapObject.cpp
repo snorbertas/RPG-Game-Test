@@ -131,6 +131,11 @@ MapObjectInfo::MapObject MapObjectInfo::GenerateTree(int x, int y) {
 	return GenerateObjectByType(static_cast<EMapObjectType>(index), x, y);
 }
 
+MapObjectInfo::MapObject MapObjectInfo::GenerateFlower(int x, int y) {
+	int index = FlowerLowestID + (rand() % (FlowerHighestID - FlowerLowestID + 1));
+	return GenerateObjectByType(static_cast<EMapObjectType>(index), x, y);
+}
+
 MapObjectInfo::MapObject MapObjectInfo::GenerateLocalPlayer(int x, int y) {
 	return GenerateObjectByType(EMapObjectPlayer_L, x, y);
 }
