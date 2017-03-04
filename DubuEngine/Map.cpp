@@ -871,14 +871,6 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 
 	int yPlayerMax = static_cast<int>((MAP_SIZE_Y * TILE_SIZE) * ((y + 1) / double(OBJECT_BLOCKS_CNT)) + 1e-9) - 1;
 
-	static int hereXMin = -1;
-	static int hereXMax = -1;
-	if (xMin != hereXMin || xMax != hereXMax) {
-		std::cout << "xMin: " << xMin << ", xMax: " << xMax << endl;
-		hereXMin = xMin;
-		hereXMax = xMax;
-	}
-
 	bool draw = true;
 	while (draw) {
 		draw = false;
