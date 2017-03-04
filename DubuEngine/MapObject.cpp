@@ -52,6 +52,10 @@ bool MapObjectInfo::MapObject::IsPlayer() {
 	return Type == EMapObjectPlayer_L || Type == EMapObjectPlayer_M;
 }
 
+double MapObjectInfo::MapObject::DistanceToObject(const MapObjectInfo::MapObject& obj) {
+	return sqrt(double((x - obj.x) * (x - obj.x) + (y - obj.y) * (y - obj.y)));
+}
+
 bool MapObjectInfo::MapObject::HasCollision() {
 	return IsTree();
 }

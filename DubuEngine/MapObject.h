@@ -69,6 +69,7 @@ public:
 		bool IsBigTree();
 		bool IsGrass();
 		bool IsPlayer();
+		double DistanceToObject(const MapObject& obj);
 		bool HasCollision();
 		CollisionBox GetCollisionBox();
 		void Draw(Game* g, SpriteStruct* sprites);

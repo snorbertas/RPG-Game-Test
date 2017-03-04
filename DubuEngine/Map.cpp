@@ -421,8 +421,9 @@ void Map::GenerateForest() {
 }
 
 void Map::GenerateForestWithDensity(double density) {
-	int trees = static_cast<int>(_Queue.size() * density + 1);
-	for (int i = 0; i < trees; ++i) {
+	size_t trees = static_cast<size_t>(_Queue.size() * (density + 0.05));
+	size_t initialSize = Objects.size();
+	for (size_t i = 0; i < trees; ++i) {
 		int tileIndex = rand() % static_cast<int>(_Queue.size());
 		auto& t = _Queue[tileIndex];
 		if (_ForestMode == 0)
@@ -430,7 +431,31 @@ void Map::GenerateForestWithDensity(double density) {
 														  t.second * TILE_SIZE));
 		else
 			Objects.push_back(MapObjectInfo::GenerateTree(t.first  * TILE_SIZE + (rand() % TILE_SIZE - TILE_SIZE / 2), 
-														  t.second * TILE_SIZE - (rand() % TILE_SIZE)));
+														  t.second * TILE_SIZE + (rand() % TILE_SIZE - TILE_SIZE / 2)));
+	}
+	size_t finalSize = Objects.size();
+	std::sort(Objects.begin() + initialSize, Objects.begin() + finalSize, [](const auto& a, const auto& b) { return a.x < b.x; } );
+	size_t startIndex = initialSize;
+	size_t shift = 0;
+	for (size_t i = initialSize; i < finalSize; ++i) {
+		while (startIndex < i && Objects[i].x - Objects[startIndex].x > _MinPixelDistanceBetweenTrees)
+			++startIndex;
+		bool eraseTree = false;
+		for (size_t j = startIndex; j < i; ++j) {
+			if (Objects[i].DistanceToObject(Objects[j]) < _MinPixelDistanceBetweenTrees) {
+				eraseTree = true;
+				break;
+			}
+		}
+		if (!eraseTree) {
+			if (shift != 0)
+				Objects[i - shift] = Objects[i];
+		} else {
+			++shift;
+		}
+	}
+	for (size_t i = 0; i < shift; ++i) {
+		Objects.pop_back();
 	}
 }
 
@@ -829,35 +854,45 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 
 	int yPlayerMax = static_cast<int>((MAP_SIZE_Y * TILE_SIZE) * ((y + 1) / double(OBJECT_BLOCKS_CNT)) + 1e-9) - 1;
 
+	static int hereXMin = -1;
+	static int hereXMax = -1;
+	if (xMin != hereXMin || xMax != hereXMax) {
+		std::cout << "xMin: " << xMin << ", xMax: " << xMax << endl;
+		hereXMin = xMin;
+		hereXMax = xMax;
+	}
+
 	bool draw = true;
 	while (draw) {
 		draw = false;
 		int yPrev = _InfiniteDist;
 		int yPlayer = _InfiniteDist;
+		bool canDrawPrev = false;
 		if (playerIndex != Players.size() && Players[playerIndex].y <= yPlayerMax)
 			yPlayer = Players[playerIndex].y;
 
 		for (int x = xMin; x <= xMax; ++x) {
 			int ind = _TemporaryVector[x];
-			if (yPrev != _InfiniteDist && (ind == (int) ObjectBlock[x][y].size() || yPrev <= ObjectBlock[x][y][ind]->y) && yPrev <= yPlayer) {
+			if (canDrawPrev && (ind == (int) ObjectBlock[x][y].size() || yPrev <= ObjectBlock[x][y][ind]->y) && yPrev <= yPlayer) {
 				int& indPrev = _TemporaryVector[x - 1];
 				ObjectBlock[x - 1][y][indPrev]->Draw(g, sprites);
 				++indPrev;
-				yPrev = _InfiniteDist;
 				draw = true;
-			} else if (ind != (int) ObjectBlock[x][y].size()) {
+			}
+			if (ind != (int) ObjectBlock[x][y].size()) {
+				canDrawPrev = (ObjectBlock[x][y][ind]->y < yPrev);
 				yPrev = ObjectBlock[x][y][ind]->y;
 			} else {
+				canDrawPrev = false;
 				yPrev = _InfiniteDist;
 			}
 		}
-		if (yPrev != _InfiniteDist && yPrev <= yPlayer) {
+		if (canDrawPrev && yPrev <= yPlayer) {
 			int& indPrev = _TemporaryVector[xMax];
 			ObjectBlock[xMax][y][indPrev]->Draw(g, sprites);
 			++indPrev;
 			draw = true;
 		}
-
 		if (!draw && yPlayer != _InfiniteDist) {
 			Players[playerIndex].Draw(g, sprites);
 			++playerIndex;
