@@ -10,7 +10,7 @@ public:
 	Cloud(int ix, int iy, int ivel, int iflags) : x(ix), y(iy), vel(ivel), flags(iflags) {}
 	int x;
 	int y;
-	int vel;
+	float vel;
 	int flags = 0;
 };
 

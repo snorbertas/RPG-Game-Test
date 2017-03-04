@@ -15,6 +15,7 @@
 #include "Debug.h"
 #include "Radar.h"
 #include "Weather.h"
+#include "WelcomeInterface.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -159,4 +160,5 @@
 			Debug debug;						// Temp debug
 			Radar radar;						// Radar interface
 			Weather weather;					// Weather
+			WelcomeInterface* welcome_interface;// Welcome interface
 	};

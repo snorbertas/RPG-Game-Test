@@ -127,6 +127,9 @@ void LoadInterfaces(Game* g){
 	// Interface 14
 	NewInterface(&g->Interfaces[INTERFACE_MINI_MAP], NO_SPRITE, g->BWIDTH - 176, g->BHEIGHT - 176);
 
+	// Interface 28 - Welcome Interface
+	NewInterface(&g->Interfaces[INTERFACE_WELCOME], NO_SPRITE, 0, 0);
+
 	// Interface 29 - Chat/Console
 	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 496);
 
@@ -176,7 +179,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 			// Darken for pause menu
 			if (i == INTERFACE_PAUSE ||
 				(g->scene == 2 && (i == INTERFACE_OPTIONS || i == INTERFACE_KEYBOARD))) {
-				DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.8);
+				DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.95);
 			}
 
 			// Draw Interface image
@@ -204,6 +207,15 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				// Surival
 				x += 220;
 				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 200, 300, 0.8);
+			}
+
+			if (i == INTERFACE_WELCOME) {
+				// Initial x/y
+				int x = g->welcome_interface->X();
+				int y = g->welcome_interface->Y();
+				int w = g->welcome_interface->Width();
+				int h = g->welcome_interface->Height();
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, w, h, 0.9);
 			}
 
 			// Loop trough all buttons
@@ -636,10 +648,10 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					}
 
 					// Draw frame
-					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x - 75, y, 150, 63, 0.8);
+					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x - 50, y, 100, 46, 0.8);
 
 					// Write the timer
-					DrawText(font[7], 255, gb, gb, x, y, ALLEGRO_ALIGN_CENTER,
+					DrawText(font[6], 255, gb, gb, x, y, ALLEGRO_ALIGN_CENTER,
 						format.c_str(), g->game_duration.minutes, g->game_duration.seconds);
 					break;
 				}
@@ -648,6 +660,9 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawMiniMap(g, sprites, g->Interfaces[i].x, g->Interfaces[i].y);
 					break;
 				}
+				case INTERFACE_WELCOME:
+					g->welcome_interface->DrawAllElements(g, sprites, font);
+					break;
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
 						DrawRectangle(g, g->Interfaces[i].x + 2, g->Interfaces[i].y + 2, 500 - 4, 400 - 4, 0, 0, 0, 0.3);
@@ -990,6 +1005,7 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/night");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/timer <seconds (0 = RESET)> ");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/welcome");
 		} else if (type == "/seed") {
 			args >> g->map.seed;
 		} else if (type == "/timer") {
@@ -1014,6 +1030,12 @@ void HandleCommand(Game* g, const char* msg) {
 		} else if (type == "/grid") {
 			g->debug.grid = !g->debug.grid;
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Toggled grid.");
+		} else if(type == "/welcome"){
+			delete(g->welcome_interface);
+			g->welcome_interface = new WelcomeInterface((g->BWIDTH / 2) - 400, (g->BHEIGHT / 2) - 250, 800, 500);
+			g->welcome_interface->LoadTextFromFile("dec/TEST.dec");
+			g->welcome_interface->InterpretAllRawText();
+			g->Interfaces[INTERFACE_WELCOME].visible = true;
 		} else {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ("Unrecognized command: " + type).c_str());
 		}

@@ -15,7 +15,7 @@ Weather::Weather(CloudMode mode) {
 			// Initialized random clouds
 			Cloud new_cloud = Cloud(rand() % (Map::MAP_SIZE_X * Map::TILE_SIZE),
 				rand() % (Map::MAP_SIZE_Y * Map::TILE_SIZE),
-				1 + rand() % 2,
+				1 + (float(rand() % 200) / 100.0),
 				rand() % 2);
 			cloud.push_back(new_cloud);
 		}
@@ -24,7 +24,7 @@ Weather::Weather(CloudMode mode) {
 		for (int i = 0; i < MAX_CLOUDS_MENU; i++) {
 			Cloud new_cloud = Cloud(-1280 + rand() % 2560,
 				((Map::MAP_SIZE_Y * Map::TILE_SIZE) - 720) + rand() % 1440,
-				1 + rand() % 2,
+				1 + (float(rand() % 200) / 100.0),
 				rand() % 2);
 			cloud.push_back(new_cloud);
 		}

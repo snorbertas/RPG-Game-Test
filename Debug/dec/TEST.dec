@@ -1,0 +1,21 @@
+// This line will draw a string in the middle of the screen
+[text=Hello World!][color=#EBA2EF][y=200][center]
+
+// Topleft corner
+[text=I am here!][font=2][color=#FF0000]
+
+// Topright corner....
+[text=Now I'm here!][font=2][color=#00FF00][right]
+
+// Etc., etc.
+[text=I am everywhere!][font=2][color=#0000FF][bot]
+
+[text=Except here...][font=2][color=#FFFF00][bot][right]
+
+// These are images, self explanatory
+[img=Body:5][center][y=150]
+[img=Body:6][left][y=200]
+[img=Object:22][x=250][y=250]
+
+// Online image example
+[img=https://puu.sh/ubn6o.png][center]

@@ -52,6 +52,7 @@
     <ClCompile Include="TilesInfo.cpp" />
     <ClCompile Include="Tips.cpp" />
     <ClCompile Include="Weather.cpp" />
+    <ClCompile Include="WelcomeInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DubuEngineServer\DEProtocol.h" />
@@ -80,6 +81,7 @@
     <ClInclude Include="TilesInfo.h" />
     <ClInclude Include="Tips.h" />
     <ClInclude Include="Weather.h" />
+    <ClInclude Include="WelcomeInterface.h" />
     <ClInclude Include="_EngineConfig.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameHandler.h" />
