@@ -240,7 +240,8 @@ void WelcomeInterface::InterpretAllRawText() {
 				// Online image
 				// 1. Download
 				// 2. Load it
-				// 3. Add it to vector
+				// 3 Delete the local image
+				// 4. Add it to vector
 			}
 		}
 	}

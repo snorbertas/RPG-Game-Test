@@ -56,6 +56,7 @@ public:
 	// Reset whole interface
 	void ResetInterface() {
 		ResetText();
+		_line.clear();
 		_image.clear();
 		_image_online.clear();
 	};
