@@ -352,7 +352,7 @@ private:
 	static const int _MaxJunctionDistanceForRoad = 15;
 	static const int _MinForestTiles = 10;
 	static const int _MinPixelDistanceBetweenTrees = 30;
-	static const int _FlowersCntMultiplier = 2;
+	static const int _FlowersCntMultiplier = 10;
 	static const int _InfiniteDist = (MAP_SIZE_X + MAP_SIZE_Y + 5) * TILE_SIZE;
 };
 

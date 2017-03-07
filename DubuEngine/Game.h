@@ -16,6 +16,7 @@
 #include "Radar.h"
 #include "Weather.h"
 #include "WelcomeInterface.h"
+#include "GameDuration.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -87,15 +88,6 @@
 		float opacity = 1.0;					// Transperency
 	};
 
-// GameDuration structure
-	struct GameDuration {
-		int ticks = 0;							// Game duration in ticks
-		int minutes = 0;						// Minutes since game has started
-		int seconds = 0;						// Seconds (up to 59) since game has started
-		bool inverted = false;					// If true, we're counting down
-		int seconds_start = 120;				// Start counting down from here if inverted (in seconds)
-	};
-
 /* =============================== Game Class =============================
  *		The big, main, scary Game class. Used as the primary object.
  *		This whole game code is orientated around the Game class.
@@ -160,5 +152,5 @@
 			Debug debug;						// Temp debug
 			Radar radar;						// Radar interface
 			Weather weather;					// Weather
-			WelcomeInterface* welcome_interface;// Welcome interface
+			WelcomeInterface welcome_interface; // Welcome interface
 	};

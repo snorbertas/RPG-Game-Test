@@ -129,6 +129,11 @@ void LoadInterfaces(Game* g){
 
 	// Interface 28 - Welcome Interface
 	NewInterface(&g->Interfaces[INTERFACE_WELCOME], NO_SPRITE, 0, 0);
+	for (int i = 0; i < 10; i++) {
+		/*  Reserving 10 buttons for this interface since it's
+			a multipurpose, dynamic interface. */
+		NewButton(&g->Buttons[17 + i], SPRITE_BUTTON_PLAY, 0, 0, 142, 35, INTERFACE_WELCOME);
+	}
 
 	// Interface 29 - Chat/Console
 	NewInterface(&g->Interfaces[INTERFACE_CHAT], NO_SPRITE, 0, g->BHEIGHT - 496);
@@ -210,11 +215,14 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 			}
 
 			if (i == INTERFACE_WELCOME) {
+				// Darken background
+				DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 0, 0.5);
+
 				// Initial x/y
-				int x = g->welcome_interface->X();
-				int y = g->welcome_interface->Y();
-				int w = g->welcome_interface->Width();
-				int h = g->welcome_interface->Height();
+				int x = g->welcome_interface.X();
+				int y = g->welcome_interface.Y();
+				int w = g->welcome_interface.Width();
+				int h = g->welcome_interface.Height();
 				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, w, h, 0.9);
 			}
 
@@ -661,7 +669,8 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					break;
 				}
 				case INTERFACE_WELCOME:
-					g->welcome_interface->DrawAllElements(g, sprites, font);
+					g->welcome_interface.InitSpecialElements(g);
+					g->welcome_interface.DrawAllElements(g, sprites, font);
 					break;
 				case INTERFACE_CHAT:
 					if (g->chat.show_chat && g->scene == 1) {
@@ -824,8 +833,8 @@ bool InterfaceIsOnTop(Game* g, int id) {
 			// TODO
 			if (i != 6 && i != 2 && i != 7 && i != 12 &&
 				i != 31 && i != 32 && i != 33 && i != 29 &&
-				i != 27 && i != 28 && i != 34 && i != 35 &&
-				i != 26 && i != 30 && i != 13 && i != 14) {
+				i != 27 && i != 34 && i != 35 && i != 26 &&
+				i != 30 && i != 13 && i != 14) {
 				top_i = i;
 			}
 		}
@@ -850,7 +859,8 @@ void HandleInterfaces(Game* g) {
 	if (g->fade_out < 0) g->fade_out = 0;
 	
 	HandleChatInterface(g);
-	HandleLoginInterface(g);	
+	HandleLoginInterface(g);
+	if(g->Interfaces[INTERFACE_WELCOME].visible == true) g->welcome_interface.Handle();
 }
 
 void HandleChatInterface(Game* g) {
@@ -1031,10 +1041,10 @@ void HandleCommand(Game* g, const char* msg) {
 			g->debug.grid = !g->debug.grid;
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Toggled grid.");
 		} else if(type == "/welcome"){
-			delete(g->welcome_interface);
-			g->welcome_interface = new WelcomeInterface((g->BWIDTH / 2) - 400, (g->BHEIGHT / 2) - 250, 800, 500);
-			g->welcome_interface->LoadTextFromFile("dec/TEST.dec");
-			g->welcome_interface->InterpretAllRawText();
+			g->welcome_interface.ResetInterface(g);
+			g->welcome_interface.SetDimensions((g->BWIDTH / 2) - 400, (g->BHEIGHT / 2) - 250, 800, 500);
+			g->welcome_interface.LoadTextFromFile("dec/TEST.dec");
+			g->welcome_interface.InterpretAllRawText();
 			g->Interfaces[INTERFACE_WELCOME].visible = true;
 		} else {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ("Unrecognized command: " + type).c_str());

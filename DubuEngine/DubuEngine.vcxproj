@@ -68,6 +68,7 @@
     <ClInclude Include="DEDefinitions.h" />
     <ClInclude Include="Digging.h" />
     <ClInclude Include="Drinking.h" />
+    <ClInclude Include="GameDuration.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="MiniMap.h" />

@@ -162,6 +162,14 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->binding_key = NULL;
 									done = true;
 									break;
+								case 17: // Button 0 for welcome interface (Play)
+									g->Interfaces[INTERFACE_WELCOME].visible = false;
+									g->game_duration.ticks = 0;
+									g->game_duration.seconds_start = 300;
+									g->game_duration.inverted = true;
+									g->game_duration.ticking = true;
+									done = true;
+									break;
 								case 241:
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
 									g->Interfaces[INTERFACE_LOGIN].visible = true;
@@ -677,6 +685,19 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->Interfaces[INTERFACE_STATS].visible = true;
 	g->Interfaces[INTERFACE_SCORE].visible = true;
 	g->Interfaces[INTERFACE_MINI_MAP].visible = true;
+	g->game_duration.ticking = false;
+	g->game_duration.ticks = 0;
+	g->game_duration.minutes = 5;
+	g->game_duration.seconds = 0;
+	g->game_duration.seconds_start = 300;
+
+	// Welcome interface
+	g->welcome_interface.ResetInterface(g);
+	g->welcome_interface.SetDimensions((g->BWIDTH / 2) - 400, (g->BHEIGHT / 2) - 250, 800, 500);
+	g->welcome_interface.LoadTextFromFile("dec/BoneHunt.dec");
+	g->welcome_interface.InterpretAllRawText();
+	g->Interfaces[INTERFACE_WELCOME].visible = true;
+
 
 	// Reset, fade and done :)
 	g->menu.done_loading = false;
