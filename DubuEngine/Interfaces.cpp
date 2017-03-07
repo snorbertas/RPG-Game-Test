@@ -13,6 +13,7 @@
 #include "Radar.h"
 #include "MiniMap.h"
 #include "Tips.h"
+#include "MapObject.h"
 
 inline const char * const BoolToString(bool b)
 {
@@ -1016,6 +1017,18 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/timer <seconds (0 = RESET)> ");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/welcome");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/object <i>");
+		} else if (type == "/object") {
+			int object_type = -1;
+			args >> object_type;
+			if (object_type > 0 && object_type < MapObjectInfo::EMapObjectType::EMapObjectCount) {
+				MapObjectInfo::MapObject mobj =
+					MapObjectInfo::GenerateObjectByType((MapObjectInfo::EMapObjectType)object_type, g->pl.x, g->pl.y);
+				g->map.Objects.push_back(mobj);
+				g->map.OrganizeObjects();
+				g->map.CreateSolids();
+				AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ("Spawned object " + to_string(object_type)).c_str());
+			}
 		} else if (type == "/seed") {
 			args >> g->map.seed;
 		} else if (type == "/timer") {

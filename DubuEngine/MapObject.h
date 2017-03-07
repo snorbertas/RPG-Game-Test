@@ -44,6 +44,12 @@ public:
 		EMapObjectPeePuddle,
 		EMapObjectPlayer_L,
 		EMapObjectPlayer_M,
+		EMapObjectRock_0,
+		EMapObjectRock_1,
+		EMapObjectRock_2,
+		EMapObjectRock_3,
+		EMapObjectRock_4,
+		EMapObjectRock_5,
 		EMapObjectCount
 	};
 
@@ -52,6 +58,8 @@ private:
 	static const EMapObjectType BushHighestID = EMapObjectBush_BO;
 	static const EMapObjectType TreeLowestID = EMapObjectTree_BG;
 	static const EMapObjectType TreeHighestID = EMapObjectTree_SO;
+	static const EMapObjectType RockLowestID = EMapObjectRock_0;
+	static const EMapObjectType RockHighestID = EMapObjectRock_5;
 	static const EMapObjectType FlowerLowestID = EMapObjectFlower_R;
 	static const EMapObjectType FlowerHighestID = EMapObjectFlower_P;
 	static const EMapObjectType GreeneryLowestID = EMapObjectBush_SG;
@@ -67,6 +75,9 @@ public:
 
 	public:
 		bool IsBush();
+		bool IsRock();
+		bool IsThinRock();
+		bool IsWideRock();
 		bool IsTree();
 		bool IsBigTree();
 		bool IsGrass();
@@ -99,6 +110,8 @@ public:
 	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
 
 private:
+	static CollisionBox GenerateThinRockBox(int x, int y);
+	static CollisionBox GenerateWideRockBox(int x, int y);
 	static CollisionBox GenerateBigTreeBox(int x, int y);
 	static CollisionBox GenerateSmallTreeBox(int x, int y);
 

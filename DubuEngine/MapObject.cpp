@@ -8,30 +8,48 @@
 using ESprite = EObjectSprite;
 
 const MapObjectInfo::MapObject MapObjectInfo::_Objects[MapObjectInfo::EMapObjectCount] = {
-	MapObject(0,  EObjectSpriteBush_SG), 
-	MapObject(1,  EObjectSpriteBush_BG), 
-	MapObject(2,  EObjectSpriteBush_SD), 
-	MapObject(3,  EObjectSpriteBush_BD), 
-	MapObject(4,  EObjectSpriteBush_SO), 
-	MapObject(5,  EObjectSpriteBush_BO), 
-	MapObject(6,  EObjectSpriteTree_BG),
-	MapObject(7,  EObjectSpriteTree_SG), 
-	MapObject(8,  EObjectSpriteTree_BD),
-	MapObject(9,  EObjectSpriteTree_SD), 
-	MapObject(10, EObjectSpriteTree_BO),
-	MapObject(11, EObjectSpriteTree_SO),
-	MapObject(12, EObjectSpriteFlower_R),
-	MapObject(13, EObjectSpriteFlower_C), 
-	MapObject(14, EObjectSpriteFlower_P), 
-	MapObject(15, EObjectSpriteGrass_0), 
-	MapObject(16, EObjectSpriteUndefined), // bone without sprite 
-	MapObject(17, EObjectSpriteUndefined), // pee puddle without sprite 
-	MapObject(18, EObjectSpriteUndefined), // local player
-	MapObject(19, EObjectSpriteUndefined), // multi player
+	MapObject(EMapObjectBush_SG,  EObjectSpriteBush_SG),
+	MapObject(EMapObjectBush_BG,  EObjectSpriteBush_BG),
+	MapObject(EMapObjectBush_SD,  EObjectSpriteBush_SD),
+	MapObject(EMapObjectBush_BD,  EObjectSpriteBush_BD),
+	MapObject(EMapObjectBush_SO,  EObjectSpriteBush_SO),
+	MapObject(EMapObjectBush_BO,  EObjectSpriteBush_BO),
+	MapObject(EMapObjectTree_BG,  EObjectSpriteTree_BG),
+	MapObject(EMapObjectTree_SG,  EObjectSpriteTree_SG),
+	MapObject(EMapObjectTree_BD,  EObjectSpriteTree_BD),
+	MapObject(EMapObjectTree_SD,  EObjectSpriteTree_SD),
+	MapObject(EMapObjectTree_BO, EObjectSpriteTree_BO),
+	MapObject(EMapObjectTree_SO, EObjectSpriteTree_SO),
+	MapObject(EMapObjectFlower_R, EObjectSpriteFlower_R),
+	MapObject(EMapObjectFlower_C, EObjectSpriteFlower_C),
+	MapObject(EMapObjectFlower_P, EObjectSpriteFlower_P),
+	MapObject(EMapObjectGrass, EObjectSpriteGrass_0),
+	MapObject(EMapObjectBone, EObjectSpriteUndefined),
+	MapObject(EMapObjectPeePuddle, EObjectSpriteUndefined),
+	MapObject(EMapObjectPlayer_L, EObjectSpriteUndefined),
+	MapObject(EMapObjectPlayer_M, EObjectSpriteUndefined),
+	MapObject(EMapObjectRock_0, EObjectSpriteRock_0),
+	MapObject(EMapObjectRock_1, EObjectSpriteRock_1),
+	MapObject(EMapObjectRock_2, EObjectSpriteRock_2),
+	MapObject(EMapObjectRock_3, EObjectSpriteRock_3),
+	MapObject(EMapObjectRock_4, EObjectSpriteRock_4),
+	MapObject(EMapObjectRock_5, EObjectSpriteRock_5),
 };
 
 bool MapObjectInfo::MapObject::IsBush() {
 	return BushLowestID <= Type && Type <= BushHighestID;
+}
+
+bool MapObjectInfo::MapObject::IsRock() {
+	return RockLowestID <= Type && Type <= RockHighestID;
+}
+
+bool MapObjectInfo::MapObject::IsThinRock() {
+	return RockLowestID <= Type && Type <= EMapObjectRock_3;
+}
+
+bool MapObjectInfo::MapObject::IsWideRock() {
+	return EMapObjectRock_4 <= Type && Type <= RockHighestID;
 }
 
 bool MapObjectInfo::MapObject::IsTree() {
@@ -57,13 +75,17 @@ double MapObjectInfo::MapObject::DistanceToObject(const MapObjectInfo::MapObject
 }
 
 bool MapObjectInfo::MapObject::HasCollision() {
-	return IsTree();
+	return IsTree() || IsRock();
 }
 
 CollisionBox MapObjectInfo::MapObject::GetCollisionBox() {
 	if (!HasCollision())
 		return CollisionBox(x, y, 0, 0);
-	if (IsBigTree())
+	if (IsThinRock())
+		return GenerateThinRockBox(x, y);
+	else if (IsWideRock())
+		return GenerateWideRockBox(x, y);
+	else if (IsBigTree())
 		return GenerateBigTreeBox(x, y);
 	else
 		return GenerateSmallTreeBox(x, y);
@@ -142,6 +164,14 @@ MapObjectInfo::MapObject MapObjectInfo::GenerateLocalPlayer(int x, int y) {
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateMultiPlayer(int x, int y, int id) {
 	return GenerateObjectByType(EMapObjectPlayer_M, x, y, id);
+}
+
+CollisionBox MapObjectInfo::GenerateThinRockBox(int x, int y) {
+	return CollisionBox(x, y + 54, 70, 9);
+}
+
+CollisionBox MapObjectInfo::GenerateWideRockBox(int x, int y) {
+	return CollisionBox(x, y + 54, 85, 9);
 }
 
 CollisionBox MapObjectInfo::GenerateBigTreeBox(int x, int y) {
