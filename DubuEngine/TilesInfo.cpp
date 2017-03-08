@@ -207,9 +207,9 @@ const TilesInfo::Tile& TilesInfo::GetTileBySpriteId(int spriteId) {
 		tileIndex -= 15;
 	} else {
 		biomIndex = 0;
-		if (spriteId == 4 || spriteId == 5)
-			tileIndex = 3;
-		else if (spriteId > 5)
+		if (spriteId == 5 || spriteId == 6)
+			tileIndex = 4;
+		else if (spriteId >= 7)
 			tileIndex -= 2;
 	}
 	return BiomTiles[biomIndex][tileIndex];

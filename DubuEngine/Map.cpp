@@ -49,18 +49,126 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 		}
 	}
 
-	for (int i = 0; i < MAP_SIZE_X; ++i) {
-		for (int j = 0; j < MAP_SIZE_Y; ++j) {
-			if (tile[i][j] == 4)
-				tile[i][j] += rand() % 3;
-		}
-	}
+	TrimMap();
 
 	BuildRoads();
 
 	GenerateForest();
 
 	GenerateGreenery();
+
+	for (int i = 0; i < MAP_SIZE_X; ++i) {
+		for (int j = 0; j < MAP_SIZE_Y; ++j) {
+			if (tile[i][j] == 4)
+				tile[i][j] += rand() % 3;
+		}
+	}
+}
+
+void Map::TrimMap() {
+	_Queue.clear();
+	TrimMapBorder(0, 0, 1, 0, 0, 1); // trim top border
+	TrimMapBorder(MAP_SIZE_X - 1, 0, 0, 1, -1, 0); // trim right border
+	TrimMapBorder(MAP_SIZE_X - 1, MAP_SIZE_Y - 1, -1, 0, 0, -1); // trim bottom border
+	TrimMapBorder(0, MAP_SIZE_Y - 1, 0, -1, 1, 0); // trim left border
+	for (size_t i = 0; i < _Queue.size(); ++i) {
+		AdjustWaterSides(_Queue[i].first, _Queue[i].second);
+	}
+	int a = 3;
+}
+
+void Map::TrimMapBorder(int xStart, int yStart, int xMoveDirection, int yMoveDirection, int xTrimDirection, int yTrimDirection) {
+	int steps;
+	if (xMoveDirection != 0)
+		steps = MAP_SIZE_X;
+	else
+		steps = MAP_SIZE_Y;
+
+	int x = xStart;
+	int y = yStart;
+	int trimDeepness = _MinTrim + rand() % (_MaxAdditionalTrim + 1);
+	int trimCurDeepness = trimDeepness;
+	for (int step = 0; step < steps; ++step, x += xMoveDirection, y += yMoveDirection) {
+		TrimStrip(x, y, xTrimDirection, yTrimDirection, trimCurDeepness);
+
+		if (trimCurDeepness != trimDeepness) {
+			int add = 1;
+			int mult = (trimDeepness - trimCurDeepness) / abs(trimDeepness - trimCurDeepness);
+			if (rand() % 3 == 0) {
+				add = 0;
+			} else {
+				if (abs(trimDeepness - trimCurDeepness) != 1 && rand() % 3 == 0) {
+					add = 2;
+				}
+			}
+			trimCurDeepness += add * mult;
+		} else {
+			int mod = std::max(3, (2 * (_MaxAdditionalTrim + 1)) / 3);
+			trimDeepness += rand() % mod - (mod / 2);
+			trimDeepness = max(trimDeepness, _MinTrim);
+			trimDeepness = min(trimDeepness, _MinTrim + _MaxAdditionalTrim);
+		}
+	}
+}
+
+void Map::TrimStrip(int xStart, int yStart, int xTrimDirection, int yTrimDirection, int length) {
+	TilesInfo::Tile waterTile;
+	for (size_t i = 0; i < 9; ++i)
+		waterTile.Side[i] = TilesInfo::WATER;
+	int waterSprite = TilesInfo::GetSpriteIdByTile(waterTile);
+	for (int x = xStart, y = yStart, i = 0; i < length; x += xTrimDirection, y += yTrimDirection, ++i) {
+		const TilesInfo::Tile& t = TilesInfo::GetTileBySpriteId(tile[x][y]);
+		bool hasWater = false;
+		for (size_t i = 0; i < 9; ++i) {
+			if (t.Side[i] == TilesInfo::WATER) {
+				hasWater = true;
+				break;
+			}
+		}
+		if (hasWater && i != 0)
+			break;
+		tile[x][y] = waterSprite;
+		_Queue.push_back(std::make_pair(x, y));
+	}
+}
+
+void Map::AdjustWaterSides(int x, int y) {
+	TilesInfo::Tile t;
+	int side = 0;
+	for (int yAdd = -1; yAdd <= 1; ++yAdd) {
+		for (int xAdd = -1; xAdd <= 1; ++xAdd, ++side) {
+			int xCur = x + xAdd;
+			int yCur = y + yAdd;
+			if (!InMap(xCur, yCur)) {
+				t.Side[side] = TilesInfo::WATER;
+				continue;
+			}
+			t.Side[side] = TilesInfo::GetTileBySpriteId(tile[xCur][yCur]).Side[8 - side];
+		}
+	}
+
+	if (InMap(x, y - 1) && t.Side[1] == TilesInfo::GRASS)
+		t.Side[0] = t.Side[2] = TilesInfo::GRASS;
+	if (InMap(x, y + 1) && t.Side[7] == TilesInfo::GRASS)
+		t.Side[6] = t.Side[8] = TilesInfo::GRASS;
+	if (InMap(x - 1, y) && t.Side[3] == TilesInfo::GRASS)
+		t.Side[0] = t.Side[6] = TilesInfo::GRASS;
+	if (InMap(x + 1, y) && t.Side[5] == TilesInfo::GRASS)
+		t.Side[2] = t.Side[8] = TilesInfo::GRASS;
+
+	if (InMap(x - 1, y - 1) && InMap(x + 1, y - 1) && t.Side[0] == TilesInfo::GRASS && t.Side[2] == TilesInfo::GRASS)
+		t.Side[1] = TilesInfo::GRASS;
+	if (InMap(x - 1, y - 1) && InMap(x - 1, y + 1) && t.Side[0] == TilesInfo::GRASS && t.Side[6] == TilesInfo::GRASS)
+		t.Side[3] = TilesInfo::GRASS;
+	if (InMap(x + 1, y - 1) && InMap(x + 1, y + 1) && t.Side[2] == TilesInfo::GRASS && t.Side[8] == TilesInfo::GRASS)
+		t.Side[5] = TilesInfo::GRASS;
+	if (InMap(x - 1, y + 1) && InMap(x + 1, y + 1) && t.Side[6] == TilesInfo::GRASS && t.Side[8] == TilesInfo::GRASS)
+		t.Side[7] = TilesInfo::GRASS;
+
+	if (t.Side[1] == TilesInfo::GRASS && t.Side[3] == TilesInfo::GRASS && t.Side[5] == TilesInfo::GRASS && t.Side[7] == TilesInfo::GRASS)
+		t.Side[4] = TilesInfo::GRASS;
+
+	tile[x][y] = TilesInfo::GetSpriteIdByTile(t);
 }
 
 bool Map::BuildRoad(std::pair<int, int> a, std::pair<int, int> b) {

@@ -121,18 +121,6 @@ public:
 		void RenderBorders(Game* g, SpriteStruct* sprites);
 
 
-	/* ========= GenerateRandomMapWithAppropriateNeighbours =============
-	 *	Generates a random map with appropiate neighbour tiles
-	 */
-		void GenerateRandomMapWithAppropriateNeighbours();
-
-
-	/* =================== GenerateMapWithBaseBiome =====================
-	 *	Generates a random map with a random base biome
-	 */
-		void GenerateMapWithBaseBiome();
-
-
 	/* ====================== GenerateRandomShape =======================
 	 *	Generates a random shape in a biome matrix within the square specified
 	 */
@@ -174,10 +162,56 @@ public:
 		void AddPeePuddle(int x, int y);
 
 private:
-	/* ======================== RenderObjectsOnBlockY ===========================
+	/* ===================== RenderObjectsOnBlockY ======================
 	 *	Renders all objects corresponding to block y (fauna, players, etc.)
 	 */
 		void RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin, int xMax, size_t& playerIndex);
+
+	/* ==================== GenerateMapWithBaseBiome ====================
+	 *	Generates a random map with a random base biome
+	 */
+		void GenerateMapWithBaseBiome();
+
+	/* =========== GenerateRandomMapWithAppropriateNeighbours ===========
+	 *	Generates a random map with appropiate neighbour tiles
+	 */
+		void GenerateRandomMapWithAppropriateNeighbours();
+
+	/* ============================ TrimMap =============================
+	 *	Trim map with water tiles to make an island
+	 */
+		void TrimMap();
+
+	/* ========================= TrimMapBorder ==========================
+	 *	Trim map border
+	 *
+	 *	@param xStart start cell x
+	 *	@param yStart start cell y
+	 *	@param xMoveDirection strip start move direction x
+	 *	@param yMoveDirection strip start move direction y
+	 *	@param xTrimDirection trim strip direction x
+	 *	@param yTrimDirection trim strip direction y
+	 */
+		void TrimMapBorder(int xStart, int yStart, int xMoveDirection, int yMoveDirection, int xTrimDirection, int yTrimDirection);
+
+	/* =========================== TrimStrip ============================
+	 *	Trim strip at the map border
+	 *
+	 *	@param xStart start cell x
+	 *	@param yStart start cell y
+	 *	@param xTrimDirection trim strip direction x
+	 *	@param yTrimDirection trim strip direction y
+	 *	@param length strip length
+	 */
+		void TrimStrip(int xStart, int yStart, int xTrimDirection, int yTrimDirection, int length);
+		
+	/* ======================== AdjustWaterSides ========================
+	 *	Adjusts water tile sides
+	 *
+	 *	@param x x-coordinate of tile patched
+	 *	@param y y-coordinate of tile patched 
+	 */
+		void AdjustWaterSides(int x, int y);
 
 	/* =========================== BuildRoads ===========================
 	 *	Generates roads from already generated water bioms map
@@ -257,8 +291,8 @@ private:
 	/* ====================== AdjustDirtPlacePatch ======================
 	 *	Patches dirt tile to adjust dirt sides
 	 *
-	 *	@param x x-coordinate of tiled patched
-	 *	@param y y-coordinate of tiled patched 
+	 *	@param x x-coordinate of tile patched
+	 *	@param y y-coordinate of tile patched 
 	 *	@return true if 2x2 dirt patch has been placed, false if tile turned into grass
 	 */
 		bool AdjustDirtPlacePatch(int x, int y);
@@ -345,6 +379,8 @@ private:
 private:
 	static const int _NeighbourWayCnt = 4;
 	static const std::pair<int, int> _NeighbourWay[_NeighbourWayCnt];
+	static const int _MinTrim = 1;
+	static const int _MaxAdditionalTrim = 2;
 	static const int _LakesToRoadsSpawnDist = 1;
 	static const int _WaterDirtToForestSpawnDist = 2;
 	static const int _JunctionChance = 70;
