@@ -3,6 +3,27 @@
 #include "Game.h"
 #include "ScaledDraw.h"
 #include "DEText.h"
+#include "Interfaces.h"
+
+void WelcomeInterface::ResetSpecial(Game* g) {
+	// Hide the 10 buttons in the interface
+	for (int i = 0; i < 10; i++) {
+		g->Buttons[17 + i].visible = false;
+	}
+}
+
+void WelcomeInterface::InitSpecialElements(Game* g) {
+	// Initialize buttons
+	for (size_t i = 0; i < _button.size(); i++) {
+		if (!_button[i].init) {
+			int button_id = _button[i].id;
+			g->Buttons[17 + button_id].x = _button[i].x + _x;
+			g->Buttons[17 + button_id].y = _button[i].y + _y;
+			g->Buttons[17 + button_id].visible = true;
+			_button[i].init = true;
+		}
+	}
+}
 
 void WelcomeInterface::DrawAllElements(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Horizontal/Vertical ratios for text drawing
@@ -54,6 +75,28 @@ void WelcomeInterface::DrawAllElements(Game* g, SpriteStruct* sprites, ALLEGRO_F
 		DrawImage(g, _image_online[i].img,
 			_image_online[i].x + _x, _image_online[i].y + _y, 0);
 
+	}
+
+	// Draw misc
+	for (size_t i = 0; i < _misc.size(); i++) {
+		int anim = 0;
+		if (timer > 30) anim = 1;
+		if (_misc[i].type <= WIMisc::Type::RIGHT_KEY) {
+			string key_str = "ERR";
+			if (_misc[i].type == WIMisc::Type::PEE_KEY) key_str = GetKeyName(g->keys.pee_bind);
+			if (_misc[i].type == WIMisc::Type::DIG_KEY) key_str = GetKeyName(g->keys.dig_bind);
+			if (_misc[i].type == WIMisc::Type::DRINK_KEY) key_str = GetKeyName(g->keys.drink_bind);
+			if (_misc[i].type == WIMisc::Type::UP_KEY) key_str = GetKeyName(g->keys.up_bind);
+			if (_misc[i].type == WIMisc::Type::DOWN_KEY) key_str = GetKeyName(g->keys.down_bind);
+			if (_misc[i].type == WIMisc::Type::LEFT_KEY) key_str = GetKeyName(g->keys.left_bind);
+			if (_misc[i].type == WIMisc::Type::RIGHT_KEY) key_str = GetKeyName(g->keys.right_bind);
+			DrawImage(g, sprites->img_button[SPRITE_BUTTON_BLANK_SMALL + anim],
+				_misc[i].x + _x, _misc[i].y + _y + (anim * 4),
+				0, 0.8);
+			DrawText(font[2], 0, 0, 0,
+				_misc[i].x + 18 + _x, _misc[i].y + 6 + _y + (anim * 4),
+				ALLEGRO_ALIGN_CENTER, "%s", key_str.c_str());
+		}
 	}
 }
 
@@ -112,6 +155,8 @@ void WelcomeInterface::InterpretAllRawText() {
 		int r = 0;
 		int g = 0;
 		int b = 0;
+		int button_id = -1;
+		int misc_id = -1;
 		string text = "";
 		string img_type = "";
 		string img_id = "";
@@ -129,7 +174,17 @@ void WelcomeInterface::InterpretAllRawText() {
 				string code = current_line.substr(found_start + 1, (found_end - found_start) - 1);
 
 				// Now analyze what sort of code we've found
-				if (code.substr(0, 5) == "text=") {
+				if (code.substr(0, 5) == "misc=") {
+					// Add misc
+					misc_id = atoi(code.substr(5, code.length() - 5).c_str());
+					if (misc_id >= 10) misc_id = -1;
+
+				} else if (code.substr(0, 7) == "button=") {
+					// Add button
+					button_id = atoi(code.substr(7, code.length() - 7).c_str());
+					if (button_id >= 10) button_id = -1;
+
+				} else if (code.substr(0, 5) == "text=") {
 					// Add text
 					text = code.substr(5, code.length() - 5);
 
@@ -209,8 +264,25 @@ void WelcomeInterface::InterpretAllRawText() {
 		if (y < 10) y = 10;
 		if (y > _h - 30) y = _h - 30;
 
-		// First decide wether it's text or an image
-		if (text != "") {
+		// First decide the type of element
+		if (misc_id != -1) {
+			// It's misc
+			WIMisc temp_WIMisc;
+			temp_WIMisc.type = (WIMisc::Type)misc_id;
+			temp_WIMisc.x = x;
+			temp_WIMisc.y = y;
+			_misc.push_back(temp_WIMisc);
+
+		} else if (button_id != -1) {
+			// It's a button
+			WIButton temp_WIButton;
+			temp_WIButton.x = x;
+			temp_WIButton.y = y;
+			temp_WIButton.id = button_id;
+			temp_WIButton.init = false;
+			_button.push_back(temp_WIButton);
+
+		} else if (text != "") {
 			// It's text
 			WIText temp_WIText;
 			temp_WIText.text = text;

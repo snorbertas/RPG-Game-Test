@@ -6,8 +6,8 @@
 #define MAX_MISC_SPRITES 5
 #define MAX_BACKGROUND_SPRITES 5
 #define MAX_INTERFACE_SPRITES 23
-#define MAX_BUTTON_SPRITES 30
-#define MAX_OBJECT_SPRITES 23
+#define MAX_BUTTON_SPRITES 32
+#define MAX_OBJECT_SPRITES 29
 #define MAX_GFX_SPRITES 8
 
 #include <allegro5\allegro.h>
@@ -46,5 +46,11 @@ enum EObjectSprite {
 	EObjectSpriteFlower_C = 19,
 	EObjectSpriteFlower_P = 20,
 	EObjectSpriteGrass_0 = 21,
-	EObjectSpriteGrass_1 = 22
+	EObjectSpriteGrass_1 = 22,
+	EObjectSpriteRock_0 = 23,
+	EObjectSpriteRock_1 = 24,
+	EObjectSpriteRock_2 = 25,
+	EObjectSpriteRock_3 = 26,
+	EObjectSpriteRock_4 = 27,
+	EObjectSpriteRock_5 = 28,
 };
