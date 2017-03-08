@@ -63,13 +63,22 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 }
 
 void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites) {
-	// Render player test (Maybe put this in a separate file?)
+	// Render a player
 	int flag = 0;
 	if (pl.facing == 3) flag = 1;
 	DrawImage(g,
 		sprites->img_body[pl.sprite_id + pl.sprite_frame],
 		pl.x + g->camera.x,
 		pl.y + g->camera.y, flag);
+}
+
+void RenderPlayerShadow(Game* g, Player& pl, SpriteStruct* sprites) {
+	// Render a player's shadow
+	float opacity = g->weather.cycle.sunlight.brightness;
+	DrawImage(g, sprites->img_gfx[SPRITE_SHADOW_PLAYER],
+		pl.x + g->camera.x,
+		pl.y + 5 + g->camera.y,
+		0, opacity);
 }
 
 void RenderParallaxBackground(Game* g, SpriteStruct* sprites) {

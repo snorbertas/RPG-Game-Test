@@ -485,6 +485,9 @@ void LoadSettings(){
 			if (setting_type == "WINDOW_WIDTH") g.s_x = s_val;
 			if (setting_type == "WINDOW_HEIGHT") g.s_y = s_val;
 			if (setting_type == "WINDOW_MODE") g.window_mode = s_val;
+			if (setting_type == "RENDER_SHADOWS") g.weather.cycle.sunlight.active = (bool)s_val;
+			if (setting_type == "MUSIC_VOLUME") g.music_volume = s_val;
+			if (setting_type == "SOUND_VOLUME") g.sound_volume = s_val;
 			if (setting_type == ("KEY_LEFT")) g.keys.left_bind = s_val;
 			if (setting_type == ("KEY_RIGHT")) g.keys.right_bind = s_val;
 			if (setting_type == ("KEY_UP")) g.keys.up_bind = s_val;
@@ -493,10 +496,19 @@ void LoadSettings(){
 			if (setting_type == ("KEY_DIG")) g.keys.dig_bind = s_val;
 			if (setting_type == ("KEY_SNIFF")) g.keys.sniff_bind = s_val;
 			if (setting_type == ("KEY_CHAT")) g.keys.chat_bind = s_val;
+			if (setting_type == ("KEY_PEE")) g.keys.pee_bind = s_val;
+			if (setting_type == ("KEY_DRINK")) g.keys.drink_bind = s_val;
 		}
 	}
 	file.close();
 
+	// Correct volumes
+	if (g.music_volume < 0) g.music_volume = 0;
+	if (g.music_volume > 100) g.music_volume = 100;
+	if (g.sound_volume < 0) g.sound_volume = 0;
+	if (g.sound_volume > 100) g.sound_volume = 100;
+
+	// Correct graphics
 	if (g.s_x > 1920 || g.s_x < 640) {
 		g.s_x = g.BHEIGHT;
 		g.s_y = g.BWIDTH;
@@ -523,6 +535,9 @@ void SaveSettings(){
 	myfile << ("WINDOW_WIDTH = " + to_string(g.s_x) + "\n");
 	myfile << ("WINDOW_HEIGHT = " + to_string(g.s_y) + "\n");
 	myfile << ("WINDOW_MODE = " + to_string(g.window_mode) + "\n");
+	myfile << ("RENDER_SHADOWS = " + to_string((int)g.weather.cycle.sunlight.active) + "\n");
+	myfile << ("MUSIC_VOLUME = " + to_string(g.music_volume) + "\n");
+	myfile << ("SOUND_VOLUME = " + to_string(g.sound_volume) + "\n");
 	myfile << ("KEY_LEFT = " + to_string(g.keys.left_bind) + "\n");
 	myfile << ("KEY_RIGHT = " + to_string(g.keys.right_bind) + "\n");
 	myfile << ("KEY_UP = " + to_string(g.keys.up_bind) + "\n");
@@ -531,6 +546,8 @@ void SaveSettings(){
 	myfile << ("KEY_DIG = " + to_string(g.keys.dig_bind) + "\n");
 	myfile << ("KEY_SNIFF = " + to_string(g.keys.sniff_bind) + "\n");
 	myfile << ("KEY_CHAT = " + to_string(g.keys.chat_bind) + "\n");
+	myfile << ("KEY_PEE = " + to_string(g.keys.pee_bind) + "\n");
+	myfile << ("KEY_DRINK = " + to_string(g.keys.drink_bind) + "\n");
 	myfile.close();
 }
 

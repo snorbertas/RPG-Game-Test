@@ -69,6 +69,30 @@ void DrawRotatedImage(Game* g, ALLEGRO_BITMAP* img, int x, int y, int degree, in
 	}
 }
 
+void DrawRotatedShadow(Game* g, ALLEGRO_BITMAP* img, int x, int y, double degree, int flags, float opacity) {
+	if (!g->done) {
+		float r_x = (float)g->s_x / (float)g->BWIDTH;
+		float r_y = (float)g->s_y / (float)g->BHEIGHT;
+		int w = al_get_bitmap_width(img);
+		int h = al_get_bitmap_height(img);
+		if (img != NULL) {
+			if (collide(0, 0, g->BWIDTH, g->BHEIGHT, x, y, w, h)) {
+				//al_draw_scaled_rotated_bitmap(img, w / 2, h / 2, r_x*x, r_y*y, r_x, r_y, (degree * 3.14159 / 180), flags);
+				ALLEGRO_COLOR tint;
+				//tint.a = (opacity * 255.0);
+				tint.a = opacity;
+				tint.r = 0;
+				tint.g = 0;
+				tint.b = 0;
+				al_draw_tinted_rotated_bitmap(img, tint, w / 2, 0, x, y, (degree * 3.14159 / 180), flags);
+			}
+		} else {
+			al_show_native_message_box(NULL, "Error", "File(s) Missing", "Game will quit.", "Quit", 0);
+			g->done = true;
+		}
+	}
+}
+
 void DrawRectangle(Game* g, int x, int y, int w, int h, int re, int gr, int bl, float a){
 	float r_x = (float)g->s_x/(float)g->BWIDTH;
 	float r_y = (float)g->s_y/(float)g->BHEIGHT;

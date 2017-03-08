@@ -30,9 +30,41 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 				g->logini.type_username = false;
 			}
 		}
+		
+		// Drop-down menu cancelation
+		if (g->Interfaces[4].visible && !MouseIsOn(g, g->Interfaces[4].x, g->Interfaces[4].y, 160, 80)) {
+			g->Interfaces[4].visible = false;
+		}
+		if (g->Interfaces[5].visible && !MouseIsOn(g, g->Interfaces[5].x, g->Interfaces[5].y, 160, 60)) {
+			g->Interfaces[5].visible = false;
+		}
+
+		// Volume adjustment engage
+		if (g->Interfaces[3].visible) {
+			// Music
+			if (MouseIsOn(g, g->Interfaces[3].x + g->Buttons[29].x, g->Interfaces[3].y + g->Buttons[29].y, 160, 20)) {
+				g->adjusting_music = true;
+			}
+
+			// Sound
+			if (MouseIsOn(g, g->Interfaces[3].x + g->Buttons[30].x, g->Interfaces[3].y + g->Buttons[30].y, 160, 20)) {
+				g->adjusting_sound = true;
+			}
+		}
 	} else {
 		// Interface Button's click
 		bool done = false;
+
+		// But first check for release of volume adjustment
+		if (g->Interfaces[INTERFACE_OPTIONS].visible == true) {
+			if (g->adjusting_music || g->adjusting_sound) {
+				g->adjusting_music = false;
+				g->adjusting_sound = false;
+				done = true;
+			}
+		}
+
+		// Loop trough all interfaces and buttons
 		for(int i = 0; i < MAX_INTERFACES; i++){
 			if(g->Interfaces[i].visible == true && done == false){
 				for(int j = 0; j < MAX_BUTTONS; j++){
@@ -170,6 +202,20 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->game_duration.ticking = true;
 									done = true;
 									break;
+								case 27: // Turn on/off shadow rendering
+									g->weather.cycle.sunlight.active = !g->weather.cycle.sunlight.active;
+									done = true;
+									break;
+								case 28: // Done (from options)
+									if (g->scene == 2) {
+										HideAllInterfaces(g, INTERFACE_PAUSE);
+										g->Interfaces[INTERFACE_PAUSE].visible = true;
+									} else {
+										HideAllInterfaces(g, INTERFACE_MAIN_MENU);
+										g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									}
+									done = true;
+									break;
 								case 241:
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
 									g->Interfaces[INTERFACE_LOGIN].visible = true;
@@ -196,6 +242,14 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								case 249:
 									HideAllInterfaces(g, 9);
 									g->Interfaces[INTERFACE_KEYBOARD].visible = true;
+									done = true;
+									break;
+								case 250:
+									RequestBindKeyInput(g, &g->keys.pee_bind);
+									done = true;
+									break;
+								case 251:
+									RequestBindKeyInput(g, &g->keys.drink_bind);
 									done = true;
 									break;
 								case 258:
@@ -265,6 +319,8 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 void RightClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 	if(!release){
 		//
+		if (g->Interfaces[4].visible) g->Interfaces[4].visible = false;
+		if (g->Interfaces[5].visible) g->Interfaces[5].visible = false;
 	} else {
 		//
 	}

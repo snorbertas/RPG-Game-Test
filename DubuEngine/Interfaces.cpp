@@ -62,28 +62,33 @@ void LoadInterfaces(Game* g){
 	// Interface 2 (Generating map)
 	NewInterface(&g->Interfaces[INTERFACE_GENERATING], NO_SPRITE, (g->BWIDTH / 2), (g->BHEIGHT / 2));
 
-	// Interface 3 //Options
+	// Interface 3 (Options)
 	NewInterface(&g->Interfaces[INTERFACE_OPTIONS], SPRITE_INTERFACE_OPTIONS, (g->BWIDTH/2) - 200, (g->BHEIGHT/2) - 200);
-	NewButton(&g->Buttons[5], SPRITE_BUTTON_RES, 215, 15, 168, 37, INTERFACE_OPTIONS);
-	NewButton(&g->Buttons[6], SPRITE_BUTTON_RES, 215, 71, 168, 37, INTERFACE_OPTIONS);
-	NewButton(&g->Buttons[249], SPRITE_BUTTON_CONTROLS, 127, 125, 142, 35, INTERFACE_OPTIONS);
+	NewButton(&g->Buttons[5], SPRITE_BUTTON_RES, 215, 42, 160, 20, INTERFACE_OPTIONS);
+	NewButton(&g->Buttons[6], SPRITE_BUTTON_RES, 215, 67, 160, 20, INTERFACE_OPTIONS);
+	NewButton(&g->Buttons[27], SPRITE_BUTTON_TICK_EMPTY, 215, 90, 23, 20, INTERFACE_OPTIONS);
+	NewButton(&g->Buttons[249], SPRITE_BUTTON_CONTROLS, 12, 256, 142, 35, INTERFACE_OPTIONS);
+	NewButton(&g->Buttons[28], SPRITE_BUTTON_DONE, 245, 256, 142, 35, INTERFACE_OPTIONS);
+
+	NewButton(&g->Buttons[29], SPRITE_BUTTON_RES, 215, 155, 160, 20, INTERFACE_OPTIONS);
+	NewButton(&g->Buttons[30], SPRITE_BUTTON_RES, 215, 180, 160, 20, INTERFACE_OPTIONS);
 
 	// Interface 4
 	temp_x = g->Interfaces[INTERFACE_OPTIONS].x+g->Buttons[5].x;
 	temp_y = g->Interfaces[INTERFACE_OPTIONS].y+g->Buttons[5].y;
 	NewInterface(&g->Interfaces[4], NO_SPRITE, temp_x, temp_y);
-	NewButton(&g->Buttons[8], SPRITE_BUTTON_RES, 0, 0, 168, 37, 4);
-	NewButton(&g->Buttons[9], SPRITE_BUTTON_RES, 0, 37, 168, 37, 4);
-	NewButton(&g->Buttons[10], SPRITE_BUTTON_RES, 0, 74, 168, 37, 4);
-	NewButton(&g->Buttons[11], SPRITE_BUTTON_RES, 0, 111, 168, 37, 4);
+	NewButton(&g->Buttons[8], SPRITE_BUTTON_RES, 0, 0, 160, 20, 4);
+	NewButton(&g->Buttons[9], SPRITE_BUTTON_RES, 0, 20, 160, 20, 4);
+	NewButton(&g->Buttons[10], SPRITE_BUTTON_RES, 0, 40, 160, 20, 4);
+	NewButton(&g->Buttons[11], SPRITE_BUTTON_RES, 0, 60, 160, 20, 4);
 	
 	// Interface 5
 	temp_x = g->Interfaces[INTERFACE_OPTIONS].x+g->Buttons[6].x;
 	temp_y = g->Interfaces[INTERFACE_OPTIONS].y+g->Buttons[6].y;
 	NewInterface(&g->Interfaces[5], NO_SPRITE, temp_x, temp_y);
-	NewButton(&g->Buttons[12], SPRITE_BUTTON_RES, 0, 0, 168, 37, 5);
-	NewButton(&g->Buttons[13], SPRITE_BUTTON_RES, 0, 37, 168, 37, 5);
-	NewButton(&g->Buttons[14], SPRITE_BUTTON_RES, 0, 74, 168, 37, 5);
+	NewButton(&g->Buttons[12], SPRITE_BUTTON_RES, 0, 0, 160, 20, 5);
+	NewButton(&g->Buttons[13], SPRITE_BUTTON_RES, 0, 20, 160, 20, 5);
+	NewButton(&g->Buttons[14], SPRITE_BUTTON_RES, 0, 40, 160, 20, 5);
 	
 	// Interface 6
 	g->Interfaces[INTERFACE_VERSION].visible = true;
@@ -98,16 +103,16 @@ void LoadInterfaces(Game* g){
 
 	// Interface 9
 	NewInterface(&g->Interfaces[INTERFACE_KEYBOARD], SPRITE_INTERFACE_KEYBOARD, (g->BWIDTH / 2) - 200, (g->BHEIGHT / 2) - 200);
-	NewButton(&g->Buttons[248], SPRITE_BUTTON_DONE, 127, 256, 142, 35, INTERFACE_KEYBOARD);
+	NewButton(&g->Buttons[248], SPRITE_BUTTON_DONE, 245, 256, 142, 35, INTERFACE_KEYBOARD);
 
-	for (int i = 0; i < 8; i++) {
-		NewButton(&g->Buttons[250 + i], SPRITE_BUTTON_KEYPICK, 112, 22 + (i * 25), 80, 20, INTERFACE_KEYBOARD);
+	for (int i = 0; i < 2; i++) {
+		NewButton(&g->Buttons[250 + i], SPRITE_BUTTON_KEYPICK, 294, 22 + (i * 25), 80, 20, INTERFACE_KEYBOARD);
 	}
 	for (int i = 0; i < 4; i++) {
-		NewButton(&g->Buttons[258 + i], SPRITE_BUTTON_KEYPICK, 294, 22 + (i * 25), 80, 20, INTERFACE_KEYBOARD);
+		NewButton(&g->Buttons[258 + i], SPRITE_BUTTON_KEYPICK, 119, 22 + (i * 25), 80, 20, INTERFACE_KEYBOARD);
 	}
 	for (int i = 0; i < 4; i++) {
-		NewButton(&g->Buttons[265 + i], SPRITE_BUTTON_KEYPICK, 294, 22 + (4 * 25) + (i * 25), 80, 20, INTERFACE_KEYBOARD);
+		NewButton(&g->Buttons[265 + i], SPRITE_BUTTON_KEYPICK, 119, 22 + (4 * 25) + (i * 25), 80, 20, INTERFACE_KEYBOARD);
 	}
 
 	// Interface 10
@@ -194,6 +199,28 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				g->Interfaces[i].y,
 				0, g->Interfaces[i].opacity);
 
+			// Fill background for drop-down menu
+			if (i == 4) {
+				DrawRectangle(g, g->Interfaces[i].x, g->Interfaces[i].y, 160, 80, 64, 64, 64);
+			}
+			if (i == 5) {
+				DrawRectangle(g, g->Interfaces[i].x, g->Interfaces[i].y, 160, 60, 64, 64, 64);
+			}
+
+			// Fill in volume graphs
+			if (i == INTERFACE_OPTIONS) {
+				// Music Volume
+				int x = g->Interfaces[i].x + g->Buttons[29].x + 1;
+				int y = g->Interfaces[i].y + g->Buttons[29].y + 1;
+				int w = 158.0 * ((double)g->music_volume / 100.0);
+				DrawRectangle(g, x, y, w, 18, 255, 255, 255, 0.3);
+
+				// Sound volume
+				x = g->Interfaces[i].x + g->Buttons[30].x + 1;
+				y = g->Interfaces[i].y + g->Buttons[30].y + 1;
+				w = 158.0 * ((double)g->sound_volume / 100.0);
+				DrawRectangle(g, x, y, w, 18, 255, 255, 255, 0.3);
+			}
 			// Draw interface boxes before buttons
 			if (i == INTERFACE_SINGLE_MODE_CHOICE) {
 				// Initial x/y
@@ -362,22 +389,51 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						DrawText(font[0], 255, 255, 255, g->Interfaces[i].x, g->BHEIGHT - 80, ALLEGRO_ALIGN_CENTER, GetTip(g->menu.tip_id));
 					}
 					break;
-				case 3:
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 222, g->Interfaces[i].y + 22, ALLEGRO_ALIGN_LEFT, "%i x %i", g->s_x, g->s_y);
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 222, g->Interfaces[i].y + 78, ALLEGRO_ALIGN_LEFT, GetWindowMode(g->window_mode));
-					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 20, ALLEGRO_ALIGN_LEFT, "Resolution:");
-					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 75, ALLEGRO_ALIGN_LEFT, "Window Size:");
+				case INTERFACE_OPTIONS:
+				{
+					// Update the tick-box appearence
+					if (g->weather.cycle.sunlight.active) {
+						g->Buttons[27].sprite_id = SPRITE_BUTTON_TICK_CHECKED;
+					}
+					else {
+						g->Buttons[27].sprite_id = SPRITE_BUTTON_TICK_EMPTY;
+					}
+
+					// Graphics
+					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 17, g->Interfaces[i].y + 10, ALLEGRO_ALIGN_LEFT, "Graphics");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 222, g->Interfaces[i].y + 41, ALLEGRO_ALIGN_LEFT, "%i x %i", g->s_x, g->s_y);
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 222, g->Interfaces[i].y + 66, ALLEGRO_ALIGN_LEFT, GetWindowMode(g->window_mode));
+					DrawText(font[2], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 40, ALLEGRO_ALIGN_LEFT, "Resolution:");
+					DrawText(font[2], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 65, ALLEGRO_ALIGN_LEFT, "Window Mode:");
+					DrawText(font[2], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 90, ALLEGRO_ALIGN_LEFT, "Shadows:");
+
+					// Audio
+					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 17, g->Interfaces[i].y + 125, ALLEGRO_ALIGN_LEFT, "Audio");
+					DrawText(font[2], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 155, ALLEGRO_ALIGN_LEFT, "Music Volume:");
+					DrawText(font[2], 0, 0, 0, g->Interfaces[i].x + 22, g->Interfaces[i].y + 180, ALLEGRO_ALIGN_LEFT, "Sound Volume:");
+
+					// Music
+					string volume_str = "OFF";
+					if (g->music_volume > 0) volume_str = "%i%%";
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 295, g->Interfaces[i].y + 155,
+						ALLEGRO_ALIGN_CENTER, volume_str.c_str(), g->music_volume);
+
+					// Sound
+					if (g->sound_volume > 0) volume_str = "%i%%";
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 295, g->Interfaces[i].y + 180,
+						ALLEGRO_ALIGN_CENTER, volume_str.c_str(), g->sound_volume);
 					break;
+				}
 				case 4:	
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 7, ALLEGRO_ALIGN_LEFT, "1024 x 576");
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 44, ALLEGRO_ALIGN_LEFT, "1280 x 720");
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 81, ALLEGRO_ALIGN_LEFT, "1600 x 900");
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 118, ALLEGRO_ALIGN_LEFT, "1920 x 1080");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 1, ALLEGRO_ALIGN_LEFT, "1024 x 576");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 21, ALLEGRO_ALIGN_LEFT, "1280 x 720");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 41, ALLEGRO_ALIGN_LEFT, "1600 x 900");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 61, ALLEGRO_ALIGN_LEFT, "1920 x 1080");
 					break;
 				case 5:
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 7, ALLEGRO_ALIGN_LEFT, "Window");
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 44, ALLEGRO_ALIGN_LEFT, "Fullscreen");
-					DrawText(font[0], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 81, ALLEGRO_ALIGN_LEFT, "Borderless");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 1, ALLEGRO_ALIGN_LEFT, "Window");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 21, ALLEGRO_ALIGN_LEFT, "Fullscreen");
+					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 7, g->Interfaces[i].y + 41, ALLEGRO_ALIGN_LEFT, "Borderless");
 					break;
 				case INTERFACE_VERSION: {
 					DrawText(font[2], 255, 255, 255, 0, 0, ALLEGRO_ALIGN_LEFT, ENGINE_VERSION);
@@ -406,11 +462,6 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					}
 					break;
 				}
-				case 7:
-					g->music_volume_cd--;
-					if (g->music_volume_cd <= 0) g->Interfaces[i].visible = false;
-					DrawRectangle(g, g->Interfaces[i].x+3, g->Interfaces[i].y+146, 43, 0-g->music_volume*100, 132, 187, 234);
-					break;
 				case INTERFACE_LOGIN:
 				{
 					DrawText(font[1], 0, 0, 0, g->Interfaces[i].x + 110, g->Interfaces[i].y + 22, ALLEGRO_ALIGN_LEFT, g->logini.username_input.c_str());
@@ -445,70 +496,93 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				case INTERFACE_KEYBOARD:
 				{
 					int offset = 0;
+					int x = 22;
+					int x_diff = 136;
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21,
 						ALLEGRO_ALIGN_LEFT, "Move Left:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.left_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Move Right:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.right_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Move Up:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.up_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Move Down:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.down_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Camera:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.camera_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Dig:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.dig_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Sniff:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.sniff_bind));
 					DrawText(font[2], 0, 0, 0,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 202,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
 						ALLEGRO_ALIGN_LEFT, "Chat:");
 					DrawText(font[2], 255, 255, 255,
-						g->Interfaces[INTERFACE_KEYBOARD].x + 333,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.chat_bind));
+
+					// Next column
+					offset = 0;
+					x = 207;
+					x_diff = 126;
+					DrawText(font[2], 0, 0, 0,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
+						g->Interfaces[INTERFACE_KEYBOARD].y + 21,
+						ALLEGRO_ALIGN_LEFT, "Pee:");
+					DrawText(font[2], 255, 255, 255,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
+						g->Interfaces[INTERFACE_KEYBOARD].y + 21,
+						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.pee_bind));
+					DrawText(font[2], 0, 0, 0,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
+						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
+						ALLEGRO_ALIGN_LEFT, "Drink:");
+					DrawText(font[2], 255, 255, 255,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
+						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
+						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.drink_bind));
 					break;
 				}
 				case INTERFACE_PAUSE:
@@ -853,6 +927,21 @@ void HideAllInterfaces(Game* g, int except) {
 	}
 }
 
+void HandleVolumeAdjust(Game* g) {
+	if (g->Interfaces[INTERFACE_OPTIONS].visible) {
+		if (g->adjusting_music) {
+			g->music_volume = ((g->pos_x - (g->Interfaces[INTERFACE_OPTIONS].x + g->Buttons[29].x)) / 160.0) * 100;
+			if (g->music_volume < 0) g->music_volume = 0;
+			if (g->music_volume > 100) g->music_volume = 100;
+		}
+		if (g->adjusting_sound) {
+			g->sound_volume = ((g->pos_x - (g->Interfaces[INTERFACE_OPTIONS].x + g->Buttons[30].x)) / 160.0) * 100;
+			if (g->sound_volume < 0) g->sound_volume = 0;
+			if (g->sound_volume > 100) g->sound_volume = 100;
+		}
+	}
+}
+
 void HandleInterfaces(Game* g) {
 	g->fade_in--;
 	if (g->fade_in < 0) g->fade_in = 0;
@@ -861,6 +950,7 @@ void HandleInterfaces(Game* g) {
 	
 	HandleChatInterface(g);
 	HandleLoginInterface(g);
+	HandleVolumeAdjust(g);
 	if(g->Interfaces[INTERFACE_WELCOME].visible == true) g->welcome_interface.Handle();
 }
 
@@ -1018,6 +1108,7 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/welcome");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/object <i>");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/sunlight");
 		} else if (type == "/object") {
 			int object_type = -1;
 			args >> object_type;
@@ -1031,6 +1122,8 @@ void HandleCommand(Game* g, const char* msg) {
 			}
 		} else if (type == "/seed") {
 			args >> g->map.seed;
+		} else if (type == "/sunlight") {
+			g->weather.cycle.sunlight.active = !g->weather.cycle.sunlight.active;
 		} else if (type == "/timer") {
 			args >> g->game_duration.seconds_start;
 			g->game_duration.ticks = 0;

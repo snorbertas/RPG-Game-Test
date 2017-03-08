@@ -50,6 +50,10 @@ public:
 		EMapObjectRock_3,
 		EMapObjectRock_4,
 		EMapObjectRock_5,
+		EMapObjectRock_6,
+		EMapObjectRock_7,
+		EMapObjectRock_8,
+		EMapObjectRock_9,
 		EMapObjectCount
 	};
 
@@ -75,9 +79,10 @@ public:
 
 	public:
 		bool IsBush();
-		bool IsRock();
-		bool IsThinRock();
-		bool IsWideRock();
+		bool IsRock();			// Rock with collision
+		bool IsCosmeticRock();	// Tiny rock with no collision
+		bool IsThinRock();		// Thin collision rock
+		bool IsWideRock();		// Wide collision rock
 		bool IsTree();
 		bool IsBigTree();
 		bool IsGrass();
@@ -86,6 +91,7 @@ public:
 		bool HasCollision();
 		CollisionBox GetCollisionBox();
 		void Draw(Game* g, SpriteStruct* sprites);
+		void DrawShadow(Game* g, SpriteStruct* sprites);
 
 	public:
 		int x = 0;

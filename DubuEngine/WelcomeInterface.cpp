@@ -80,6 +80,9 @@ void WelcomeInterface::DrawAllElements(Game* g, SpriteStruct* sprites, ALLEGRO_F
 	// Draw misc
 	for (size_t i = 0; i < _misc.size(); i++) {
 		int anim = 0;
+		int sprite_id = SPRITE_BUTTON_BLANK_SMALL;
+		int x_offset = 0;
+		int x_offset_text = 18;
 		if (timer > 30) anim = 1;
 		if (_misc[i].type <= WIMisc::Type::RIGHT_KEY) {
 			string key_str = "ERR";
@@ -90,11 +93,18 @@ void WelcomeInterface::DrawAllElements(Game* g, SpriteStruct* sprites, ALLEGRO_F
 			if (_misc[i].type == WIMisc::Type::DOWN_KEY) key_str = GetKeyName(g->keys.down_bind);
 			if (_misc[i].type == WIMisc::Type::LEFT_KEY) key_str = GetKeyName(g->keys.left_bind);
 			if (_misc[i].type == WIMisc::Type::RIGHT_KEY) key_str = GetKeyName(g->keys.right_bind);
-			DrawImage(g, sprites->img_button[SPRITE_BUTTON_BLANK_SMALL + anim],
-				_misc[i].x + _x, _misc[i].y + _y + (anim * 4),
+			if (key_str.length() > 2) {
+				sprite_id = SPRITE_BUTTON_BLANK_MED;
+				x_offset = -5;
+				x_offset_text = 23;
+			}
+			DrawImage(g, sprites->img_button[sprite_id + anim],
+				_misc[i].x + x_offset + _x,
+				_misc[i].y + _y + (anim * 4),
 				0, 0.8);
 			DrawText(font[2], 0, 0, 0,
-				_misc[i].x + 18 + _x, _misc[i].y + 6 + _y + (anim * 4),
+				_misc[i].x + x_offset + x_offset_text + _x,
+				_misc[i].y + 6 + _y + (anim * 4),
 				ALLEGRO_ALIGN_CENTER, "%s", key_str.c_str());
 		}
 	}

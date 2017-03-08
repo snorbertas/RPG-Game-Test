@@ -71,15 +71,17 @@ void Weather::RenderClouds(Game* g, SpriteStruct* sprites, CloudMode mode) {
 			cloud[i].flags, opacity);
 
 		// Draw shadow
-		DrawImage(g, sprites->img_background[BACKGROUND_CLOUD_SHADOW],
-			cloud[i].x + g->camera.x - 200,
-			cloud[i].y + g->camera.y + 550,
-			cloud[i].flags, opacity);
+		if (cycle.sunlight.active) {
+			DrawImage(g, sprites->img_background[BACKGROUND_CLOUD_SHADOW],
+				cloud[i].x + g->camera.x - 200,
+				cloud[i].y + g->camera.y + 550,
+				cloud[i].flags, opacity);
+		}
 	}
 }
 
 void Weather::HandleDayNightCycle(Game* g) {
-	// Nothing yet
+	cycle.sunlight.Update();
 }
 
 void Weather::StartDay(Game* g) {
@@ -108,6 +110,12 @@ void Weather::RenderDayNightCycle(Game* g) {
 			cycle.timer--;
 			a *= (TicksToSeconds(cycle.timer) / 10.0);
 			DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 0, 0, 16, a);
+		}
+
+		// Draw position of sun
+		if (cycle.sunlight.active) {
+			float sun_x = ((cycle.sunlight.position + 90.0) / 180.0) * ((float)g->BWIDTH - 30.0);
+			DrawRectangle(g, sun_x, 0, 30, 30, 255, 255, 0, 0.7);
 		}
 	}
 }

@@ -117,8 +117,11 @@
 			double new_time = 0;				// New tick
 	/*?*/	int animation_tick = 0;				// Animation timer
 			Camera camera;						// Camera object
-			float music_volume;					// Music volume
+			int music_volume = 50;				// Music volume
+			bool adjusting_music;				// If user is adjusting volume bar
 			float music_volume_cd;				// Music volume cooldown
+			int sound_volume = 50;				// Sound volume
+			bool adjusting_sound;				// If user is adjusting sound bar
 			bool remake_display;				// If true, the display will be recreated next tick
 			int s_x = 1280;						// Scale to x
 			int s_y = 720;						// Scale to y

@@ -34,6 +34,10 @@ const MapObjectInfo::MapObject MapObjectInfo::_Objects[MapObjectInfo::EMapObject
 	MapObject(EMapObjectRock_3, EObjectSpriteRock_3),
 	MapObject(EMapObjectRock_4, EObjectSpriteRock_4),
 	MapObject(EMapObjectRock_5, EObjectSpriteRock_5),
+	MapObject(EMapObjectRock_6, EObjectSpriteRock_6),
+	MapObject(EMapObjectRock_7, EObjectSpriteRock_7),
+	MapObject(EMapObjectRock_8, EObjectSpriteRock_8),
+	MapObject(EMapObjectRock_9, EObjectSpriteRock_9),
 };
 
 bool MapObjectInfo::MapObject::IsBush() {
@@ -42,6 +46,10 @@ bool MapObjectInfo::MapObject::IsBush() {
 
 bool MapObjectInfo::MapObject::IsRock() {
 	return RockLowestID <= Type && Type <= RockHighestID;
+}
+
+bool MapObjectInfo::MapObject::IsCosmeticRock() {
+	return EMapObjectRock_6 <= Type && Type <= EMapObjectRock_9;
 }
 
 bool MapObjectInfo::MapObject::IsThinRock() {
@@ -124,6 +132,57 @@ void MapObjectInfo::MapObject::Draw(Game* g, SpriteStruct* sprites) {
 	} else {
 		// Rendering multi player
 		RenderPlayer(g, g->Players[ID], sprites);
+	}
+}
+
+void MapObjectInfo::MapObject::DrawShadow(Game* g, SpriteStruct* sprites) {
+	if(g->weather.cycle.sunlight.active){
+		int angle = g->weather.cycle.sunlight.position;
+		float opacity = g->weather.cycle.sunlight.brightness;
+
+		using EType = EMapObjectType;
+		auto& img_gfx = sprites->img_gfx;
+		auto& img_object = sprites->img_object;
+		if (IsGrass()) {
+			// Tall Grass
+			angle = 0;
+			DrawRotatedShadow(g,
+				img_object[SpriteId],
+				x + 32 + g->camera.x,
+				y + 60 + g->camera.y - 7,
+				angle, ALLEGRO_FLIP_VERTICAL, opacity);
+		} else if (IsRock() || IsCosmeticRock()){
+			// Rocks
+			angle = 0;
+			DrawRotatedShadow(g,
+				img_object[SpriteId],
+				x + 36 + g->camera.x,
+				y + 63 + g->camera.y,
+				angle, ALLEGRO_FLIP_VERTICAL, opacity);
+		} else if (!IsPlayer()) {
+			// Rendering immobile objects
+			if (!IsTree()) {
+				DrawRotatedShadow(g,
+					img_object[SpriteId],
+					x + 32 + g->camera.x,
+					y + 60 + g->camera.y,
+					angle, ALLEGRO_FLIP_VERTICAL, opacity);
+			} else {
+				int gfx_id = SPRITE_SHADOW_SMALL_TREE;
+				if (IsBigTree()) gfx_id = SPRITE_SHADOW_BIG_TREE;
+				DrawRotatedShadow(g,
+					img_gfx[gfx_id],
+					x + 32 + g->camera.x,
+					y + 60 + g->camera.y,
+					angle, ALLEGRO_FLIP_VERTICAL, opacity);
+			}
+		} else if (Type == EMapObjectPlayer_L) {
+			// Rendering local player
+			RenderPlayerShadow(g, g->pl, sprites);
+		} else {
+			// Rendering multi player
+			RenderPlayerShadow(g, g->Players[ID], sprites);
+		}
 	}
 }
 

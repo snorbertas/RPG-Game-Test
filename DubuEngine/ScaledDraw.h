@@ -46,6 +46,13 @@
 		int degree,						// Degrees to rotate
 		int flags);						// 1 = flip horizontally
 
+	void DrawRotatedShadow(Game* g,// Game pointer
+		ALLEGRO_BITMAP* img,			// Image Pointer
+		int x, int y,					// x, y coordinates
+		double degree,						// Degrees to rotate
+		int flags,						// 1 = flip horizontally
+		float opacity = 1);				// Transperency 0 to 1 (0 = invisible)
+
 
 /* ============================ DrawRectangle =============================
  *		Draws a rectangle.

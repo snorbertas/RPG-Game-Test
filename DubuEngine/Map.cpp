@@ -992,6 +992,7 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 			int ind = _TemporaryVector[x];
 			if (canDrawPrev && (ind == (int) ObjectBlock[x][y].size() || yPrev <= ObjectBlock[x][y][ind]->y) && yPrev <= yPlayer) {
 				int& indPrev = _TemporaryVector[x - 1];
+				ObjectBlock[x - 1][y][indPrev]->DrawShadow(g, sprites);
 				ObjectBlock[x - 1][y][indPrev]->Draw(g, sprites);
 				++indPrev;
 				draw = true;
@@ -1006,11 +1007,13 @@ void Map::RenderObjectsOnBlockY(Game* g, SpriteStruct* sprites, int y, int xMin,
 		}
 		if (canDrawPrev && yPrev <= yPlayer) {
 			int& indPrev = _TemporaryVector[xMax];
+			ObjectBlock[xMax][y][indPrev]->DrawShadow(g, sprites);
 			ObjectBlock[xMax][y][indPrev]->Draw(g, sprites);
 			++indPrev;
 			draw = true;
 		}
 		if (!draw && yPlayer != _InfiniteDist) {
+			Players[playerIndex].DrawShadow(g, sprites);
 			Players[playerIndex].Draw(g, sprites);
 			++playerIndex;
 			draw = true;

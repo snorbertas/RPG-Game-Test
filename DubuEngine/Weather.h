@@ -4,6 +4,22 @@
 #include <vector>
 class Game;
 
+// ========================== Sunlight class =============================
+class Sunlight {
+public:
+	bool active = true;			// Wether sun is active or not (false means no shadows)
+	int timer = -1;				// Timer for movement
+	float brightness = 0.15;	// Brightness of shadows
+	double position = -45;		// -90 degrees on left, 90 degrees on right
+	int height = 20;			// 0px morning/evening, 20px mid-day
+	void Update() {
+		if (active) {
+			position += 0.005;
+			if (position > 90) position = -90;
+		}
+	}
+};
+
 // ============================ Cloud class ==============================
 class Cloud {
 public:
@@ -17,6 +33,7 @@ public:
 // ============================ Cycle class ==============================
 class DayNightCycle {
 public:
+	Sunlight sunlight;
 	int timer = -1;
 	bool night = false;
 };

@@ -14,11 +14,19 @@
 
 
 /* ============================= RenderPlayer =============================
- *		Renders the player.
+ *		Renders a player.
  *
- *		Called once per tick from the RenderGame() function.
+ *		Called when desired.
  */
 	void RenderPlayer(Game* g, Player& pl, SpriteStruct* sprites);
+
+
+/* ========================== RenderPlayerShadow ==========================
+ *		Renders a player's shadow.
+ *
+ *		Called when desired.
+ */
+	void RenderPlayerShadow(Game* g, Player& pl, SpriteStruct* sprites);
 
 
 /* ======================= RenderParallaxBackground =======================
