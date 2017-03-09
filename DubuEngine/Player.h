@@ -77,4 +77,5 @@ public:
 
 	// Multi-player
 	bool connected = false;
+	bool sprinting = false;			// For sprint animation
 };

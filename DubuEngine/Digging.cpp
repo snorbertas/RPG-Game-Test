@@ -58,12 +58,14 @@ void RenderDigging(Game * g, SpriteStruct* sprites) {
 	if (g->connected) {
 		for (int i = 0; i < g->MAX_PLAYERS; i++) {
 			Player* p = &g->Players[i];
-			if (p->digging) {
-				int frame = p->dig_timer - (p->dig_timer / 8) * 8;
-				frame = 3 - (frame / 2);
-				DrawImage(g, sprites->img_gfx[frame],
-					p->x + g->camera.x,
-					p->y + g->camera.y, 0);
+			if (p->connected) {
+				if (p->digging) {
+					int frame = p->dig_timer - (p->dig_timer / 8) * 8;
+					frame = 3 - (frame / 2);
+					DrawImage(g, sprites->img_gfx[frame],
+						p->x + g->camera.x,
+						p->y + g->camera.y, 0);
+				}
 			}
 		}
 	}

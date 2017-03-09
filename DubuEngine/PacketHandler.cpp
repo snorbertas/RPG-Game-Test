@@ -81,6 +81,7 @@ void HandlePacket(Game* g, Packet* p) {
 		g->Players[player_id].dig_timer = ppa->dig_timer;
 		g->Players[player_id].peeing = ppa->peeing;
 		g->Players[player_id].pee_timer = ppa->pee_timer;
+		g->Players[player_id].sprinting = ppa->sprinting;
 	} else if (deriv == DEP_DERIV_SCORE) {
 		// Update score
 		g->score.score_info[ps->p_id] = ps->score;
@@ -98,6 +99,9 @@ void QueueActionsPacket(Game* g) {
 		// Peeing
 		packet->peeing = g->pl.peeing;
 		packet->pee_timer = g->pl.pee_timer;
+
+		// Sprinting
+		packet->sprinting = g->pl.sprinting;
 
 		// Add packet to queue
 		AddPacketToQueue(g, packet);

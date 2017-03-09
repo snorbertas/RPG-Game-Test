@@ -110,6 +110,7 @@ public:
 	int dig_timer = 0;
 	bool peeing = false;
 	int pee_timer = 0;
+	bool sprinting = false;
 };
 
 // Packet derivative for score update

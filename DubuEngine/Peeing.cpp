@@ -52,18 +52,20 @@ void RenderPeeing(Game * g, SpriteStruct* sprites) {
 	if (g->connected) {
 		for (int i = 0; i < g->MAX_PLAYERS; i++) {
 			Player* p = &g->Players[i];
-			if (p->peeing) {
-				// Decide orientation
-				if (p->facing == Player::Facing::FacingRight) flags = ALLEGRO_FLIP_HORIZONTAL;
+			if (p->connected) {
+				if (p->peeing) {
+					// Decide orientation
+					if (p->facing == Player::Facing::FacingRight) flags = ALLEGRO_FLIP_HORIZONTAL;
 
-				// Calculate frame
-				int frame = p->pee_timer - (p->pee_timer / 8) * 8;
-				frame = 3 - (frame / 2);
+					// Calculate frame
+					int frame = p->pee_timer - (p->pee_timer / 8) * 8;
+					frame = 3 - (frame / 2);
 
-				// Render sprite
-				DrawImage(g, sprites->img_gfx[frame + 4],
-					p->x + g->camera.x,
-					p->y + g->camera.y, flags);
+					// Render sprite
+					DrawImage(g, sprites->img_gfx[frame + 4],
+						p->x + g->camera.x,
+						p->y + g->camera.y, flags);
+				}
 			}
 		}
 	}

@@ -98,6 +98,7 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 				paction->dig_timer = ppa->dig_timer;
 				paction->peeing = ppa->peeing;
 				paction->pee_timer = ppa->pee_timer;
+				paction->sprinting = ppa->sprinting;
 				AddPacketToQueue(&g->players[i], paction);
 			}
 		}

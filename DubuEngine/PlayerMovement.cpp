@@ -5,6 +5,7 @@
 #include "Digging.h"
 #include "Peeing.h"
 #include "Drinking.h"
+#include "PacketHandler.h"
 
 void HandleStamina(Game* g) {
 	// Correct the velocity
@@ -17,9 +18,13 @@ void HandleStamina(Game* g) {
 			if (g->keys.left || g->keys.right || g->keys.up || g->keys.down) {
 				g->pl.stamina_left--;
 				g->gfx_dirt.push_back(DirtParticle(g->pl.x + (rand() % g->pl.w), g->pl.y + g->pl.h));
+				g->pl.sprinting = true;
+
+				// Queue packet to server
+				QueueActionsPacket(g);
 			}
 
-			// Fix
+			// Fix invalid value
 			if (g->pl.stamina_left < 0) g->pl.stamina_left = 0;
 		} else {
 			g->pl.velocity = g->pl.base_velocity;
@@ -36,6 +41,22 @@ void HandleStamina(Game* g) {
 		// Fix velocity
 		g->pl.velocity = g->pl.base_velocity;
 		g->pl.ticks_to_anim = g->pl.base_ticks_to_anim;
+		g->pl.sprinting = false;
+
+		// Queue packet to server
+		QueueActionsPacket(g);
+	}
+
+	// Multiplayer
+	if (g->connected) {
+		for (int i = 0; i < g->MAX_PLAYERS; i++) {
+			Player* p = &g->Players[i];
+			if (p->connected) {
+				if (p->sprinting) {
+					g->gfx_dirt.push_back(DirtParticle(p->x + (rand() % p->w), p->y + p->h));
+				}
+			}
+		}
 	}
 }
 
