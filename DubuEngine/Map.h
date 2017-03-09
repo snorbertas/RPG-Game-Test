@@ -171,6 +171,16 @@ public:
 	 *	Spawns randomly-distributed butterflies
 	 */
 		void PopulateButterflies(int amount);
+		
+	/* ========================= BlockForObject =========================
+	 *	Finds appropriate block for object
+	 */
+		static std::pair<int, int> BlockForObject(const MapObjectInfo::MapObject& obj);
+		
+	/* ========================= BlockForPoint ==========================
+	 *	Finds appropriate block for point on map
+	 */
+		static std::pair<int, int> BlockForPoint(int x, int y);
 
 private:
 	/* ===================== RenderObjectsOnBlockY ======================
@@ -351,16 +361,6 @@ private:
 	 *	Builds simplified tile by 4 sides
 	 */
 		TilesInfo::Tile BuildTileBySides(int x, int y);
-		
-	/* ========================= BlockForObject =========================
-	 *	Finds appropriate block for object
-	 */
-		inline std::pair<int, int> BlockForObject(const MapObjectInfo::MapObject& obj);
-		
-	/* ========================= BlockForPoint ==========================
-	 *	Finds appropriate block for point on map
-	 */
-		inline std::pair<int, int> BlockForPoint(int x, int y);
 
 public:
 	static const int OBJECT_BLOCKS_CNT = 10;				// Blocks per axis

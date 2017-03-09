@@ -63,17 +63,16 @@ void DrawMiniMap(Game* g, SpriteStruct* sprites, int x, int y, int w, int h) {
 	int end_x_real = (start_x + hor_blocks - 1) * Map::TILE_SIZE;
 	int end_y_real = (start_y + ver_blocks - 1) * Map::TILE_SIZE;
 
-	// Loop trough all map objects (is there a faster way?)
-	for (size_t i = 0; i < g->map.Objects.size(); i++) {
-		MapObjectInfo::MapObject* mapobj = &g->map.Objects[i];
-		if (mapobj->x >= start_x_real && mapobj->x <= end_x_real &&
-			mapobj->y >= start_y_real && mapobj->y <= end_y_real) {
-
-			// If it's a tree, draw it
-			if (mapobj->IsTree() || mapobj->IsBigTree()) {
-				int draw_x = x + (((float)mapobj->x / Map::TILE_SIZE) - start_x) * block_size;
-				int draw_y = y + (((float)mapobj->y / Map::TILE_SIZE) - start_y) * block_size;
-				DrawMiniMapTree(g, draw_x, draw_y);
+	std::pair<int, int> blockMin = Map::BlockForPoint(start_x_real, start_y_real);
+	std::pair<int, int> blockMax = Map::BlockForPoint(end_x_real, end_y_real);
+	for (int i = blockMin.first; i <= blockMax.first; ++i) {
+		for (int j = blockMin.second; j <= blockMax.second; ++j) {
+			for (const auto& obj : g->map.ObjectBlock[i][j]) {
+				if (obj->IsTree()) {
+					int draw_x = x + (((float)obj->x / Map::TILE_SIZE) - start_x) * block_size;
+					int draw_y = y + (((float)obj->y / Map::TILE_SIZE) - start_y) * block_size;
+					DrawMiniMapTree(g, draw_x, draw_y);
+				}
 			}
 		}
 	}

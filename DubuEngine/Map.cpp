@@ -855,11 +855,11 @@ CollisionBox GetCollisionFromTile(int tile_id, int x, int y) {
 	return cb;
 }
 
-inline std::pair<int, int> Map::BlockForObject(const MapObjectInfo::MapObject& obj) {
+std::pair<int, int> Map::BlockForObject(const MapObjectInfo::MapObject& obj) {
 	return BlockForPoint(obj.x, obj.y);
 }
 
-inline std::pair<int, int> Map::BlockForPoint(int x, int y) {
+std::pair<int, int> Map::BlockForPoint(int x, int y) {
 	x = max(0, x);
 	x = min(MAP_SIZE_X * TILE_SIZE - 1, x);
 	y = max(0, y);
