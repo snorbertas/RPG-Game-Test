@@ -125,7 +125,7 @@ void Map::TrimStrip(int xStart, int yStart, int xTrimDirection, int yTrimDirecti
 				break;
 			}
 		}
-		if (hasWater && i != 0)
+		if (hasWater && i >= _MinTrim)
 			break;
 		tile[x][y] = waterSprite;
 		_Queue.push_back(std::make_pair(x, y));
@@ -146,6 +146,18 @@ void Map::AdjustWaterSides(int x, int y) {
 			t.Side[side] = TilesInfo::GetTileBySpriteId(tile[xCur][yCur]).Side[8 - side];
 		}
 	}
+	if ((InMap(x, y - 1) && TilesInfo::GetTileBySpriteId(tile[x][y - 1]).Side[6] == TilesInfo::GRASS) ||
+		(InMap(x - 1, y) && TilesInfo::GetTileBySpriteId(tile[x - 1][y]).Side[2] == TilesInfo::GRASS))
+		t.Side[0] = TilesInfo::GRASS;
+	if ((InMap(x, y - 1) && TilesInfo::GetTileBySpriteId(tile[x][y - 1]).Side[8] == TilesInfo::GRASS) ||
+		(InMap(x + 1, y) && TilesInfo::GetTileBySpriteId(tile[x + 1][y]).Side[0] == TilesInfo::GRASS))
+		t.Side[2] = TilesInfo::GRASS;
+	if ((InMap(x, y + 1) && TilesInfo::GetTileBySpriteId(tile[x][y + 1]).Side[0] == TilesInfo::GRASS) ||
+		(InMap(x - 1, y) && TilesInfo::GetTileBySpriteId(tile[x - 1][y]).Side[8] == TilesInfo::GRASS))
+		t.Side[6] = TilesInfo::GRASS;
+	if ((InMap(x, y + 1) && TilesInfo::GetTileBySpriteId(tile[x][y + 1]).Side[2] == TilesInfo::GRASS) ||
+		(InMap(x + 1, y) && TilesInfo::GetTileBySpriteId(tile[x + 1][y]).Side[6] == TilesInfo::GRASS))
+		t.Side[8] = TilesInfo::GRASS;
 
 	if (InMap(x, y - 1) && t.Side[1] == TilesInfo::GRASS)
 		t.Side[0] = t.Side[2] = TilesInfo::GRASS;
