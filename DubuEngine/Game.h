@@ -17,6 +17,7 @@
 #include "Weather.h"
 #include "WelcomeInterface.h"
 #include "GameDuration.h"
+#include "GFX.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -46,6 +47,7 @@
 		int pee_bind = ALLEGRO_KEY_Q;			// Binded key to pee
 		int drink_bind = ALLEGRO_KEY_W;			// Binded key to drink
 		int chat_bind = ALLEGRO_KEY_ENTER;		// Binded key to chat/type
+		int sprint_bind = ALLEGRO_KEY_E;		// Binded key to sprint
 		bool left = false;						// If true, then moving left key is inputted
 		bool right = false;						// If true, then moving right key is inputted
 		bool down = false;						// If true, then down key is inputted
@@ -53,6 +55,7 @@
 		bool CTRL = false;						// If true, then CTRL is being held down
 		bool SHIFT = false;						// If true, then SHIFT is being held down
 		bool backspace = false;					// If true, then Backspace is being held down
+		bool sprint = false;
 	};
 
 // Menu structure
@@ -156,4 +159,5 @@
 			Radar radar;						// Radar interface
 			Weather weather;					// Weather
 			WelcomeInterface welcome_interface; // Welcome interface
+			vector<DirtParticle> gfx_dirt;		// Vector for all dirt gfx
 	};

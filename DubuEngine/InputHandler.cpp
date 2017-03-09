@@ -252,6 +252,10 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									RequestBindKeyInput(g, &g->keys.drink_bind);
 									done = true;
 									break;
+								case 252:
+									RequestBindKeyInput(g, &g->keys.sprint_bind);
+									done = true;
+									break;
 								case 258:
 									RequestBindKeyInput(g, &g->keys.left_bind);
 									done = true;
@@ -385,6 +389,8 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 					if (!g->pl.digging && !g->pl.peeing && !g->pl.drinking) {
 						StartDigging(g, &g->pl);
 					}
+				} else if (kid == g->keys.sprint_bind) {
+						g->keys.sprint = true;
 				} else if (kid == g->keys.pee_bind) {
 					if (!g->pl.digging && !g->pl.peeing && !g->pl.drinking) {
 						if (g->pl.pee_ammo == 0) {
@@ -467,6 +473,9 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 		}
 		if (kid == g->keys.down_bind) {
 			g->keys.down = false;
+		}
+		if (kid == g->keys.sprint_bind) {
+			g->keys.sprint = false;
 		}
 		if (kid == ALLEGRO_KEY_LSHIFT || kid == ALLEGRO_KEY_RSHIFT) {
 			g->keys.SHIFT = false;

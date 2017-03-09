@@ -34,6 +34,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render drinking animation
 	RenderDrinking(g, sprites);
 
+	// Render dirt particles
+	RenderDirtParticles(g);
+
 	// Sort and render objects
 	g->map.SortPlayerObjects(g);
 	g->map.RenderObjects(g, sprites);

@@ -105,7 +105,7 @@ void LoadInterfaces(Game* g){
 	NewInterface(&g->Interfaces[INTERFACE_KEYBOARD], SPRITE_INTERFACE_KEYBOARD, (g->BWIDTH / 2) - 200, (g->BHEIGHT / 2) - 200);
 	NewButton(&g->Buttons[248], SPRITE_BUTTON_DONE, 245, 256, 142, 35, INTERFACE_KEYBOARD);
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		NewButton(&g->Buttons[250 + i], SPRITE_BUTTON_KEYPICK, 294, 22 + (i * 25), 80, 20, INTERFACE_KEYBOARD);
 	}
 	for (int i = 0; i < 4; i++) {
@@ -583,6 +583,14 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
 						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
 						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.drink_bind));
+					DrawText(font[2], 0, 0, 0,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x,
+						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + (offset += 25),
+						ALLEGRO_ALIGN_LEFT, "Sprint:");
+					DrawText(font[2], 255, 255, 255,
+						g->Interfaces[INTERFACE_KEYBOARD].x + x + x_diff,
+						g->Interfaces[INTERFACE_KEYBOARD].y + 21 + offset,
+						ALLEGRO_ALIGN_CENTER, GetKeyName(g->keys.sprint_bind));
 					break;
 				}
 				case INTERFACE_PAUSE:
@@ -709,7 +717,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					float stamina_fraction = ((float)g->pl.stamina_left / (float)g->pl.stamina_max);
 					int stamina_lenght = stamina_fraction * 200;
 					DrawBar(g, sprites, BarType::EMPTY, x, y + 66, 200);
-					DrawBar(g, sprites, BarType::RED, x, y + 66, stamina_lenght);
+					if (stamina_lenght > 8) DrawBar(g, sprites, BarType::RED, x, y + 66, stamina_lenght);
 					DrawText(font[2], 170, 64, 64, x + 100, y + 64, ALLEGRO_ALIGN_CENTER, "Stamina");
 
 					// Timer

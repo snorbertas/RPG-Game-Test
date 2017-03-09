@@ -6,6 +6,39 @@
 #include "Peeing.h"
 #include "Drinking.h"
 
+void HandleStamina(Game* g) {
+	// Correct the velocity
+	if (g->keys.sprint) {
+		if (g->pl.stamina_left > 0) {
+			g->pl.velocity = g->pl.base_velocity * g->pl.sprint_multiplier;
+			g->pl.ticks_to_anim = g->pl.base_ticks_to_anim - 1;
+
+			// If player attempting to move
+			if (g->keys.left || g->keys.right || g->keys.up || g->keys.down) {
+				g->pl.stamina_left--;
+				g->gfx_dirt.push_back(DirtParticle(g->pl.x + (rand() % g->pl.w), g->pl.y + g->pl.h));
+			}
+
+			// Fix
+			if (g->pl.stamina_left < 0) g->pl.stamina_left = 0;
+		} else {
+			g->pl.velocity = g->pl.base_velocity;
+			g->pl.ticks_to_anim = g->pl.base_ticks_to_anim;
+			g->keys.sprint = false;
+		}
+	} else {
+		// Recharge stamina
+		g->pl.stamina_left++;
+		if (g->pl.stamina_left > g->pl.stamina_max) {
+			g->pl.stamina_left = g->pl.stamina_max;
+		}
+
+		// Fix velocity
+		g->pl.velocity = g->pl.base_velocity;
+		g->pl.ticks_to_anim = g->pl.base_ticks_to_anim;
+	}
+}
+
 void UpdatePlayerMovementSprite(Player& pl) {
 	pl.sprite_frame++;
 
@@ -274,6 +307,9 @@ static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 			HandlePlayerIdle(g);
 		}
 	}
+
+	// Stamina
+	HandleStamina(g);
 }
 
 static void Click(Game* g, int button, bool release, ALLEGRO_SAMPLE** sample_sfx) {

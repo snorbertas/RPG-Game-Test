@@ -76,9 +76,9 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 		} else if (kid == ALLEGRO_KEY_F6) {
 			g->pl.ticks_to_move++;
 		} else if (kid == ALLEGRO_KEY_F7) {
-			g->pl.velocity--;
+			g->pl.base_velocity--;
 		} else if (kid == ALLEGRO_KEY_F8) {
-			g->pl.velocity++;
+			g->pl.base_velocity++;
 		} else if (kid == ALLEGRO_KEY_F9) {
 			g->pl.ticks_to_anim--;
 		} else if (kid == ALLEGRO_KEY_F10) {

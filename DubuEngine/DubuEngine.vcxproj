@@ -33,6 +33,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
+    <ClCompile Include="GFX.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Interfaces.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -71,6 +72,7 @@
     <ClInclude Include="Digging.h" />
     <ClInclude Include="Drinking.h" />
     <ClInclude Include="GameDuration.h" />
+    <ClInclude Include="GFX.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="MiniMap.h" />

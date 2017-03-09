@@ -55,11 +55,17 @@ public:
 	int w = 64;
 	int h = 64;
 
-	// Physics
-	int velocity = 3;				// Pixels per movement
+	/* Physics */
+	// Bases
+	int base_velocity = 3;			// Base velocity
+	int base_ticks_to_anim = 5;		// Base ticks for animation
+
+	// Real values
+	int velocity = base_velocity;	// Pixels per movement
+	double sprint_multiplier = 1.5;	// Multiplier for velocity from base movement speed
 	int	ticks_to_move = 1;			// Ticks to move
 	int ticks_left_move = ticks_to_move;	// Ticks left till next movement
-	int ticks_to_anim = 5;			// Ticks to change sprite
+	int ticks_to_anim = base_ticks_to_anim;	// Ticks to change sprite
 	int ticks_left_anim = ticks_to_anim;	// Ticks left till sprite change
 	int dig_duration = TPS;			// Takes one second to dig
 	int dig_timer = 0;				// Timer to track digging

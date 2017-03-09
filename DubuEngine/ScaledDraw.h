@@ -96,6 +96,20 @@
 		int s,							// Size
 		int re, int gr, int bl);		// Red, green, blue colours
 
+
+/* =========================== DrawFilledCircle ===========================
+ *		Draws a filled circle.
+ *		The shape will be rescaled according to the ratio between game size
+ *		and the resolution setting. (g->BWIDTH, g->BHEIGHT & g->s_x, g->s_y)
+ *
+ *		Called from render functions.
+ */
+	void DrawFilledCircle(Game* g,		// Game pointer
+		int x, int y,					// x, y coordinates
+		float r,						// Radius
+		int re, int gr, int bl,			// Red, green, blue colours
+		float a = 1);					// Transperency 0 to 1 (0 = invisible)
+
 /* =============================== DrawText ===============================
  *		Draws text.
  *		Shortened macro, requires float r_x/r_y to be defined prior as the scale ratio.

@@ -25,6 +25,7 @@ void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	HandleGameDuration(g);
 	HandleMultiplayerMisc(g);
 	HandleButterflies(g);
+	HandleDirtParticles(g);
 }
 
 void HandleGamePackets(Game* g) {

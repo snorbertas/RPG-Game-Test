@@ -498,6 +498,7 @@ void LoadSettings(){
 			if (setting_type == ("KEY_CHAT")) g.keys.chat_bind = s_val;
 			if (setting_type == ("KEY_PEE")) g.keys.pee_bind = s_val;
 			if (setting_type == ("KEY_DRINK")) g.keys.drink_bind = s_val;
+			if (setting_type == ("KEY_SPRINT")) g.keys.sprint_bind = s_val;
 		}
 	}
 	file.close();
@@ -548,6 +549,7 @@ void SaveSettings(){
 	myfile << ("KEY_CHAT = " + to_string(g.keys.chat_bind) + "\n");
 	myfile << ("KEY_PEE = " + to_string(g.keys.pee_bind) + "\n");
 	myfile << ("KEY_DRINK = " + to_string(g.keys.drink_bind) + "\n");
+	myfile << ("KEY_SPRINT = " + to_string(g.keys.sprint_bind) + "\n");
 	myfile.close();
 }
 
