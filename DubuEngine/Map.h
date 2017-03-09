@@ -3,6 +3,7 @@
 #include "CollisionBox.h"
 #include "MapObject.h"
 #include "TilesInfo.h"
+#include "Butterfly.h"
 
 #include <list>
 #include <vector>
@@ -160,6 +161,16 @@ public:
 	 *	Adds pee puddle on (x, y)
 	 */
 		void AddPeePuddle(int x, int y);
+
+	/* ======================= RenderButterflies ========================
+	 *	Renders the butterflies
+	 */
+		void RenderButterflies(Game* g, SpriteStruct* sprites);
+
+	/* ====================== PopulateButterflies =======================
+	 *	Spawns randomly-distributed butterflies
+	 */
+		void PopulateButterflies(int amount);
 
 private:
 	/* ===================== RenderObjectsOnBlockY ======================
@@ -355,6 +366,7 @@ public:
 	static const int OBJECT_BLOCKS_CNT = 10;				// Blocks per axis
 public:
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];						// tile[x][y]
+	std::vector<Butterfly> Butterflies;						// Cosmetic butterflies
 	std::vector<CollisionBox> solid;						// Solids (collisions/can't pass trough)
 	std::vector<CollisionBox> except_solid;					// Special collision boxes to except solid collision
 	std::vector<MapObjectInfo::MapObject> Objects;			// Map objects (fauna, etc.)

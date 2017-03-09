@@ -1108,6 +1108,7 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/welcome");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/object <i>");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/butterfly");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/sunlight");
 		} else if (type == "/object") {
 			int object_type = -1;
@@ -1122,6 +1123,9 @@ void HandleCommand(Game* g, const char* msg) {
 			}
 		} else if (type == "/seed") {
 			args >> g->map.seed;
+		} else if (type == "/butterfly") {
+			g->map.Butterflies.push_back(Butterfly(g->pl.x, g->pl.y));
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Spawned butterfly");
 		} else if (type == "/sunlight") {
 			g->weather.cycle.sunlight.active = !g->weather.cycle.sunlight.active;
 		} else if (type == "/timer") {

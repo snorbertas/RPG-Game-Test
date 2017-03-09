@@ -493,6 +493,13 @@ void Map::AdjustDirtSides() {
 	}
 }
 
+void Map::PopulateButterflies(int amount) {
+	for (int i = 0; i < amount; i++) {
+		Butterflies.push_back(Butterfly(rand() % MAP_SIZE_X * TILE_SIZE,
+			rand() % MAP_SIZE_Y * TILE_SIZE));
+	}
+}
+
 void Map::PopulateRandomObjects() {
 	// First reset the vector
 	Objects.clear();
@@ -959,6 +966,12 @@ bool Map::ChangeForestMode(int newForestMode) {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void Map::RenderButterflies(Game* g, SpriteStruct* sprites) {
+	for (size_t i = 0; i < Butterflies.size(); i++) {
+		Butterflies[i].Draw(g, sprites);
 	}
 }
 

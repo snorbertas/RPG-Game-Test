@@ -24,6 +24,7 @@ void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	UpdateMapAnimations(g);
 	HandleGameDuration(g);
 	HandleMultiplayerMisc(g);
+	HandleButterflies(g);
 }
 
 void HandleGamePackets(Game* g) {
@@ -41,6 +42,12 @@ void HandleGamePackets(Game* g) {
 			Packet* ping = new Packet(PACKET_TYPE_PING);
 			AddPacketToQueue(g, ping);
 		}
+	}
+}
+
+void HandleButterflies(Game* g) {
+	for (size_t i = 0; i < g->map.Butterflies.size(); i++) {
+		g->map.Butterflies[i].Tick();
 	}
 }
 

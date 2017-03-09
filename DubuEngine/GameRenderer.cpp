@@ -38,6 +38,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	g->map.SortPlayerObjects(g);
 	g->map.RenderObjects(g, sprites);
 
+	// Render butterflies
+	g->map.RenderButterflies(g, sprites);
+
 	// Render grid
 	g->map.RenderGrid(g, sprites);
 

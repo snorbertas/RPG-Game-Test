@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DubuEngineServer\DEProtocol.cpp" />
+    <ClCompile Include="Butterfly.cpp" />
     <ClCompile Include="Camera.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -56,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DubuEngineServer\DEProtocol.h" />
+    <ClInclude Include="Butterfly.h" />
     <ClInclude Include="Camera.h">
       <SubType>Header</SubType>
     </ClInclude>

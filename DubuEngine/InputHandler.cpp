@@ -725,11 +725,14 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	Fade(g, 0);
 	g->menu.done_loading = true;
 	g->menu.ticks_since_done_loading = 0;
-
-	// Fade in
 	Sleep(2000);
 
+	// Butterfly spawn example
+	g->map.Butterflies.empty();
+	g->map.PopulateButterflies(50);
+
 	// Set everything up
+
 	NewGame(g);
 	g->weather = Weather(Weather::CloudMode::MODE_GAME);
 	g->pl.x = 3200;

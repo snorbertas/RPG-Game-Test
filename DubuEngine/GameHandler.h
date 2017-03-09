@@ -43,6 +43,14 @@
  */
 	void HandleGameDuration(Game* g);
 
+
+/* ========================== HandleButterflies ===========================
+ *		Handles all butterflies.
+ *
+ *		Called from HandleGame function.
+ */
+	void HandleButterflies(Game* g);
+
 	
 /* ======================== HandleMultiplayerMisc =========================
  *		Handles multiplayer timers, animations, etc.
