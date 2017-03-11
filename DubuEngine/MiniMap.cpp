@@ -68,7 +68,7 @@ void DrawMiniMap(Game* g, SpriteStruct* sprites, int x, int y, int w, int h) {
 	for (int i = blockMin.first; i <= blockMax.first; ++i) {
 		for (int j = blockMin.second; j <= blockMax.second; ++j) {
 			for (const auto& obj : g->map.ObjectBlock[i][j]) {
-				if (obj->IsTree()) {
+				if (obj->IsTree() && obj->x >= start_x_real && obj->x <= end_x_real && obj->y >= start_y_real && obj->y <= end_y_real) {
 					int draw_x = x + (((float)obj->x / Map::TILE_SIZE) - start_x) * block_size;
 					int draw_y = y + (((float)obj->y / Map::TILE_SIZE) - start_y) * block_size;
 					DrawMiniMapTree(g, draw_x, draw_y);
