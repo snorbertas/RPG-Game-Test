@@ -1302,3 +1302,44 @@ void UpdateMapAnimations(Game* g) {
 		}
 	}
 }
+
+void Map::MarkTerritory(int cx, int cy, int owner, int radius) {
+	// Find a square to work with
+	int size_w = (radius * 2) + 1;
+	int size_h = (radius * 2) + 1;
+
+	for (int x = 0; x < size_w; x++) {
+		for (int y = 0; y < size_h + 1; y++) {
+			// Decide if we need to mark this zone
+			int x_space = (size_w - ((y * 2) + 1)) / 2;
+			if (y > radius) x_space *= -1;
+
+			if (x >= x_space && x < size_w - x_space) {
+				// Check if it's a valid zone
+				int x_real = cx - radius + x;
+				int y_real = cy - radius + y;
+				if (x_real >= 0 && x_real < Map::MAP_SIZE_X) {
+					if (y_real >= 0 && y_real < Map::MAP_SIZE_Y) {
+						// Mark it
+						zone[x_real][y_real].Mark(owner);
+					}
+				}
+			}
+		}
+	}
+
+}
+
+bool Map::PlayerIsHome(Player* p) {
+	// Choose which block we're standing on
+	int x = (p->x + (p->w / 2)) / TILE_SIZE;
+	int y = (p->y + (p->h / 2)) / TILE_SIZE;
+
+	// Check
+	if (x >= 0 && x < MAP_SIZE_X && y >= 0 && y < MAP_SIZE_Y) {
+		if (zone[x][y].Owner == p->pID) {
+			return true;
+		}
+	}
+	return false;
+}

@@ -83,6 +83,7 @@
     <ClInclude Include="Radar.h">
       <SubType>Header</SubType>
     </ClInclude>
+    <ClInclude Include="Zone.h" />
     <ClInclude Include="TilesInfo.h" />
     <ClInclude Include="Tips.h" />
     <ClInclude Include="Weather.h" />

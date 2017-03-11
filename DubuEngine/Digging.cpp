@@ -3,15 +3,20 @@
 #include "Collision.h"
 #include "GameHandler.h"
 #include "PacketHandler.h"
+#include "Map.h"
 
 void StartDigging(Game* g, Player* p) {
-	// Local player
-	if (p->pID == -1) {
-		p->digging = true;
-		p->dig_timer = p->dig_duration;
+	if (g->map.PlayerIsHome(p)) {
+		// Local player
+		if (p->pID == -1) {
+			p->digging = true;
+			p->dig_timer = p->dig_duration;
 
-		// Queue packet to server
-		QueueActionsPacket(g);
+			// Queue packet to server
+			QueueActionsPacket(g);
+		}
+	} else {
+		AddChatMessage(g->chat, "__SYSTEM__", 139, 49, 121, "Can't dig unless it's your territory.");
 	}
 }
 

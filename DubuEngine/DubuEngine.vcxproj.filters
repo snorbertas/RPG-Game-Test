@@ -221,6 +221,9 @@
     <ClInclude Include="GFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Zone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

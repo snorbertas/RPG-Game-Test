@@ -4,9 +4,12 @@
 #include "MapObject.h"
 #include "TilesInfo.h"
 #include "Butterfly.h"
+#include "Zone.h"
 
 #include <list>
 #include <vector>
+
+class Player;
 
 // Biomes
 enum Biome {
@@ -181,6 +184,16 @@ public:
 	 *	Finds appropriate block for point on map
 	 */
 		static std::pair<int, int> BlockForPoint(int x, int y);
+
+	/* ========================= MarkTerritory ==========================
+	 *	Marks zone blocks withing a radius around x/y center for the correct owner
+	 */
+		void MarkTerritory(int cx, int cy, int owner, int radius);
+
+	/* ========================= IsPlayerHome ===========================
+	 *	Checks whether the specified player is in his own zone
+	 */
+		bool PlayerIsHome(Player* p);
 
 private:
 	/* ===================== RenderObjectsOnBlockY ======================
@@ -366,6 +379,7 @@ public:
 	static const int OBJECT_BLOCKS_CNT = 10;				// Blocks per axis
 public:
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];						// tile[x][y]
+	Zone zone[MAP_SIZE_X][MAP_SIZE_Y];						// Each square is a zone that holds info for gamemodes
 	std::vector<Butterfly> Butterflies;						// Cosmetic butterflies
 	std::vector<CollisionBox> solid;						// Solids (collisions/can't pass trough)
 	std::vector<CollisionBox> except_solid;					// Special collision boxes to except solid collision

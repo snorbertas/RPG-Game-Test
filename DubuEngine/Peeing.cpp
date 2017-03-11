@@ -24,6 +24,7 @@ void HandlePeeing(Game* g, Player* p) {
 		p->peeing = false;
 		if (p->pID == -1) {
 			g->map.AddPeePuddle(p->x, p->y);
+			g->map.MarkTerritory(round(p->x/Map::TILE_SIZE), round(p->y/Map::TILE_SIZE), -1, 3);
 			AddChatMessage(g->chat, "__SYSTEM__", 139, 49, 121, "Added Puddle");
 		}
 	}
