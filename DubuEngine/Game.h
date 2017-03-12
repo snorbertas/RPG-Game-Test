@@ -145,6 +145,8 @@
 			int server_port = 25565;			// Server port
 			bool gameover = false;				// If true, the game is over, different handling
 			bool allow_input = true;			// Wether input is allowed or not
+			int game_mode = 0;					// Current game mode
+			int level = 1;						// Current level
 			GameDuration game_duration;			// Game duration object
 			Chat chat;							// Chat object
 			ScoreBoard score;					// Scoreboard object

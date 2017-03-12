@@ -133,6 +133,23 @@ void LoadInterfaces(Game* g){
 	// Interface 14
 	NewInterface(&g->Interfaces[INTERFACE_MINI_MAP], NO_SPRITE, g->BWIDTH - 176, g->BHEIGHT - 176);
 
+	// Interface 15
+	NewInterface(&g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE], NO_SPRITE, 0, 0);
+	int count = 40;
+	for (int y = 0; y < 5; y++) {
+		for (int x = 0; x < 6; x++) {
+			NewButton(&g->Buttons[count], NO_SPRITE,
+				315 + (x * 110),
+				280 + (y * 60),
+				100, 50, INTERFACE_BONEHUNT_LEVEL_CHOICE);
+			count++;
+		}
+	}
+	NewButton(&g->Buttons[39], SPRITE_BUTTON_CANCEL,
+		315 + (5 * 110),
+		280 + (6 * 60),
+		112, 45, INTERFACE_BONEHUNT_LEVEL_CHOICE);
+
 	// Interface 28 - Welcome Interface
 	NewInterface(&g->Interfaces[INTERFACE_WELCOME], NO_SPRITE, 0, 0);
 	for (int i = 0; i < 10; i++) {
@@ -751,6 +768,50 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawMiniMap(g, sprites, g->Interfaces[i].x, g->Interfaces[i].y);
 					break;
 				}
+				case INTERFACE_BONEHUNT_LEVEL_CHOICE:
+				{
+					int count = 0;
+					int completed_levels = 30;
+					int x_offset = g->Buttons[40].x;
+					int y_offset = g->Buttons[40].y;
+					for (int y = 0; y < 5; y++) {
+						for (int x = 0; x < 6; x++) {
+							float opacity = 1.0;
+							if (count > completed_levels + 1) opacity = 0.2;
+							if (MouseIsOn(g, g->Buttons[40 + count].x, g->Buttons[40 + count].y, 100, 50)) {
+								DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN_GLOW,
+									(x * 110) + x_offset,
+									(y * 60) + y_offset,
+									100, 50, opacity);
+							} else {
+								DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN,
+									(x * 110) + x_offset,
+									(y * 60) + y_offset,
+									100, 50, opacity);
+							}
+
+							/*if (count <= completed_levels) {
+								DrawImage(g, sprites->img_icon[SPRITE_MEDAL_GOLD],
+									(x * 110) + x_offset + 75,
+									(y * 60) + y_offset + 2,
+									0);
+							}
+
+							if (count <= completed_levels) {
+								DrawText(font[4], 0, 222, 0,
+									(x * 110) + x_offset + 10,
+									(y * 60) + y_offset + 25,
+									ALLEGRO_ALIGN_LEFT, "Complete!");
+							}*/
+
+							DrawText(font[2], 255, 255, 255,
+								(x * 110) + x_offset + 10,
+								(y * 60) + y_offset + 3,
+								ALLEGRO_ALIGN_LEFT, "Level: %i", ++count);
+						}
+					}
+					break;
+				}
 				case INTERFACE_WELCOME:
 					g->welcome_interface.InitSpecialElements(g);
 					g->welcome_interface.DrawAllElements(g, sprites, font);
@@ -1228,6 +1289,14 @@ void DrawInterfaceBox(Game* g, SpriteStruct* sprites, InterfaceBoxType type, int
 		re = 151;
 		gr = 113;
 		bl = 74;
+		break;
+	case InterfaceBoxType::BROWN_GLOW:
+		sprite_corner = SPRITE_INTERFACE_BOX_BGC;
+		sprite_hor = SPRITE_INTERFACE_BOX_BGH;
+		sprite_ver = SPRITE_INTERFACE_BOX_BGV;
+		re = 172;
+		gr = 141;
+		bl = 110;
 		break;
 	default:
 		// Default will be brown

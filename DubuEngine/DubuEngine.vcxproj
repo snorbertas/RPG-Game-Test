@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DubuEngineServer\DEProtocol.h" />
+    <ClInclude Include="BoneHunt.h" />
     <ClInclude Include="Butterfly.h" />
     <ClInclude Include="Camera.h">
       <SubType>Header</SubType>

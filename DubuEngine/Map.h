@@ -83,6 +83,9 @@ public:
 		}
 	}
 
+	// Change the minimum trim
+	void SetTrim(int border) { _MinTrim = border; }
+
 	// Sort objects and create blocks
 	void OrganizeObjects();
 
@@ -405,7 +408,7 @@ private:
 private:
 	static const int _NeighbourWayCnt = 4;
 	static const std::pair<int, int> _NeighbourWay[_NeighbourWayCnt];
-	static const int _MinTrim = 1;
+	int _MinTrim = 1;
 	static const int _MaxAdditionalTrim = 2;
 	static const int _LakesToRoadsSpawnDist = 1;
 	static const int _WaterDirtToForestSpawnDist = 2;

@@ -17,6 +17,7 @@
 #include "Digging.h"
 #include "Peeing.h"
 #include "Drinking.h"
+#include "BoneHunt.h"
 
 using namespace std;
 
@@ -102,7 +103,8 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									break;
 								case 3: // Play bone hunt
 									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = false;
-									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = true;
+									//_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 									break;
 								case 4: // Play bonesweeper
@@ -312,6 +314,19 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 							}
+
+							// For buttons that don't have switch cases
+							if (g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible == true) {
+								int clicked_level = j - 39;
+								if (clicked_level >= 1 && clicked_level <= 30) {
+									g->level = clicked_level;
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
+									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
+									done = true;
+								}
+							}
+
+							// End of click
 						}
 					}
 				}
@@ -715,7 +730,8 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	double current_time = al_get_time();
 
 	// Generate map
-	g->map.seed = rand() % 133333337;
+	g->map.seed = BoneHuntSeedAndTrim(g->level).first;
+	g->map.SetTrim(BoneHuntSeedAndTrim(g->level).second);
 	g->map.ChangeForestMode(1);
 	g->map.GenerateRandom(1);
 

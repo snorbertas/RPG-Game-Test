@@ -142,7 +142,7 @@
 
 
 // ========================== Interface box types =========================
-	enum InterfaceBoxType { BROWN };
+	enum InterfaceBoxType { BROWN, BROWN_GLOW };
 /* =========================== DrawInterfaceBox ===========================
  *		Draws a progress bar with specified settings.
  *
