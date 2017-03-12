@@ -609,14 +609,19 @@ int Map::ViewForestPlace(int xs, int ys) {
 }
 
 void Map::GenerateGreenery() {
-	int flowerCnt = static_cast<int>(sqrt(double(MAP_SIZE_X * MAP_SIZE_Y))) * _FlowersCntMultiplier;
+	_Queue.clear();
+	for (int i = 0; i < MAP_SIZE_X; ++i)
+		for (int j = 0; j < MAP_SIZE_Y; ++j)
+			if (TilesInfo::GetSubstanceBySpriteId(tile[i][j]) == TilesInfo::GRASS)
+				_Queue.push_back(std::make_pair(i, j));
+	if (_Queue.size() == 0)
+		return ;
+	int flowerCnt = static_cast<int>(sqrt(double(_Queue.size()))) * _FlowersCntMultiplier;
+	int size = static_cast<int>(_Queue.size());
 	for (int i = 0; i < flowerCnt; ++i) {
-		int x = rand() % MAP_SIZE_X;
-		int y = rand() % MAP_SIZE_Y;
-		if (TilesInfo::GetSubstanceBySpriteId(tile[x][y]) != TilesInfo::GRASS) {
-			--i;
-			continue;
-		}
+		int tileInd = rand() % size;
+		int x = _Queue[tileInd].first;
+		int y = _Queue[tileInd].second;
 		x = x * TILE_SIZE + (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
 		y = y * TILE_SIZE - (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
 		Objects.push_back(MapObjectInfo::GenerateFlower(x, y));
