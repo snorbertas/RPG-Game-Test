@@ -436,6 +436,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						ALLEGRO_ALIGN_CENTER, volume_str.c_str(), g->music_volume);
 
 					// Sound
+					volume_str = "OFF";
 					if (g->sound_volume > 0) volume_str = "%i%%";
 					DrawText(font[2], 255, 255, 255, g->Interfaces[i].x + 295, g->Interfaces[i].y + 180,
 						ALLEGRO_ALIGN_CENTER, volume_str.c_str(), g->sound_volume);
