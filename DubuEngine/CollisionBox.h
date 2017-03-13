@@ -16,4 +16,16 @@ public:
 	double y = 0;
 	int w = 0;
 	int h = 0;
+
+public:
+	bool operator==(const CollisionBox& box) const {
+		return x == box.x && y == box.y;
+	}
+	bool operator<(const CollisionBox& box) const {
+		if (x != box.x)
+			return x < box.x;
+		if (y != box.y)
+			return y < box.y;
+		return false;
+	}
 };

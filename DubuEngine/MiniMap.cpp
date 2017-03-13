@@ -49,7 +49,7 @@ void DrawMiniMap(Game* g, SpriteStruct* sprites, int x, int y, int w, int h) {
 	x += 8;
 	y += 8;
 	for (int xi = start_x; xi < start_x + hor_blocks; xi++) {
-		for (int yi = start_y; yi < start_y + hor_blocks; yi++) {
+		for (int yi = start_y; yi < start_y + ver_blocks; yi++) {
 			int draw_x = x + (xi - start_x) * block_size;
 			int draw_y = y + (yi - start_y) * block_size;
 			DrawMiniMapTile(g, g->map.tile[xi][yi], draw_x, draw_y, block_size);

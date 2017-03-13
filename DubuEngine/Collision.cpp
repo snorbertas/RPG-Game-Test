@@ -1,5 +1,7 @@
 #include "Collision.h"
 
+#include <algorithm>
+
 bool PlayerMoveCollides(Player& pl, Map& map, double mov_x, double mov_y) {
 	// Player box
 	CollisionBox o1(pl.x + mov_x, pl.y + mov_y, pl.w, pl.h);
@@ -10,24 +12,35 @@ bool PlayerMoveCollides(Player& pl, Map& map, double mov_x, double mov_y) {
 	o1.w = 8;
 	o1.h = 8;
 
-	// Loop trough all collision objects
-	for (size_t i = 0; i < map.solid.size(); i++) {
-		if (collide(o1, map.solid[i])) {
-			// Let's make sure it's not excepted
-			bool collision_found = true;
-			for (size_t e = 0; e < map.except_solid.size(); e++) {
-				if (collide(o1, map.except_solid[e])) {
-					collision_found = false;
-				}
-			}
-			if(collision_found) return true;
-		}
-	}
-
 	// Check collision with map boundary
 	if (o1.x < 0 || o1.x + o1.w > (Map::MAP_SIZE_X * Map::TILE_SIZE) ||
 		o1.y < 0 || o1.y + o1.h > (Map::MAP_SIZE_Y * Map::TILE_SIZE)) {
 		return true;
+	}
+
+	int xMin = std::max(static_cast<int>(o1.x) - 2 * Map::TILE_SIZE, 0);
+	int xMax = static_cast<int>(o1.x) + o1.w;
+	CollisionBox minBox(xMin, 0, 0, 0);
+	CollisionBox maxBox(xMax, Map::MAP_SIZE_Y * Map::TILE_SIZE, 0, 0);
+	
+	// Loop through all except collision objects
+	auto lft = lower_bound(map.except_solid.begin(), map.except_solid.end(), minBox);
+	auto rht = upper_bound(map.except_solid.begin(), map.except_solid.end(), maxBox);
+	for (auto it = lft; it != rht; ++it) {
+		auto& exceptSolid = *it;
+		if (collide(o1, exceptSolid)) {
+			return false;
+		}
+	}
+
+	// Loop trough all collision objects
+	lft = lower_bound(map.solid.begin(), map.solid.end(), minBox);
+	rht = upper_bound(map.solid.begin(), map.solid.end(), maxBox);
+	for (auto it = lft; it != rht; ++it) {
+		auto& solid = *it;
+		if (collide(o1, solid)) {
+			return true;
+		}
 	}
 
 	return false;

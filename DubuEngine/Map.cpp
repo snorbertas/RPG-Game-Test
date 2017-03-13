@@ -915,6 +915,9 @@ void Map::CreateSolids() {
 			solid.push_back(it->GetCollisionBox());
 		}
 	}
+
+	sort(solid.begin(), solid.end(), [](const auto& a, const auto& b) { return a.x < b.x; });
+	sort(except_solid.begin(), except_solid.end(), [](const auto& a, const auto& b) { return a.x < b.x; });
 }
 
 void Map::GenerateRandom(int alg) {
