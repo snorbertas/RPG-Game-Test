@@ -18,6 +18,7 @@
 #include "WelcomeInterface.h"
 #include "GameDuration.h"
 #include "GFX.h"
+#include "ProgressData.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -162,4 +163,5 @@
 			Weather weather;					// Weather
 			WelcomeInterface welcome_interface; // Welcome interface
 			vector<DirtParticle> gfx_dirt;		// Vector for all dirt gfx
+			ProgressData progress;				// Progress data
 	};

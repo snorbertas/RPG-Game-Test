@@ -104,7 +104,6 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								case 3: // Play bone hunt
 									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = false;
 									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = true;
-									//_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 									break;
 								case 4: // Play bonesweeper
@@ -216,6 +215,11 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 										HideAllInterfaces(g, INTERFACE_MAIN_MENU);
 										g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
 									}
+									done = true;
+									break;
+								case 39:
+									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
 									done = true;
 									break;
 								case 241:

@@ -57,6 +57,9 @@ int main(){
 	// Load settings
 	LoadSettings();
 
+	// Load game progress
+	g.progress.Load("data/Progress.sav");
+
 	// Initiate display
 	al_set_new_display_flags(g.window_mode);
 	display = al_create_display(g.s_x, g.s_y);
@@ -124,6 +127,9 @@ int main(){
 
 	// Save settings
 	SaveSettings();
+
+	// Save game data
+	g.progress.Save("data/Progress.sav");
 
 	// Free memory once loop ends
 	/*BASS_Free();*/

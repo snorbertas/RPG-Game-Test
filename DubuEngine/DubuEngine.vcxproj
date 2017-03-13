@@ -47,6 +47,7 @@
     <ClCompile Include="PlayerMovement.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ProgressData.cpp" />
     <ClCompile Include="Radar.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -81,6 +82,7 @@
     <ClInclude Include="PlayerMovement.h">
       <SubType>Header</SubType>
     </ClInclude>
+    <ClInclude Include="ProgressData.h" />
     <ClInclude Include="Radar.h">
       <SubType>Header</SubType>
     </ClInclude>

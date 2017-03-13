@@ -140,14 +140,14 @@ void LoadInterfaces(Game* g){
 		for (int x = 0; x < 6; x++) {
 			NewButton(&g->Buttons[count], NO_SPRITE,
 				315 + (x * 110),
-				280 + (y * 60),
+				270 + (y * 60),
 				100, 50, INTERFACE_BONEHUNT_LEVEL_CHOICE);
 			count++;
 		}
 	}
 	NewButton(&g->Buttons[39], SPRITE_BUTTON_CANCEL,
-		315 + (5 * 110),
-		280 + (6 * 60),
+		(g->BWIDTH / 2) + 188,
+		(g->BHEIGHT / 2) + 236,
 		112, 45, INTERFACE_BONEHUNT_LEVEL_CHOICE);
 
 	// Interface 28 - Welcome Interface
@@ -257,6 +257,14 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				// Surival
 				x += 220;
 				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 200, 300, 0.8);
+			}
+			if (i == INTERFACE_BONEHUNT_LEVEL_CHOICE) {
+				// Initial x/y
+				int x = (g->BWIDTH / 2) - 320;
+				int y = (g->BHEIGHT / 2) - 100;
+
+				// Menu
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y + 320, 640, 80, 0.8);
 			}
 
 			if (i == INTERFACE_WELCOME) {
@@ -772,13 +780,14 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				case INTERFACE_BONEHUNT_LEVEL_CHOICE:
 				{
 					int count = 0;
-					int completed_levels = 30;
+					int completed_levels = g->progress.BoneHunt.CompleteCount() - 1;
 					int x_offset = g->Buttons[40].x;
 					int y_offset = g->Buttons[40].y;
 					for (int y = 0; y < 5; y++) {
 						for (int x = 0; x < 6; x++) {
+							// Interface box (button) for each level
 							float opacity = 1.0;
-							if (count > completed_levels + 1) opacity = 0.2;
+							if (count > completed_levels) opacity = 0.2;
 							if (MouseIsOn(g, g->Buttons[40 + count].x, g->Buttons[40 + count].y, 100, 50)) {
 								DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN_GLOW,
 									(x * 110) + x_offset,
@@ -791,20 +800,25 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 									100, 50, opacity);
 							}
 
-							/*if (count <= completed_levels) {
-								DrawImage(g, sprites->img_icon[SPRITE_MEDAL_GOLD],
+							// Medal
+							ProgressData::ProgressMedal medal = g->progress.BoneHunt.Level[count].Medal;
+							if (medal > 0) {
+								DrawImage(g, sprites->img_icon[medal],
 									(x * 110) + x_offset + 75,
 									(y * 60) + y_offset + 2,
 									0);
 							}
 
-							if (count <= completed_levels) {
+							// Complete
+							bool complete = g->progress.BoneHunt.Level[count].Complete;
+							if (complete) {
 								DrawText(font[4], 0, 222, 0,
 									(x * 110) + x_offset + 10,
 									(y * 60) + y_offset + 25,
 									ALLEGRO_ALIGN_LEFT, "Complete!");
-							}*/
+							}
 
+							// Level # label
 							DrawText(font[2], 255, 255, 255,
 								(x * 110) + x_offset + 10,
 								(y * 60) + y_offset + 3,
