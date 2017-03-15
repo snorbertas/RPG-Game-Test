@@ -11,6 +11,7 @@
 #include <iostream>
 #include "Game.h"
 #include "ScaledDraw.h"
+#include "GameHandler.h"
 #include "GameRenderer.h"
 #include "Digging.h"
 #include "Peeing.h"
@@ -47,20 +48,6 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render grid
 	g->map.RenderGrid(g, sprites);
 
-	// Render sniff info (debug/temp)
-	/*if (g->debug.grid) {
-		for (size_t i = 0; i < g->map.Bones.size(); i++) {
-			DrawOutline(g, g->map.Bones[i].x + g->camera.x, g->map.Bones[i].y + g->camera.y,
-				Map::TILE_SIZE, Map::TILE_SIZE, 255, 255, 255, 3);
-			float r_x = (float)g->s_x / (float)g->BWIDTH;
-			float r_y = (float)g->s_y / (float)g->BHEIGHT;
-			DrawText(font[4], 255, 255, 255, g->map.Bones[i].x + g->camera.x + 4, g->map.Bones[i].y + g->camera.y,
-				ALLEGRO_ALIGN_LEFT, "Bone: #%i", i);
-			DrawText(font[4], 255, 255, 255, g->map.Bones[i].x + g->camera.x + 4, g->map.Bones[i].y + g->camera.y + 12,
-				ALLEGRO_ALIGN_LEFT, "%f", g->map.Bones[i].Distance);
-		}
-	}*/
-
 	// Render zone info (debug/temp)
 	if (g->debug.grid) {
 		for (int x = 0; x < Map::MAP_SIZE_X; x++) {
@@ -71,13 +58,13 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 					if (y_real >= -g->camera.y && y_real <= -g->camera.y + g->BHEIGHT - (Map::TILE_SIZE * -1)) {
 						float r_x = (float)g->s_x / (float)g->BWIDTH;
 						float r_y = (float)g->s_y / (float)g->BHEIGHT;
-						if (g->map.zone[x][y].Owner > -2) {
-							DrawText(font[0], 255, 255, 0,
-								(x * Map::TILE_SIZE) + g->camera.x + (Map::TILE_SIZE / 2),
-								(y * Map::TILE_SIZE) + g->camera.y + (5),
-								ALLEGRO_ALIGN_CENTER, "%i", g->map.zone[x][y].Owner);
-						}
 
+						DrawText(font[0], 255, 255, 0,
+						(x * Map::TILE_SIZE) + g->camera.x + (Map::TILE_SIZE / 2),
+						(y * Map::TILE_SIZE) + g->camera.y + (5),
+						ALLEGRO_ALIGN_CENTER, "%i", g->map.zone[x][y].Owner);
+
+						// BoneSweeper
 						int re = 0;
 						int gr = 0;
 						int bl = 0;
@@ -100,6 +87,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 			}
 		}
 	}
+
+	// Render territory information
+	RenderTerritoryInfo(g, sprites, font);
 
 	// Render clouds
 	g->weather.RenderClouds(g, sprites);

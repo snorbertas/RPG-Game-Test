@@ -383,6 +383,7 @@ public:
 public:
 	int tile[MAP_SIZE_X][MAP_SIZE_Y];						// tile[x][y]
 	Zone zone[MAP_SIZE_X][MAP_SIZE_Y];						// Each square is a zone that holds info for gamemodes
+	std::vector<Territory> territory;						// Territories made out of zones
 	std::vector<Butterfly> Butterflies;						// Cosmetic butterflies
 	std::vector<CollisionBox> solid;						// Solids (collisions/can't pass trough)
 	std::vector<CollisionBox> except_solid;					// Special collision boxes to except solid collision

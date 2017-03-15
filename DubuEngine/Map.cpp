@@ -1336,6 +1336,22 @@ void Map::MarkTerritory(int cx, int cy, int owner, int radius) {
 		}
 	}
 
+	// Recalculate territory
+	bool found_territory = false;
+	for (size_t i = 0; i < territory.size(); i++) {
+		if (territory[i].owner = owner) {
+			// Found a matching territory
+			found_territory = true;
+			territory[i].Recalculate(this, owner);
+			break;
+		}
+	}
+
+	// Didn't find a territory, need to create new one
+	if (!found_territory) {
+		territory.push_back(Territory(owner));
+		territory.back().Recalculate(this, owner);
+	}
 }
 
 bool Map::PlayerIsHome(Player* p) {

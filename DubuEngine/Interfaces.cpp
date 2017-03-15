@@ -134,13 +134,13 @@ void LoadInterfaces(Game* g){
 	NewInterface(&g->Interfaces[INTERFACE_MINI_MAP], NO_SPRITE, g->BWIDTH - 176, g->BHEIGHT - 176);
 
 	// Interface 15
-	NewInterface(&g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE], NO_SPRITE, 0, 0);
+	NewInterface(&g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE], NO_SPRITE, (g->BWIDTH / 2), (g->BHEIGHT / 2));
 	int count = 40;
 	for (int y = 0; y < 5; y++) {
 		for (int x = 0; x < 6; x++) {
 			NewButton(&g->Buttons[count], NO_SPRITE,
-				315 + (x * 110),
-				270 + (y * 60),
+				(x * 110) - 330,
+				270 + (y * 60) - (g->BHEIGHT / 2),
 				100, 50, INTERFACE_BONEHUNT_LEVEL_CHOICE);
 			count++;
 		}
@@ -781,14 +781,16 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				{
 					int count = 0;
 					int completed_levels = g->progress.BoneHunt.CompleteCount() - 1;
-					int x_offset = g->Buttons[40].x;
-					int y_offset = g->Buttons[40].y;
+					int x_offset = g->Buttons[40].x + g->Interfaces[i].x;
+					int y_offset = g->Buttons[40].y + g->Interfaces[i].y;
 					for (int y = 0; y < 5; y++) {
 						for (int x = 0; x < 6; x++) {
 							// Interface box (button) for each level
 							float opacity = 1.0;
 							if (count > completed_levels) opacity = 0.2;
-							if (MouseIsOn(g, g->Buttons[40 + count].x, g->Buttons[40 + count].y, 100, 50)) {
+							if (MouseIsOn(g,
+								g->Buttons[40 + count].x + g->Interfaces[i].x,
+								g->Buttons[40 + count].y + g->Interfaces[i].y, 100, 50)) {
 								DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN_GLOW,
 									(x * 110) + x_offset,
 									(y * 60) + y_offset,
