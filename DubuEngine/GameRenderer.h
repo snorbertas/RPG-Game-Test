@@ -29,6 +29,22 @@
 	void RenderPlayerShadow(Game* g, Player& pl, SpriteStruct* sprites);
 
 
+/* =============================== RenderNPC ==============================
+ *		Renders an NPC.
+ *
+ *		Called when desired.
+ */
+	void RenderNPC(Game* g, NPC& npc, SpriteStruct* sprites);
+
+
+/* ============================ RenderNPCShadow ===========================
+ *		Renders an NPC's shadow.
+ *
+ *		Called when desired.
+ */
+	void RenderNPCShadow(Game* g, NPC& npc, SpriteStruct* sprites);
+
+
 /* ======================= RenderParallaxBackground =======================
  *		Renders the background.
  *

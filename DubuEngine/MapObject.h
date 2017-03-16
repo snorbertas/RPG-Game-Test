@@ -44,6 +44,7 @@ public:
 		EMapObjectPeePuddle,
 		EMapObjectPlayer_L,
 		EMapObjectPlayer_M,
+		EMapObjectNPC,
 		EMapObjectRock_0,
 		EMapObjectRock_1,
 		EMapObjectRock_2,
@@ -114,6 +115,7 @@ public:
 	static MapObjectInfo::MapObject GenerateFlower(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateLocalPlayer(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
+	static MapObjectInfo::MapObject GenerateNPC(int x = 0, int y = 0, int id = -1);
 
 private:
 	static CollisionBox GenerateThinRockBox(int x, int y);

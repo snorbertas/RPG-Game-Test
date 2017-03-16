@@ -1190,12 +1190,14 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/dump");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/day");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/night");
-			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/timer <seconds (0 = RESET)> ");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/timer <i> ");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/seed <i>");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/welcome");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/object <i>");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/butterfly");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/sunlight");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/npc <i>");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/ai");
 		} else if (type == "/object") {
 			int object_type = -1;
 			args >> object_type;
@@ -1209,6 +1211,13 @@ void HandleCommand(Game* g, const char* msg) {
 			}
 		} else if (type == "/seed") {
 			args >> g->map.seed;
+		} else if (type == "/ai") {
+			if (g->npc.size() > 0) g->npc[0].HandleAI(g);
+		} else if (type == "/npc") {
+			int npc_type;
+			args >> npc_type;
+			g->npc.push_back(NPC((NPC::Type)npc_type, g->pl.x, g->pl.y, g->npc.size()));
+			g->npc[g->npc.size() - 1].facing = g->pl.facing;
 		} else if (type == "/butterfly") {
 			g->map.Butterflies.push_back(Butterfly(g->pl.x, g->pl.y));
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Spawned butterfly");

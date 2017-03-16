@@ -84,6 +84,10 @@
 	#define SPRITE_INTERFACE_CONNECTING 3
 	#define SPRITE_LOGO 4
 
+	// Bodies
+	#define SPRITE_BODY_DEFAULT 0
+	#define SPRITE_BODY_MONSTER 16
+
 /*=========================*/
 /*= INTERFACE DEFINITIONS =*/
 /*=========================*/

@@ -59,11 +59,6 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 						float r_x = (float)g->s_x / (float)g->BWIDTH;
 						float r_y = (float)g->s_y / (float)g->BHEIGHT;
 
-						DrawText(font[0], 255, 255, 0,
-						(x * Map::TILE_SIZE) + g->camera.x + (Map::TILE_SIZE / 2),
-						(y * Map::TILE_SIZE) + g->camera.y + (5),
-						ALLEGRO_ALIGN_CENTER, "%i", g->map.zone[x][y].Owner);
-
 						// BoneSweeper
 						int re = 0;
 						int gr = 0;
@@ -86,7 +81,21 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 				}
 			}
 		}
+
+		if (g->npc.size() > 0) {
+			if (g->npc[0].path.successful) {
+				float r_x = (float)g->s_x / (float)g->BWIDTH;
+				float r_y = (float)g->s_y / (float)g->BHEIGHT;
+				for (size_t i = 0; i < g->npc[0].path.node.size(); i++) {
+					DrawText(font[0], 255, 255, 255,
+						g->npc[0].path.node[i].first + g->camera.x,
+						g->npc[0].path.node[i].second + g->camera.y - 17,
+						ALLEGRO_ALIGN_CENTER, "%i", i);
+				}
+			}
+		}
 	}
+
 
 	// Render territory information
 	RenderTerritoryInfo(g, sprites, font);
@@ -114,6 +123,25 @@ void RenderPlayerShadow(Game* g, Player& pl, SpriteStruct* sprites) {
 	DrawImage(g, sprites->img_gfx[SPRITE_SHADOW_PLAYER],
 		pl.x + g->camera.x,
 		pl.y + 5 + g->camera.y,
+		0, opacity);
+}
+
+void RenderNPC(Game* g, NPC& npc, SpriteStruct* sprites) {
+	// Render an NPC
+	int flag = 0;
+	if (npc.facing == 3) flag = 1;
+	DrawImage(g,
+		sprites->img_body[npc.sprite_id + npc.sprite_frame],
+		npc.x + g->camera.x,
+		npc.y + g->camera.y, flag);
+}
+
+void RenderNPCShadow(Game* g, NPC& npc, SpriteStruct* sprites) {
+	// Render an NPC's shadow
+	float opacity = g->weather.cycle.sunlight.brightness;
+	DrawImage(g, sprites->img_gfx[SPRITE_SHADOW_PLAYER],
+		npc.x + g->camera.x,
+		npc.y + 5 + g->camera.y,
 		0, opacity);
 }
 

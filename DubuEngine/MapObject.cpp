@@ -28,6 +28,7 @@ const MapObjectInfo::MapObject MapObjectInfo::_Objects[MapObjectInfo::EMapObject
 	MapObject(EMapObjectPeePuddle, EObjectSpriteUndefined),
 	MapObject(EMapObjectPlayer_L, EObjectSpriteUndefined),
 	MapObject(EMapObjectPlayer_M, EObjectSpriteUndefined),
+	MapObject(EMapObjectNPC, EObjectSpriteUndefined),
 	MapObject(EMapObjectRock_0, EObjectSpriteRock_0),
 	MapObject(EMapObjectRock_1, EObjectSpriteRock_1),
 	MapObject(EMapObjectRock_2, EObjectSpriteRock_2),
@@ -75,7 +76,7 @@ bool MapObjectInfo::MapObject::IsGrass() {
 }
 
 bool MapObjectInfo::MapObject::IsPlayer() {
-	return Type == EMapObjectPlayer_L || Type == EMapObjectPlayer_M;
+	return Type == EMapObjectPlayer_L || Type == EMapObjectPlayer_M || Type == EMapObjectNPC;
 }
 
 double MapObjectInfo::MapObject::DistanceToObject(const MapObjectInfo::MapObject& obj) {
@@ -126,6 +127,9 @@ void MapObjectInfo::MapObject::Draw(Game* g, SpriteStruct* sprites) {
 				y - h + g->camera.y,
 				0);
 		}
+	} else if (Type == EMapObjectNPC) {
+		// Rendering an NPC
+		RenderNPC(g, g->npc[ID], sprites);
 	} else if (Type == EMapObjectPlayer_L) {
 		// Rendering local player
 		RenderPlayer(g, g->pl, sprites);
@@ -176,6 +180,9 @@ void MapObjectInfo::MapObject::DrawShadow(Game* g, SpriteStruct* sprites) {
 					y + 60 + g->camera.y,
 					angle, ALLEGRO_FLIP_VERTICAL, opacity);
 			}
+		} else if (Type == EMapObjectNPC) {
+			// Rendering local player
+			RenderNPCShadow(g, g->npc[ID], sprites);
 		} else if (Type == EMapObjectPlayer_L) {
 			// Rendering local player
 			RenderPlayerShadow(g, g->pl, sprites);
@@ -219,6 +226,10 @@ MapObjectInfo::MapObject MapObjectInfo::GenerateFlower(int x, int y) {
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateLocalPlayer(int x, int y) {
 	return GenerateObjectByType(EMapObjectPlayer_L, x, y);
+}
+
+MapObjectInfo::MapObject MapObjectInfo::GenerateNPC(int x, int y, int id) {
+	return GenerateObjectByType(EMapObjectNPC, x, y, id);
 }
 
 MapObjectInfo::MapObject MapObjectInfo::GenerateMultiPlayer(int x, int y, int id) {

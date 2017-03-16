@@ -42,7 +42,9 @@
     <ClCompile Include="MenuHandler.cpp" />
     <ClCompile Include="MenuRenderer.cpp" />
     <ClCompile Include="MiniMap.cpp" />
+    <ClCompile Include="NPC.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="Pathing.cpp" />
     <ClCompile Include="Peeing.cpp" />
     <ClCompile Include="PlayerMovement.cpp">
       <SubType>Code</SubType>
@@ -79,6 +81,8 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="MiniMap.h" />
+    <ClInclude Include="NPC.h" />
+    <ClInclude Include="Pathing.h" />
     <ClInclude Include="Peeing.h" />
     <ClInclude Include="PlayerMovement.h">
       <SubType>Header</SubType>

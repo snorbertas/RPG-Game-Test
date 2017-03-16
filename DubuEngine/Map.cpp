@@ -823,6 +823,16 @@ bool TileIsWater(int tile_id) {
 	return false;
 }
 
+bool TileIsPathable(int tile_id) {
+	if (TileIsGrass(tile_id) ||
+		TileIsDirt(tile_id) /*||
+		(tile_id >= 28 && tile_id <= 31) ||
+		(tile_id >= 33 && tile_id <= 36)*/) {
+		return true;
+	}
+	return false;
+}
+
 bool TileIsGrass(int tile_id) {
 	if (tile_id >= 0 && tile_id <= 14) return true;
 	return false;
@@ -963,6 +973,12 @@ void Map::SortPlayerObjects(Game* g) {
 			if (g->Players[i].connected)
 				Players.push_back(MapObjectInfo::GenerateMultiPlayer(g->Players[i].x, g->Players[i].y, g->Players[i].pID));
 
+	/* NPCs (Identical to a player object except
+	   slightly simplified and controlled by AI)*/
+	for (size_t i = 0; i < g->npc.size(); ++i) {
+		Players.push_back(MapObjectInfo::GenerateNPC(g->npc[i].x, g->npc[i].y, g->npc[i].id));
+	}
+
 	// Sort them by their y value
 	sort(Players.begin(), Players.end(), [](const auto& a, const auto& b) { return a.y < b.y; });
 }
@@ -1058,6 +1074,7 @@ void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 	// Temp (Draw grid and collision boxes for solids)
 
 	if (g->debug.grid) {
+		// Please don't speed this up since this function will be deleted
 		for (size_t i = 0; i < solid.size(); i++) {
 			DrawRectangle(g,
 				solid[i].x + g->camera.x, solid[i].y + g->camera.y,
@@ -1068,8 +1085,8 @@ void Map::RenderGrid(Game* g, SpriteStruct* sprites) {
 				except_solid[i].x + g->camera.x, except_solid[i].y + g->camera.y,
 				except_solid[i].w, except_solid[i].h, 0, 0, 255, 0.2);
 		}
-		for (int x = 0; x < MAP_SIZE_X; x++) {
-			for (int y = 0; y < MAP_SIZE_Y; y++) {
+		for (int x = (-g->camera.x / TILE_SIZE); x < ((-g->camera.x + g->BWIDTH + TILE_SIZE) / TILE_SIZE); x++) {
+			for (int y = (-g->camera.y / TILE_SIZE); y < ((-g->camera.y + g->BHEIGHT + TILE_SIZE) / TILE_SIZE); y++) {
 				DrawOutline(g,
 					x * TILE_SIZE + g->camera.x,
 					y * TILE_SIZE + g->camera.y,
