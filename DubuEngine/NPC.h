@@ -31,8 +31,8 @@ public:
 
 	/* Physics */
 	// Bases
-	int base_velocity = 3;			// Base velocity
-	int base_ticks_to_anim = 5;		// Base ticks for animation
+	int base_velocity = 4;			// Base velocity
+	int base_ticks_to_anim = 4;		// Base ticks for animation
 
 	// Real values
 	int velocity = base_velocity;	// Pixels per movement

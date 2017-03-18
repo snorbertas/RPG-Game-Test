@@ -1197,7 +1197,6 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/butterfly");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/sunlight");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/npc <i>");
-			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/ai");
 		} else if (type == "/object") {
 			int object_type = -1;
 			args >> object_type;
@@ -1211,8 +1210,6 @@ void HandleCommand(Game* g, const char* msg) {
 			}
 		} else if (type == "/seed") {
 			args >> g->map.seed;
-		} else if (type == "/ai") {
-			if (g->npc.size() > 0) g->npc[0].HandleAI(g);
 		} else if (type == "/npc") {
 			int npc_type;
 			args >> npc_type;

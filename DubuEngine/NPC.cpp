@@ -1,16 +1,59 @@
 #include "Game.h"
+#include "Collision.h"
 
 void NPC::HandleAI(Game* g) {
 	/* The AI has to be smart enough to develop agression
 	and to think of a path towards to find player without
 	collision */
 
-	// Test
-	Node start = Node(round(x / Map::TILE_SIZE), round(y / Map::TILE_SIZE));
-	Node goal = Node(round(g->pl.x / Map::TILE_SIZE), round(g->pl.y / Map::TILE_SIZE));
+	// Reset movement
+	left = false;
+	right = false;
+	up = false;
+	down = false;
+	
+	// Check path
+	if (!path.successful) {
+		// Test
+		Node start = Node(round(x / Map::TILE_SIZE), round(y / Map::TILE_SIZE));
+		Node goal = Node(round(g->pl.x / Map::TILE_SIZE), round(g->pl.y / Map::TILE_SIZE));
+		path = FindPath(g->map, start, goal);
+	} else {
+		// Decide path node
+		Node goal = path.node[path.current_node];
 
-	path = FindPath(g->map, start, goal);
+		// Decide movement
+		if ((x + (w / 2)) - goal.x < -4) {
+			right = true;
+			facing = Player::Facing::FacingRight;
+		}
+		if ((x + (w / 2)) - goal.x > 4) {
+			left = true;
+			facing = Player::Facing::FacingLeft;
+		}
+		if ((y + (h / 2)) - goal.y < -4) {
+			down = true;
+			facing = Player::Facing::FacingDown;
+		}
+		if ((y + (h / 2)) - goal.y > 4) {
+			up = true;
+			facing = Player::Facing::FacingUp;
+		}
 
+		// Check if we met our current node goal yet
+		CollisionBox col_npc(x + (w / 2) - 8, y + (h / 2) - 8, 16, 16);
+		CollisionBox col_goal(goal.x - 8, goal.y - 8, 16, 16);
+		if (collide(col_npc, col_goal)) {
+			// Reached our current node goal, what's next?
+			path.current_node++;
+
+			if ((size_t)path.current_node >= path.node.size()) {
+				// Completed whole path
+				path.Reset();
+			}
+		}
+
+	}
 }
 
 void NPC::UpdateMovementSprite() {
@@ -159,7 +202,7 @@ void NPC::HandleMovementLogic() {
 static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	// Tick
 	for (size_t i = 0; i < g->npc.size(); i++) {
-		//g->npc[i].HandleAI(g);
+		g->npc[i].HandleAI(g);
 		if (g->npc[i].left || g->npc[i].right || g->npc[i].up || g->npc[i].down) {
 			g->npc[i].HandleMovementLogic();
 		} else {
