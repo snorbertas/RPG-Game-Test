@@ -16,9 +16,10 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 		}
 	}
 
-	// A vector that stores vectors of nodes (coordinates).
-	// The initial vector index represents a distance.
-	// Example: mark[3][0] would access the first (of many) points that are 3 squares away from goal.
+	/* A vector that stores vectors of nodes (coordinates).
+	   The initial vector index represents a distance.
+	   Example: mark[3][0] would access the first (of many)
+	   points that are 3 squares away from goal. */
 	vector<vector<Node>> mark;
 
 	// Add the goal node(s) to marks
@@ -28,7 +29,7 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 	int distance = 1;
 
 	// Mark goal as 0 (no distance from goal)
-	matrix[goal.first][goal.second] = 0;
+	matrix[goal.x][goal.y] = 0;
 
 	// Loop till the start is found or till we break
 	bool marked_start = false;
@@ -48,92 +49,30 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 			Node current_node = mark[distance - 1][i];
 
 			// The coordinates we'll explore around
-			int x = current_node.first;
-			int y = current_node.second;
+			int x = current_node.x;
+			int y = current_node.y;
 
-			// Left
-			if (x > 0) {
-				if (matrix[x - 1][y] == NodeState::Unexplored) {
-					if (TileIsPathable(map.tile[x - 1][y])) {
-						// Mark it
-						matrix[x - 1][y] = distance;
-						this_distance_marks.push_back(make_pair(x - 1, y));
-					}
-				}
-			}
+			// Scan the 3x3 grid around current location
+			for (int yc = y - 1; yc <= y + 1; ++yc) {
+				for (int xc = x - 1; xc <= x + 1; ++xc) {
+					// If a legal index
+					if (xc >= 0 && xc < Map::MAP_SIZE_X &&
+						yc >= 0 && yc < Map::MAP_SIZE_Y) {
 
-			// Right
-			if (x < Map::MAP_SIZE_X - 1) {
-				if (matrix[x + 1][y] == NodeState::Unexplored) {
-					if (TileIsPathable(map.tile[x + 1][y])) {
-						// Mark it
-						matrix[x + 1][y] = distance;
-						this_distance_marks.push_back(make_pair(x + 1, y));
-					}
-				}
-			}
+						// If not explored
+						if (matrix[xc][yc] == NodeState::Unexplored) {
 
-			// Above
-			if (y > 0) {
-				if (matrix[x][y - 1] == NodeState::Unexplored) {
-					if (TileIsPathable(map.tile[x][y - 1])) {
-						// Mark it
-						matrix[x][y - 1] = distance;
-						this_distance_marks.push_back(make_pair(x, y - 1));
-					}
-				}
-				
-				// Top-left
-				if (x > 0) {
-					if (matrix[x - 1][y - 1] == NodeState::Unexplored) {
-						if (TileIsPathable(map.tile[x - 1][y - 1])) {
-							// Mark it
-							matrix[x - 1][y - 1] = distance;
-							this_distance_marks.push_back(make_pair(x - 1, y - 1));
-						}
-					}
-				}
+							// If pathable
+							if (TileIsPathable(map.tile[xc][yc])) {
 
-				// Top-right
-				if (x < Map::MAP_SIZE_X - 1) {
-					if (matrix[x + 1][y - 1] == NodeState::Unexplored) {
-						if (TileIsPathable(map.tile[x + 1][y - 1])) {
-							// Mark it
-							matrix[x + 1][y - 1] = distance;
-							this_distance_marks.push_back(make_pair(x + 1, y - 1));
-						}
-					}
-				}
-			}
+								// Mark it
+								matrix[xc][yc] = distance;
+								this_distance_marks.push_back(Node(xc, yc));
+							} else {
 
-			// Bellow
-			if (y < Map::MAP_SIZE_Y - 1) {
-				if (matrix[x][y + 1] == NodeState::Unexplored) {
-					if (TileIsPathable(map.tile[x][y + 1])) {
-						// Mark it
-						matrix[x][y + 1] = distance;
-						this_distance_marks.push_back(make_pair(x, y + 1));
-					}
-				}
-
-				// Bottm-left
-				if (x > 0) {
-					if (matrix[x - 1][y + 1] == NodeState::Unexplored) {
-						if (TileIsPathable(map.tile[x - 1][y + 1])) {
-							// Mark it
-							matrix[x - 1][y + 1] = distance;
-							this_distance_marks.push_back(make_pair(x - 1, y + 1));
-						}
-					}
-				}
-
-				// Bottom-right
-				if (x < Map::MAP_SIZE_X - 1) {
-					if (matrix[x + 1][y + 1] == NodeState::Unexplored) {
-						if (TileIsPathable(map.tile[x + 1][y + 1])) {
-							// Mark it
-							matrix[x + 1][y + 1] = distance;
-							this_distance_marks.push_back(make_pair(x + 1, y + 1));
+								// Mark as unpathable
+								matrix[xc][yc] = NodeState::Unpathable;
+							}
 						}
 					}
 				}
@@ -151,6 +90,10 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 		// Increment distance for next loop
 		++distance;
 	}
+
+	/* Clear the last distance in vector since we don't need
+	   it to connect to the start */
+	mark.pop_back();
 	
 	/* ==============================================
 		STEP TWO:
@@ -163,28 +106,37 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 		Node current_node = result.node.back();
 
 		// The coordinates we'll explore around
-		int x = current_node.first;
-		int y = current_node.second;
+		int x = current_node.x;
+		int y = current_node.y;
 
 		// Choose next node
+		Node best_node;
+		bool straight = false;
 		for (size_t j = 0; j < mark[i].size(); ++j) {
 			Node next_node = mark[i][j];
 			// First try a straight turn, then diagonal
-			if (next_node.first == x - 1 && next_node.second == y ||
-				next_node.first == x + 1 && next_node.second == y ||
-				next_node.first == x && next_node.second == y - 1 ||
-				next_node.first == x && next_node.second == y + 1) {
-				result.node.push_back(next_node);
-				break;
+			if (next_node.x == x - 1 && next_node.y == y ||
+				next_node.x == x + 1 && next_node.y == y ||
+				next_node.x == x && next_node.y == y - 1 ||
+				next_node.x == x && next_node.y == y + 1) {
+
+				// Set this node as the best suiting one
+				best_node = next_node;
+				straight = true;
 			} else
-			if (next_node.first == x - 1 && next_node.second == y - 1 ||
-				next_node.first == x + 1 && next_node.second == y - 1 ||
-				next_node.first == x - 1 && next_node.second == y + 1 ||
-				next_node.first == x + 1 && next_node.second == y + 1) {
-				result.node.push_back(next_node);
-				break;
+			if (next_node.x == x - 1 && next_node.y == y - 1 ||
+				next_node.x == x + 1 && next_node.y == y - 1 ||
+				next_node.x == x - 1 && next_node.y == y + 1 ||
+				next_node.x == x + 1 && next_node.y == y + 1) {
+
+				// Set this node as the best suiting one\
+				// But straight > diagonal
+				if (!straight) {
+					best_node = next_node;
+				}
 			}
 		}
+		result.node.push_back(best_node);
 	}
 
 	// Convert result to real coordinates
@@ -199,8 +151,8 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 }
 
 Node ConvertToReal(Map& map, Node cord) {
-	int x = cord.first;
-	int y = cord.second;
+	int x = cord.x;
+	int y = cord.y;
 	int tile_id = map.tile[x][y];
 	if (TileIsWater(tile_id)) {
 		// Offsets
@@ -215,14 +167,14 @@ Node ConvertToReal(Map& map, Node cord) {
 
 		// Return proper coordinate
 		Node result;
-		result.first = x * Map::TILE_SIZE + (x_offset);
-		result.second = y * Map::TILE_SIZE + (y_offset);
+		result.x = x * Map::TILE_SIZE + (x_offset);
+		result.y = y * Map::TILE_SIZE + (y_offset);
 		return result;
 	} else {
 		// Return the center
 		Node result;
-		result.first = x * Map::TILE_SIZE + (Map::TILE_SIZE / 2);
-		result.second = y * Map::TILE_SIZE + (Map::TILE_SIZE / 2);
+		result.x = x * Map::TILE_SIZE + (Map::TILE_SIZE / 2);
+		result.y = y * Map::TILE_SIZE + (Map::TILE_SIZE / 2);
 		return result;
 	}
 }

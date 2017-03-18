@@ -6,8 +6,8 @@ void NPC::HandleAI(Game* g) {
 	collision */
 
 	// Test
-	Node start = make_pair(round(x / Map::TILE_SIZE), round(y / Map::TILE_SIZE));
-	Node goal = make_pair(round(g->pl.x / Map::TILE_SIZE), round(g->pl.y / Map::TILE_SIZE));
+	Node start = Node(round(x / Map::TILE_SIZE), round(y / Map::TILE_SIZE));
+	Node goal = Node(round(g->pl.x / Map::TILE_SIZE), round(g->pl.y / Map::TILE_SIZE));
 
 	path = FindPath(g->map, start, goal);
 

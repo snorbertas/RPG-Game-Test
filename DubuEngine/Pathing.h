@@ -3,9 +3,17 @@
 #include "Map.h"
 
 using namespace std;
-typedef pair<int, int> Node;
+//typedef pair<int, int> Node;
+class Node {
+public:
+	bool operator==(const Node& n) { return (x == n.x && y == n.y); }
+	Node() {}
+	Node(int new_x, int new_y) : x(new_x), y(new_y) {}
+	int x;
+	int y;
+};
 
-enum NodeState { Unexplored = -2, Blocked = -1 };
+enum NodeState { Unexplored = -2, Unpathable = -1 };
 
 struct Path {
 	// Nodes for pathway

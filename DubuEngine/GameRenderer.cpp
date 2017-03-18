@@ -88,8 +88,8 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 				float r_y = (float)g->s_y / (float)g->BHEIGHT;
 				for (size_t i = 0; i < g->npc[0].path.node.size(); i++) {
 					DrawText(font[0], 255, 255, 255,
-						g->npc[0].path.node[i].first + g->camera.x,
-						g->npc[0].path.node[i].second + g->camera.y - 17,
+						g->npc[0].path.node[i].x + g->camera.x,
+						g->npc[0].path.node[i].y + g->camera.y - 17,
 						ALLEGRO_ALIGN_CENTER, "%i", i);
 				}
 			}
