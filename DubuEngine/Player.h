@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Pathing.h"
 
 class Player {
 public:
@@ -50,6 +51,12 @@ public:
 	double x = 0;					// x/y coordinates
 	double y = 0;					// Using decimals due to compound movement
 	int facing = FacingUp;			// Direction player is facing
+
+
+	// Convert real coordinates to map coordinates
+	int MapX() { return round(x / Map::TILE_SIZE); }
+	int MapY() { return round(y / Map::TILE_SIZE); }
+	Node GetPositionNode() { return Node(MapX(), MapY()); }
 
 	// Size
 	int w = 64;

@@ -1,5 +1,46 @@
 #include "Game.h"
 #include "Collision.h"
+#include "GameHandler.h"
+
+bool NPC::PlayerInRange(Player& p) {
+	CollisionBox col_player(p.x, p.y, p.w, p.h);
+	CollisionBox col_aggression_zone(
+		x - aggression_radius,
+		y - aggression_radius,
+		aggression_radius * 2,
+		aggression_radius * 2);
+	if (collide(col_player, col_aggression_zone)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+Node NPC::PickRandomDestination(Map& map) {
+	// Set starting x and y coordinates on map
+	Node start(MapX() - roam_radius,
+		MapY() - roam_radius);
+
+	// Correction to prevent index errors
+	if (start.x < 0) start.x = 0;
+	if (start.y < 0) start.y = 0;
+	if (start.x > Map::MAP_SIZE_X - roam_radius)
+		start.x = Map::MAP_SIZE_X - roam_radius;
+	if (start.y > Map::MAP_SIZE_Y - roam_radius)
+		start.y = Map::MAP_SIZE_Y - roam_radius;
+
+	// Choose random destination
+	Node dest(start.x + rand() % roam_radius,
+		start.y + rand() % roam_radius);
+
+	// Check if pathable
+	if (TileIsPathable(map.tile[dest.x][dest.y])) {
+		return Node(dest.x, dest.y);
+	} else {
+		// Invalid tile, NPC will idle for one more tick and its chance again
+		return Node(MapX(), MapY());
+	}
+}
 
 void NPC::HandleAI(Game* g) {
 	/* The AI has to be smart enough to develop agression
@@ -11,14 +52,33 @@ void NPC::HandleAI(Game* g) {
 	right = false;
 	up = false;
 	down = false;
-	
+
+	// Idle
+	if (idle) {
+		idle_timer--;
+		if (idle_timer <= 0) {
+			// Stop idling
+			idle = false;
+
+			// Find new path to roam to
+			path = FindPath(g->map, GetPositionNode(), PickRandomDestination(g->map));
+			if (!path.successful) {
+				// Continue idling
+				idle = true;
+				idle_timer = 1;
+			}
+		}
+	}
+
+	// Aggresion
+	if ((path.current_node > 1 || idle) && PlayerInRange(g->pl)) {
+		// Findpath towards player
+		path = FindPath(g->map, GetPositionNode(), g->pl.GetPositionNode(), 10);
+		idle = false;
+	}
+
 	// Check path
-	if (!path.successful) {
-		// Test
-		Node start = Node(round(x / Map::TILE_SIZE), round(y / Map::TILE_SIZE));
-		Node goal = Node(round(g->pl.x / Map::TILE_SIZE), round(g->pl.y / Map::TILE_SIZE));
-		path = FindPath(g->map, start, goal);
-	} else {
+	if (path.successful) {
 		// Decide path node
 		Node goal = path.node[path.current_node];
 
@@ -40,7 +100,7 @@ void NPC::HandleAI(Game* g) {
 			facing = Player::Facing::FacingUp;
 		}
 
-		// Check if we met our current node goal yet
+		// Check if we met our current node goal yet (might need to tweak these boxes)
 		CollisionBox col_npc(x + (w / 2) - 8, y + (h / 2) - 8, 16, 16);
 		CollisionBox col_goal(goal.x - 8, goal.y - 8, 16, 16);
 		if (collide(col_npc, col_goal)) {
@@ -50,9 +110,15 @@ void NPC::HandleAI(Game* g) {
 			if ((size_t)path.current_node >= path.node.size()) {
 				// Completed whole path
 				path.Reset();
+
+				// Chill for few seconds
+				idle = true;
+				idle_timer = SecondsToTicks(idle_min_duration + rand() % idle_extra_rand_duration);
 			}
 		}
 
+	} else {
+		idle = true;
 	}
 }
 

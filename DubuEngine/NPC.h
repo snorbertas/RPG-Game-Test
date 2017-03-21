@@ -25,6 +25,11 @@ public:
 	double y = 0;					// Using decimals due to compound movement
 	int facing = Player::FacingUp;	// Direction NPC is facing
 
+	// Convert real coordinates to map coordinates
+	int MapX() { return round(x / Map::TILE_SIZE); }
+	int MapY() { return round(y / Map::TILE_SIZE); }
+	Node GetPositionNode() { return Node(MapX(), MapY()); }
+
 	// Size
 	int w = 64;
 	int h = 64;
@@ -51,15 +56,25 @@ public:
 	bool right = false;
 	bool up = false;
 	bool down = false;
+	bool idle = true;
+	int idle_timer = 0;
+
+	// Radii and idle duration
+	int roam_radius = 30;				// Radius within the NPC can roam (map coordinates)
+	int aggression_radius = 640;		// Radius within the NPC can detect a player (real coordinates)
+	float idle_min_duration = 2;		// Minimum seconds idle duration
+	int idle_extra_rand_duration = 2;	// Extra seconds idle duration
 
 	// Pathing
 	Path path;
+	Node PickRandomDestination(Map& map);
 
 	// Handles the AI for NPC
 	void HandleAI(Game* g);
 	void HandleMovementLogic();
 	void HandleIdle();
 	void UpdateMovementSprite();
+	bool PlayerInRange(Player& p);
 };
 
 int RegisterNPCEvents(TimerEventFunction* t, MouseEventFunction* c, KeyboardEventFunction* p);
