@@ -1,6 +1,9 @@
 #pragma once
 #include "DEDefinitions.h"
 
+class Game;
+struct SpriteStruct;
+
 // Note: A butterfly is just a GFX effect
 class Butterfly {
 public:

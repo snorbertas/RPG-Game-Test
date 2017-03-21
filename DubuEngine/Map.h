@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Butterfly.h"
 #include "CollisionBox.h"
 #include "MapObject.h"
+#include "MiniMap.h"
 #include "TilesInfo.h"
-#include "Butterfly.h"
 #include "Zone.h"
 
 #include <list>
@@ -93,7 +94,7 @@ public:
 	void CreateSolids();
 
 	// Generates a random map based on seed
-	void GenerateRandom(int alg);	
+	void Generate(int alg);	
 
 	
 	/* ====================== SortPlayerObjects =========================
@@ -393,6 +394,7 @@ public:
 	std::vector<MapObjectInfo::MapObject> Players;			// Players
 	std::vector<MapObjectInfo::MapObject> Bones;			// Bones hidden on the map
 	std::vector<MapObjectInfo::MapObject> PeePuddles;		// Pee puddles
+	TMiniMap MiniMap;										// MiniMap
 	int seed;												// Seed for random generation
 private:
 	int _RenderMode = 0;

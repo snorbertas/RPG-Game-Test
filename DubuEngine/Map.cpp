@@ -930,7 +930,7 @@ void Map::CreateSolids() {
 	sort(except_solid.begin(), except_solid.end(), [](const auto& a, const auto& b) { return a.x < b.x; });
 }
 
-void Map::GenerateRandom(int alg) {
+void Map::Generate(int alg) {
 	// Seed
 	srand(seed);
 

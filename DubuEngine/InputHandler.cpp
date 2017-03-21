@@ -737,7 +737,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->map.seed = BoneHuntSeedAndTrim(g->level).first;
 	g->map.SetTrim(BoneHuntSeedAndTrim(g->level).second);
 	g->map.ChangeForestMode(1);
-	g->map.GenerateRandom(1);
+	g->map.Generate(1);
 
 	// Record new time
 	double new_time = al_get_time();

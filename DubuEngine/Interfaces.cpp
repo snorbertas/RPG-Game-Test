@@ -484,7 +484,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[2], 255, 255, 10, 0, 90, ALLEGRO_ALIGN_LEFT, "Velocity: %i", g->pl.velocity);
 					DrawText(font[2], 255, 255, 10, 0, 105, ALLEGRO_ALIGN_LEFT, "Ticks To Anim: %i", g->pl.ticks_to_anim);
 					if (g->debug.showMegaMap) {
-						DrawMiniMap(g, sprites, (g->BWIDTH - 500) / 2, (g->BHEIGHT - 500 ) / 2, 500, 500);
+						g->map.MiniMap.Draw(g, sprites, (g->BWIDTH - 500) / 2, (g->BHEIGHT - 500 ) / 2, 500, 500);
 					}
 					break;
 				}
@@ -774,7 +774,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				}
 				case INTERFACE_MINI_MAP:
 				{
-					DrawMiniMap(g, sprites, g->Interfaces[i].x, g->Interfaces[i].y);
+					g->map.MiniMap.Draw(g, sprites, g->Interfaces[i].x, g->Interfaces[i].y);
 					break;
 				}
 				case INTERFACE_BONEHUNT_LEVEL_CHOICE:

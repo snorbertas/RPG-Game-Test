@@ -9,6 +9,7 @@
 #define MAX_BUTTON_SPRITES 38
 #define MAX_OBJECT_SPRITES 33
 #define MAX_GFX_SPRITES 26
+#define MAX_MINIMAP_SPRITES 4
 
 #include <allegro5\allegro.h>
 
@@ -25,11 +26,12 @@ struct SpriteStruct {
 	ALLEGRO_BITMAP *img_button[MAX_BUTTON_SPRITES];
 	ALLEGRO_BITMAP *img_object[MAX_OBJECT_SPRITES];
 	ALLEGRO_BITMAP *img_gfx[MAX_GFX_SPRITES];
+	ALLEGRO_BITMAP *img_minimap[MAX_MINIMAP_SPRITES];
 };
 
 enum EObjectSprite {
 	/* Map object sprites*/
-	EObjectSpriteUndefined = -1, // for objects w/o sprite
+	EObjectSpriteUndefined = -1, // for objects without sprite
 	EObjectSpriteBush_SG = 0,
 	EObjectSpriteBush_BG = 1,
 	EObjectSpriteBush_SD = 2,

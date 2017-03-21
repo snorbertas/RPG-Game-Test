@@ -41,41 +41,41 @@ const MapObjectInfo::MapObject MapObjectInfo::_Objects[MapObjectInfo::EMapObject
 	MapObject(EMapObjectRock_9, EObjectSpriteRock_9),
 };
 
-bool MapObjectInfo::MapObject::IsBush() {
+bool MapObjectInfo::MapObject::IsBush() const {
 	return BushLowestID <= Type && Type <= BushHighestID;
 }
 
-bool MapObjectInfo::MapObject::IsRock() {
+bool MapObjectInfo::MapObject::IsRock() const {
 	return RockLowestID <= Type && Type <= RockHighestID;
 }
 
-bool MapObjectInfo::MapObject::IsCosmeticRock() {
+bool MapObjectInfo::MapObject::IsCosmeticRock() const {
 	return EMapObjectRock_6 <= Type && Type <= EMapObjectRock_9;
 }
 
-bool MapObjectInfo::MapObject::IsThinRock() {
+bool MapObjectInfo::MapObject::IsThinRock() const {
 	return RockLowestID <= Type && Type <= EMapObjectRock_3;
 }
 
-bool MapObjectInfo::MapObject::IsWideRock() {
+bool MapObjectInfo::MapObject::IsWideRock() const {
 	return EMapObjectRock_4 <= Type && Type <= RockHighestID;
 }
 
-bool MapObjectInfo::MapObject::IsTree() {
+bool MapObjectInfo::MapObject::IsTree() const {
 	return TreeLowestID <= Type && Type <= TreeHighestID;
 }
 
-bool MapObjectInfo::MapObject::IsBigTree() {
+bool MapObjectInfo::MapObject::IsBigTree() const {
 	return Type == EMapObjectTree_BD || 
 		   Type == EMapObjectTree_BG || 
 		   Type == EMapObjectTree_BO;
 }
 
-bool MapObjectInfo::MapObject::IsGrass() {
+bool MapObjectInfo::MapObject::IsGrass() const {
 	return Type == EMapObjectGrass;
 }
 
-bool MapObjectInfo::MapObject::IsPlayer() {
+bool MapObjectInfo::MapObject::IsPlayer() const {
 	return Type == EMapObjectPlayer_L || Type == EMapObjectPlayer_M || Type == EMapObjectNPC;
 }
 

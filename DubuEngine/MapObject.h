@@ -79,15 +79,15 @@ public:
 			SpriteId(spriteId) {}
 
 	public:
-		bool IsBush();
-		bool IsRock();			// Rock with collision
-		bool IsCosmeticRock();	// Tiny rock with no collision
-		bool IsThinRock();		// Thin collision rock
-		bool IsWideRock();		// Wide collision rock
-		bool IsTree();
-		bool IsBigTree();
-		bool IsGrass();
-		bool IsPlayer();
+		bool IsBush() const;
+		bool IsRock() const;			// Rock with collision
+		bool IsCosmeticRock() const;	// Tiny rock with no collision
+		bool IsThinRock() const;		// Thin collision rock
+		bool IsWideRock() const;		// Wide collision rock
+		bool IsTree() const;
+		bool IsBigTree() const;
+		bool IsGrass() const;
+		bool IsPlayer() const;
 		double DistanceToObject(const MapObject& obj);
 		bool HasCollision();
 		CollisionBox GetCollisionBox();

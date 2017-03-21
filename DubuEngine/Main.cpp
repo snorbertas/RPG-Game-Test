@@ -152,6 +152,7 @@ void LoadGame() {
 	LoadSprites(sprites.img_button, "sprites/buttons", "button_", MAX_BUTTON_SPRITES);
 	LoadSprites(sprites.img_object, "sprites/objects", "object_", MAX_OBJECT_SPRITES);
 	LoadSprites(sprites.img_gfx, "sprites/gfx", "gfx_", MAX_GFX_SPRITES);
+	LoadSprites(sprites.img_minimap, "sprites/minimap", "minimap_", MAX_MINIMAP_SPRITES);
 	g.menu.bg_x = (-1500 + g.BWIDTH) + (1500 - g.BWIDTH) * (float)((float)(g.BWIDTH - g.pos_x) / (float)g.BWIDTH);
 	g.menu.bg_y = (-938 + g.BHEIGHT) + (938 - g.BHEIGHT) * (float)((float)(g.BHEIGHT - g.pos_y) / (float)g.BHEIGHT);
 	g.scene = 0;

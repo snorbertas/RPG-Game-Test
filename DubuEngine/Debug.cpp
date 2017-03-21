@@ -65,7 +65,7 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 		if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
 			g->map.seed = kid - ALLEGRO_KEY_PAD_0;
 		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_D) {
-			g->map.GenerateRandom(kid - ALLEGRO_KEY_A);
+			g->map.Generate(kid - ALLEGRO_KEY_A);
 			g->weather = Weather();
 		} else if (kid == ALLEGRO_KEY_R) {
 			g->debug.renderChange = true;
