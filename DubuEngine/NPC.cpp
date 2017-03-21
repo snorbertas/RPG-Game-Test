@@ -61,7 +61,7 @@ void NPC::HandleAI(Game* g) {
 			idle = false;
 
 			// Find new path to roam to
-			path = FindPath(g->map, GetPositionNode(), PickRandomDestination(g->map));
+			path = FindPath(g->map, GetNodePosition(), PickRandomDestination(g->map));
 			if (!path.successful) {
 				// Continue idling
 				idle = true;
@@ -73,7 +73,7 @@ void NPC::HandleAI(Game* g) {
 	// Aggresion
 	if ((path.current_node > 1 || idle) && PlayerInRange(g->pl)) {
 		// Findpath towards player
-		path = FindPath(g->map, GetPositionNode(), g->pl.GetPositionNode(), 10);
+		path = FindPath(g->map, GetNodePosition(), g->pl.GetNodePosition(), 10);
 		idle = false;
 	}
 

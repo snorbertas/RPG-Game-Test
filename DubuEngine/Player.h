@@ -56,7 +56,7 @@ public:
 	// Convert real coordinates to map coordinates
 	int MapX() { return round(x / Map::TILE_SIZE); }
 	int MapY() { return round(y / Map::TILE_SIZE); }
-	Node GetPositionNode() { return Node(MapX(), MapY()); }
+	Node GetNodePosition() { return Node(MapX(), MapY()); }
 
 	// Size
 	int w = 64;

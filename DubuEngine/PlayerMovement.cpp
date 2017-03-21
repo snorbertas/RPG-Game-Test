@@ -5,6 +5,13 @@
 #include "Peeing.h"
 #include "Drinking.h"
 #include "PacketHandler.h"
+#include "Pathing.h"
+
+
+void HandlePlayerMousePathing(Game* g) {
+	/* TODO: this function will generate player movement
+	at a specific angle relative to mouse_position */
+}
 
 void HandleStamina(Game* g) {
 	// Correct the velocity
@@ -321,6 +328,7 @@ static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 		HandleDrinking(g, &g->pl);
 		HandlePlayerIdle(g);
 	} else {
+		if(g->mouse_pathing) HandlePlayerMousePathing(g);
 		if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
 			HandlePlayerMovementLogic(g);
 		} else {

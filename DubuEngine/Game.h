@@ -166,4 +166,5 @@
 			vector<DirtParticle> gfx_dirt;		// Vector for all dirt gfx
 			vector<NPC> npc;					// Vector for all npcs
 			ProgressData progress;				// Progress data
+			bool mouse_pathing = false;			// True if we're using mouse input to path player's movements
 	};

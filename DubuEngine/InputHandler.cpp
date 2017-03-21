@@ -341,11 +341,11 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 
 void RightClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 	if(!release){
-		//
 		if (g->Interfaces[4].visible) g->Interfaces[4].visible = false;
 		if (g->Interfaces[5].visible) g->Interfaces[5].visible = false;
+		if (g->scene == 1) g->mouse_pathing = true; 
 	} else {
-		//
+		g->mouse_pathing = false;
 	}
 }
 
@@ -403,7 +403,7 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 			if (!g->chat.type_chat) {
 				if(HandlePlayerMovementKeyBinds(g, kid)){
 					// If true, there was a movement key bind handled
-					// Otherwise (false) look for next binds
+					g->mouse_pathing = false;
 				} else if (kid == g->keys.dig_bind) {
 					if (!g->pl.digging && !g->pl.peeing && !g->pl.drinking) {
 						StartDigging(g, &g->pl);
