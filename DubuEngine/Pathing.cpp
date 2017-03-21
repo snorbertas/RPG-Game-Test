@@ -195,6 +195,7 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 				best_node = next_node;
 				straight = true;
 				found_a_node = true;
+				break;
 			} else
 			if (next_node.x == x - 1 && next_node.y == y - 1 ||
 				next_node.x == x + 1 && next_node.y == y - 1 ||
