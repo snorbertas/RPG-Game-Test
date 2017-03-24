@@ -542,14 +542,16 @@ void Map::GenerateForest() {
 			int freeSpaceSize = ViewForestPlace(i, j);
 			if (freeSpaceSize < _MinForestTiles)
 				continue;
-
-			GenerateForestWithDensity(0.75);
+			if (freeSpaceSize < _MinDenseForestTiles)
+				GenerateForestWithDensity(0.3);
+			else
+				GenerateForestWithDensity(0.75);
 		}
 	}
 }
 
 void Map::GenerateForestWithDensity(double density) {
-	size_t trees = static_cast<size_t>(_Queue.size() * (density + 0.05));
+	size_t trees = static_cast<size_t>(_Queue.size() * density);
 	size_t initialSize = Objects.size();
 	for (size_t i = 0; i < trees; ++i) {
 		int tileIndex = rand() % static_cast<int>(_Queue.size());

@@ -414,11 +414,12 @@ private:
 	int _MinTrim = 1;
 	static const int _MaxAdditionalTrim = 2;
 	static const int _LakesToRoadsSpawnDist = 1;
-	static const int _WaterDirtToForestSpawnDist = 2;
+	static const int _WaterDirtToForestSpawnDist = 1;
 	static const int _JunctionChance = 70;
 	static const int _RoadThickness = 1;
 	static const int _MaxJunctionDistanceForRoad = 15;
-	static const int _MinForestTiles = 10;
+	static const int _MinForestTiles = 4;
+	static const int _MinDenseForestTiles = 15;
 	static const int _MinPixelDistanceBetweenTrees = 30;
 	static const int _FlowersCntMultiplier = 5;
 	static const int _RockNearWaterChance = 10;
