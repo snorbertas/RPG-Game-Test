@@ -635,8 +635,7 @@ void Map::GenerateNature() {
 		int y = _Queue[i].second;
 		if (_Dist[x][y] != 2)
 			break;
-		int chance = 10;
-		if (rand() % chance != 0)
+		if (rand() % _RockNearWaterChance != 0)
 			continue;
 		bool waterNear = false;
 		for (int j = -2; j <= 2; ++j) {
