@@ -73,7 +73,7 @@ void NPC::HandleAI(Game* g) {
 	// Aggresion
 	if ((path.current_node > 1 || idle) && PlayerInRange(g->pl)) {
 		// Findpath towards player
-		path = FindPath(g->map, GetNodePosition(), g->pl.GetNodePosition(), 10);
+		path = FindPath(g->map, GetNodePosition(), g->pl.GetNodePosition(), 20);
 		idle = false;
 	}
 

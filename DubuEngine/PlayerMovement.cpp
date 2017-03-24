@@ -304,6 +304,16 @@ void HandlePlayerKeyboardMovementLogic(Game* g) {
 	}
 }
 
+bool CursorOnPlayer(Game* g) {
+	int cursor_x = g->pos_x - g->camera.x;
+	int cursor_y = g->pos_y - g->camera.y;
+	if (collide(CollisionBox(g->pl.x, g->pl.y, g->pl.w, g->pl.h),
+		CollisionBox(cursor_x, cursor_y, 1, 1))) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 void HandlePlayerMouseMovementLogic(Game* g) {
 	// There's movement input, update the tick counters
@@ -440,7 +450,7 @@ static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 		HandleDrinking(g, &g->pl);
 		HandlePlayerIdle(g);
 	} else {
-		if (g->mouse_pathing) {
+		if (g->mouse_pathing && !CursorOnPlayer(g)) {
 			HandlePlayerMouseMovementLogic(g);
 		} else if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
 			HandlePlayerKeyboardMovementLogic(g);

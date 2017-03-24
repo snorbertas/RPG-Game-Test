@@ -89,6 +89,7 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 	   Example: mark[3][0] would access the first (of many)
 	   points that are 3 squares away from goal. */
 	vector<vector<Node>> mark;
+	mark.reserve((size_t)max_distance + 1);
 
 	// Add the goal node(s) to marks
 	vector<Node> goal_marks;
@@ -158,6 +159,9 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 		// Increment distance for next loop
 		++distance;
 	}
+
+	// If a start was not found, return an empty path
+	if (!marked_start) return Path();
 
 	/* Clear the last distance in vector since we don't need
 	   it to connect to the start */
