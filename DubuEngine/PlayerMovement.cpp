@@ -7,12 +7,6 @@
 #include "PacketHandler.h"
 #include "Pathing.h"
 
-
-void HandlePlayerMousePathing(Game* g) {
-	/* TODO: this function will generate player movement
-	at a specific angle relative to mouse_position */
-}
-
 void HandleStamina(Game* g) {
 	// Correct the velocity
 	if (g->keys.sprint) {
@@ -196,7 +190,7 @@ void HandlePlayerIdle(Game* g) {
 	}
 }
 
-void HandlePlayerMovementLogic(Game* g) {
+void HandlePlayerKeyboardMovementLogic(Game* g) {
 	// There's movement input, update the tick counters
 	g->pl.ticks_left_move--;
 	g->pl.ticks_left_anim--;
@@ -310,6 +304,124 @@ void HandlePlayerMovementLogic(Game* g) {
 	}
 }
 
+
+void HandlePlayerMouseMovementLogic(Game* g) {
+	// There's movement input, update the tick counters
+	g->pl.ticks_left_move--;
+	g->pl.ticks_left_anim--;
+
+	// Time to mobilize
+	if (g->pl.ticks_left_move <= 0) {
+		// Reset ticks
+		g->pl.ticks_left_move = g->pl.ticks_to_move;
+
+		// Find hypotenuse
+		int cursor_x = g->pos_x - g->camera.x;
+		int cursor_y = g->pos_y - g->camera.y;
+		double player_x = g->pl.x + (Map::TILE_SIZE / 2);
+		double player_y = g->pl.y + (Map::TILE_SIZE / 2);
+		double distance_x = (cursor_x - player_x);
+		double distance_y = (cursor_y - player_y);
+		if (distance_x < 0) distance_x *= -1;
+		if (distance_y < 0) distance_y *= -1;
+		double hypotenuse = fabs(sqrt(pow(distance_x, 2) + pow(distance_y, 2)));
+
+		// x/y distances (signed)
+		double x_dist = player_x - cursor_x;
+		double y_dist = player_y - cursor_y;
+
+		// Invert
+		if (y_dist < 0) hypotenuse *= -1;
+
+		// Spooky trigonometry
+		const long double PI = acos(-1.0);
+		double ratio = 0.0;
+		if (hypotenuse != 0) {
+			ratio = -x_dist / hypotenuse;
+		}
+		int angle = (asin(ratio) * 180.0) / PI;
+		if (y_dist < 0) angle += 180;
+
+		// Use the angle to decide how much compound velocity is used in movement
+		if (angle < 0) angle *= -1;
+		while (angle > 90) angle -= 90;
+		angle -= 45;
+		if (angle < 0) angle *= -1;
+		ratio = 1.0 - ((double)angle / 45.0);
+
+		// Calculate velocities
+		double compound_vel = ((g->pl.velocity / sqrt(2)) * 2) - g->pl.velocity;
+		compound_vel *= ratio;
+		double mov_x = g->pl.velocity + compound_vel;
+		double mov_y = g->pl.velocity + compound_vel;
+
+		// Calculate distance ratios
+		mov_x = (mov_x / (distance_x + distance_y)) * -x_dist;
+		mov_y = (mov_y / (distance_x + distance_y)) * -y_dist;
+
+		// Change facing direction
+		if (mov_x > 0) g->pl.facing = Player::FacingRight;
+		if (mov_x < 0) g->pl.facing = Player::FacingLeft;
+		if (mov_y > g->pl.velocity * 0.75) g->pl.facing = Player::FacingDown;
+		if (mov_y < -g->pl.velocity * 0.75) g->pl.facing = Player::FacingUp;
+
+		// Update player's coordinates
+		if (!PlayerMoveCollides(g->pl, g->map, mov_x, 0)) {
+			g->pl.x += mov_x;
+		} else {
+			// Fix facing direction since we cant move in mov_x direction
+			if (mov_y > 0) g->pl.facing = Player::FacingDown;
+			if (mov_y < 0) g->pl.facing = Player::FacingUp;
+		}
+		if (!PlayerMoveCollides(g->pl, g->map, 0, mov_y)) {
+			g->pl.y += mov_y;
+		} else {
+			// Fix facing direction since we cant move in mov_y direction
+			if (mov_x > 0) g->pl.facing = Player::FacingRight;
+			if (mov_x < 0) g->pl.facing = Player::FacingLeft;
+		}
+
+		using EType = MapObjectInfo::EMapObjectType;
+		// Check collision with idle grass for animation
+		for (auto& obj : g->map.GrassObjects) {
+			if (obj->SpriteId == EObjectSpriteGrass_0) {
+				// Check collision
+				CollisionBox grass(obj->x + 8, obj->y + 8, 56, 56);
+				CollisionBox player(g->pl.x, g->pl.y, g->pl.w, g->pl.h);
+
+				// Adjust the player box
+				player.x += 28;
+				player.y += 56;
+				player.w = 8;
+				player.h = 8;
+
+				// Animate if colliding
+				if (collide(grass, player)) {
+					obj->SpriteId = EObjectSpriteGrass_1;
+					obj->AnimTimer = SecondsToTicks(0.3);
+				}
+			}
+		}
+	}
+
+	// Animation
+	if (g->pl.ticks_left_anim <= 0) {
+		// Update the animation
+		UpdatePlayerMovementSprite(g->pl);
+		g->pl.ticks_left_anim = g->pl.ticks_to_anim;
+	}
+
+	// Multiplayer (if either timer got reset)
+	if (g->connected) {
+		if (g->pl.ticks_left_anim == g->pl.ticks_to_anim ||
+			g->pl.ticks_left_move == g->pl.ticks_to_move) {
+			// Add a packet to queue concerning our current state
+			QueueMovementPacket(g);
+		}
+	}
+
+}
+
 /* ============================= Event Functions ==========================
 *		Used according to the event triggered. (Do NOT define in header)
 *			- Game ticks
@@ -328,9 +440,10 @@ static void Tick(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 		HandleDrinking(g, &g->pl);
 		HandlePlayerIdle(g);
 	} else {
-		if(g->mouse_pathing) HandlePlayerMousePathing(g);
-		if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
-			HandlePlayerMovementLogic(g);
+		if (g->mouse_pathing) {
+			HandlePlayerMouseMovementLogic(g);
+		} else if (g->keys.right || g->keys.left || g->keys.up || g->keys.down) {
+			HandlePlayerKeyboardMovementLogic(g);
 		} else {
 			HandlePlayerIdle(g);
 		}

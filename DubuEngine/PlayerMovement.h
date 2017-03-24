@@ -1,8 +1,6 @@
 #pragma once
 #include "DEEvents.h"
 
-bool TryPathPlayerWithMouse(Game* g);
-
 int RegisterPlayerMovementEvents(TimerEventFunction* t, MouseEventFunction* c, KeyboardEventFunction* p);
 
 /* ==================== HandlePlayerMovementKeyBinds ======================
