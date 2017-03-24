@@ -15,7 +15,7 @@ void HandleStamina(Game* g) {
 			g->pl.ticks_to_anim = g->pl.base_ticks_to_anim - 1;
 
 			// If player attempting to move
-			if (g->keys.left || g->keys.right || g->keys.up || g->keys.down) {
+			if (g->keys.left || g->keys.right || g->keys.up || g->keys.down || g->mouse_pathing) {
 				g->pl.stamina_left--;
 				g->gfx_dirt.push_back(DirtParticle(g->pl.x + (rand() % g->pl.w), g->pl.y + g->pl.h));
 				g->pl.sprinting = true;

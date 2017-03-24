@@ -10,8 +10,10 @@ public:
 	bool operator!=(const Node& n) { return (!(x == n.x && y == n.y)); }
 	Node() {}
 	Node(int new_x, int new_y) : x(new_x), y(new_y) {}
+	Node(int new_x, int new_y, Node* new_last_node) : x(new_x), y(new_y), last_node(new_last_node) {}
 	int x;
 	int y;
+	Node* last_node = NULL;
 };
 
 enum NodeState { Unexplored = -2, Unpathable = -1 };

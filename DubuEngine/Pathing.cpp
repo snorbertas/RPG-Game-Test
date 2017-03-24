@@ -135,7 +135,7 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 
 								// Mark it
 								matrix[xc][yc] = distance;
-								this_distance_marks.push_back(Node(xc, yc));
+								this_distance_marks.push_back(Node(xc, yc, &mark[distance - 1][i]));
 							} else {
 
 								// Mark as unpathable
@@ -185,6 +185,11 @@ Path FindPath(Map& map, Node start, Node goal, int max_distance) {
 		bool found_a_node = false;
 		for (size_t j = 0; j < mark[i].size(); ++j) {
 			Node next_node = mark[i][j];
+
+			// Quick check if this node is connected
+			if (current_node.last_node != NULL)
+				if (*current_node.last_node != next_node) break;
+
 			// First try a straight turn, then diagonal
 			if (next_node.x == x - 1 && next_node.y == y ||
 				next_node.x == x + 1 && next_node.y == y ||
