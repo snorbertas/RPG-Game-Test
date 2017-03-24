@@ -55,7 +55,7 @@ void Map::GenerateRandomMapWithAppropriateNeighbours() {
 
 	GenerateForest();
 
-	GenerateGreenery();
+	GenerateNature();
 
 	for (int i = 0; i < MAP_SIZE_X; ++i) {
 		for (int j = 0; j < MAP_SIZE_Y; ++j) {
@@ -74,7 +74,6 @@ void Map::TrimMap() {
 	for (size_t i = 0; i < _Queue.size(); ++i) {
 		AdjustWaterSides(_Queue[i].first, _Queue[i].second);
 	}
-	int a = 3;
 }
 
 void Map::TrimMapBorder(int xStart, int yStart, int xMoveDirection, int yMoveDirection, int xTrimDirection, int yTrimDirection) {
@@ -322,7 +321,7 @@ void Map::BFSMarkTiles(int maxDist) {
 		int x = _Queue[i].first;
 		int y = _Queue[i].second;
 		int d = _Dist[x][y];
-		if (d == _LakesToRoadsSpawnDist)
+		if (d == maxDist)
 			break;
 
 		for (size_t j = 0; j < _NeighbourWayCnt; ++j) {
@@ -608,23 +607,51 @@ int Map::ViewForestPlace(int xs, int ys) {
 	return static_cast<int>(_Queue.size());
 }
 
-void Map::GenerateGreenery() {
+void Map::GenerateNature() {
+	// Generating flowers
 	_Queue.clear();
 	for (int i = 0; i < MAP_SIZE_X; ++i)
 		for (int j = 0; j < MAP_SIZE_Y; ++j)
 			if (TilesInfo::GetSubstanceBySpriteId(tile[i][j]) == TilesInfo::GRASS)
 				_Queue.push_back(std::make_pair(i, j));
-	if (_Queue.size() == 0)
-		return ;
-	int flowerCnt = static_cast<int>(sqrt(double(_Queue.size()))) * _FlowersCntMultiplier;
-	int size = static_cast<int>(_Queue.size());
-	for (int i = 0; i < flowerCnt; ++i) {
-		int tileInd = rand() % size;
-		int x = _Queue[tileInd].first;
-		int y = _Queue[tileInd].second;
-		x = x * TILE_SIZE + (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
-		y = y * TILE_SIZE - (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
-		Objects.push_back(MapObjectInfo::GenerateFlower(x, y));
+	if (_Queue.size() != 0) {
+		int flowerCnt = static_cast<int>(sqrt(double(_Queue.size()))) * _FlowersCntMultiplier;
+		int size = static_cast<int>(_Queue.size());
+		for (int i = 0; i < flowerCnt; ++i) {
+			int tileInd = rand() % size;
+			int x = _Queue[tileInd].first;
+			int y = _Queue[tileInd].second;
+			x = x * TILE_SIZE + (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
+			y = y * TILE_SIZE + (rand() % (TILE_SIZE / 2) - (TILE_SIZE / 4));
+			Objects.push_back(MapObjectInfo::GenerateFlower(x, y));
+		}
+	}
+
+	// Generating rocks
+	BFSInitWaterDirt();
+	BFSMarkTiles(2);
+	for (int i = (int) _Queue.size() - 1; i >= 0; --i) {
+		int x = _Queue[i].first;
+		int y = _Queue[i].second;
+		if (_Dist[x][y] != 2)
+			break;
+		int chance = 10;
+		if (rand() % chance != 0)
+			continue;
+		bool waterNear = false;
+		for (int j = -2; j <= 2; ++j) {
+			for (int k = -2; k <= 2; ++k) {
+				if (abs(j) + abs(k) > 2)
+					continue;
+				if (InMap(x + j, y + k))
+					waterNear |= (TilesInfo::GetSubstanceBySpriteId(tile[x + j][y + k]) == TilesInfo::WATER);
+			}
+		}
+		if (!waterNear)
+			continue;
+		x = x * TILE_SIZE + (rand() % ((2 * TILE_SIZE) / 3) - (TILE_SIZE / 3));
+		y = y * TILE_SIZE + (rand() % ((2 * TILE_SIZE) / 3) - (TILE_SIZE / 3));
+		Objects.push_back(MapObjectInfo::GenerateRock(x, y));
 	}
 }
 

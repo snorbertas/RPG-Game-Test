@@ -364,10 +364,10 @@ private:
 	 */
 		int ViewForestPlace(int xs, int ys);
 
-	/* ======================== GenerateGreenery ========================
-	 *	Generates additional greenery around the map
+	/* ========================= GenerateNature =========================
+	 *	Generates additional nature objects around the map
 	 */
-		void GenerateGreenery();
+		void GenerateNature();
 		
 	/* ============================= InMap ==============================
 	 *	Checks whether point is within map or not

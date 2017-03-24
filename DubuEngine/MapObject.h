@@ -97,10 +97,10 @@ public:
 	public:
 		int x = 0;
 		int y = 0;
-		int w = 64; // sprite width
-		int h = 64; // sprite width
+		int w = 64;			// sprite width
+		int h = 64;			// sprite height
 		double Distance = 0;
-		int ID; // for multi player objects
+		int ID;				// for multi player objects
 		int AnimTimer = -1;	// -1 = Disabled, 0 = Done, 0 > Frames left
 		EObjectSprite SpriteId;
 		EMapObjectType Type;
@@ -113,6 +113,7 @@ public:
 	static MapObjectInfo::MapObject GeneratePeePuddle(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateTree(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateFlower(int x = 0, int y = 0);
+	static MapObjectInfo::MapObject GenerateRock(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateLocalPlayer(int x = 0, int y = 0);
 	static MapObjectInfo::MapObject GenerateMultiPlayer(int x = 0, int y = 0, int id = -1);
 	static MapObjectInfo::MapObject GenerateNPC(int x = 0, int y = 0, int id = -1);

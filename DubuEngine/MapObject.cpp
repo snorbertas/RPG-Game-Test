@@ -224,6 +224,11 @@ MapObjectInfo::MapObject MapObjectInfo::GenerateFlower(int x, int y) {
 	return GenerateObjectByType(static_cast<EMapObjectType>(index), x, y);
 }
 
+MapObjectInfo::MapObject MapObjectInfo::GenerateRock(int x, int y) {
+	int index = RockLowestID + (rand() % (RockHighestID - RockLowestID + 1));
+	return GenerateObjectByType(static_cast<EMapObjectType>(index), x, y);
+}
+
 MapObjectInfo::MapObject MapObjectInfo::GenerateLocalPlayer(int x, int y) {
 	return GenerateObjectByType(EMapObjectPlayer_L, x, y);
 }
