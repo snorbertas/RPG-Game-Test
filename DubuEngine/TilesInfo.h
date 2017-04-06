@@ -9,21 +9,53 @@ private:
 	TilesInfo() {}
 
 public:
-	enum ESubstance {GRASS = 0, DIRT, WATER, ESUBSSTANCE_SIZE};
-	struct Tile {
+	enum ESubstance {GRASS = 0, DIRT, WATER_LAKE, WATER_SEA, ESUBSSTANCE_SIZE};
+	class Tile {
+	public:
 		Tile() : SpriteId(0) {
 			for (int i = 0; i < 9; ++i)
 				Side[i] = GRASS;
 		}
-		bool operator == (const Tile& t) {
+
+	public:
+		bool operator== (const Tile& t) {
 			for (size_t i = 0; i < 9; ++i)
 				if (Side[i] != t.Side[i])
 					return false;
 			return true;
 		}
-		ESubstance GetSubstance() const {
+
+	private:
+		bool HasSubstance(ESubstance substance) const {
+			for (size_t i = 0; i < 9; ++i)
+				if (Side[i] == substance)
+					return true;
+			return false;
+		}
+	public:
+		ESubstance GetMainSubstance() const {
 			return Side[4];
 		}
+		bool HasGrass() const {
+			return HasSubstance(GRASS);
+		}
+		bool HasDirt() const {
+			return HasSubstance(DIRT);
+		}
+		bool HasWater() const {
+			return HasSubstance(WATER_LAKE) || HasSubstance(WATER_SEA);
+		}
+		bool HasGrassMainSubstance() const {
+			return GetMainSubstance() == GRASS;
+		}
+		bool HasDirtMainSubstance() const {
+			return GetMainSubstance() == DIRT;
+		}
+		bool HasWaterMainSubstance() const {
+			return GetMainSubstance() == WATER_LAKE || GetMainSubstance() == WATER_SEA;
+		}
+
+	public:
 		ESubstance Side[9];
 		int SpriteId;
 	};
@@ -39,23 +71,24 @@ public:
 		ESubstance OuterSubstance;
 	};
 public:
-	static const size_t BIOM_CNT = 3;
+	static const size_t BIOM_CNT = 4;
 	static const Biom Bioms[BIOM_CNT];
 	static std::vector<Tile> BiomTiles[BIOM_CNT];
+	static const size_t BIOM_BUILDING_MAP_CNT = 3;
+	static const size_t BUILDING_MAP_TILES_CNT = 55;
 
 public:
 	static void AdjustTilesInfo();
 	static int GetAppropriateTile(int leftTile, int upTile, int badTile = -1);
-	static int GetSpriteIdByTile(const Tile& tileWithoutSprite);
+	static int GetSpriteIdByTile(const Tile& tile);
 	static const Tile& GetTileBySpriteId(int spriteId);
-	static ESubstance GetSubstanceBySpriteId(int spriteId);
+	static ESubstance GetMainSubstanceBySpriteId(int spriteId);
 private:
 	static void AdjustNeighboursLeftRight(const Tile& l, const Tile& r);
 	static void AdjustNeighboursUpDown(const Tile& u, const Tile& d);
 
-public:
-	enum {TILE_NEIGHBOUR_LEFT = 0, TILE_NEIGHBOUR_RIGHT, TILE_NEIGHBOUR_UP, TILE_NEIGHBOUR_DOWN, TILE_NEIGHBOUR_SIZE};
-	static std::vector<int> TileNeighbours[TILE_NEIGHBOUR_SIZE][MAX_TILE_SPRITES];
 private:
+	enum {TILE_NEIGHBOUR_LEFT = 0, TILE_NEIGHBOUR_RIGHT, TILE_NEIGHBOUR_UP, TILE_NEIGHBOUR_DOWN, TILE_NEIGHBOUR_SIZE};
+	static std::vector<int> TileNeighbours[TILE_NEIGHBOUR_SIZE][BUILDING_MAP_TILES_CNT];
 	static std::vector<int> TempAppropriateTiles;
 };

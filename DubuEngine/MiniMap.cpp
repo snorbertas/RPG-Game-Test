@@ -40,7 +40,7 @@ void TMiniMap::Create(Game* g, SpriteStruct* sprites) {
 }
 
 void TMiniMap::DrawTile(SpriteStruct* sprites, int x, int y, int type) {
-	auto substance = TilesInfo::GetSubstanceBySpriteId(type);
+	auto substance = TilesInfo::GetMainSubstanceBySpriteId(type);
 	int minimapSpriteId = -1;
 	switch (substance) {
 	case TilesInfo::GRASS:
@@ -49,7 +49,10 @@ void TMiniMap::DrawTile(SpriteStruct* sprites, int x, int y, int type) {
 	case TilesInfo::DIRT:
 		minimapSpriteId = 1;
 		break;
-	case TilesInfo::WATER:
+	case TilesInfo::WATER_LAKE:
+		minimapSpriteId = 2;
+		break;
+	case TilesInfo::WATER_SEA:
 		minimapSpriteId = 2;
 		break;
 	default:

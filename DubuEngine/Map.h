@@ -227,21 +227,21 @@ private:
 	 *	@param yStart start cell y
 	 *	@param xMoveDirection strip start move direction x
 	 *	@param yMoveDirection strip start move direction y
-	 *	@param xTrimDirection trim strip direction x
-	 *	@param yTrimDirection trim strip direction y
+	 *	@param xTrimDirection trim stripe direction x
+	 *	@param yTrimDirection trim stripe direction y
 	 */
 		void TrimMapBorder(int xStart, int yStart, int xMoveDirection, int yMoveDirection, int xTrimDirection, int yTrimDirection);
 
-	/* =========================== TrimStrip ============================
-	 *	Trim strip at the map border
+	/* =========================== TrimStripe ===========================
+	 *	Trim stripe at the map border
 	 *
 	 *	@param xStart start cell x
 	 *	@param yStart start cell y
-	 *	@param xTrimDirection trim strip direction x
-	 *	@param yTrimDirection trim strip direction y
-	 *	@param length strip length
+	 *	@param xTrimDirection trim stripe direction x
+	 *	@param yTrimDirection trim stripe direction y
+	 *	@param length stripe length
 	 */
-		void TrimStrip(int xStart, int yStart, int xTrimDirection, int yTrimDirection, int length);
+		void TrimStripe(int xStart, int yStart, int xTrimDirection, int yTrimDirection, int length);
 		
 	/* ======================== AdjustWaterSides ========================
 	 *	Adjusts water tile sides
@@ -250,6 +250,22 @@ private:
 	 *	@param y y-coordinate of tile patched 
 	 */
 		void AdjustWaterSides(int x, int y);
+
+	/* ============================= SetSea =============================
+	 *	Set sea tiles on the island border
+	 */
+		void SetSea();
+
+	/* ========================== GetSeaBorder ==========================
+	 *	Gets all water tiles from one of the borders of the map
+	 *
+	 *	@param xStart start cell x
+	 *	@param yStart start cell y
+	 *	@param xMoveDirection stripe start move direction x
+	 *	@param yMoveDirection stripe start move direction y
+	 *	@param waterSide side index that should be water
+	 */
+		void GetSeaBorder(int xStart, int yStart, int xMoveDirection, int yMoveDirection, int waterSide);
 
 	/* =========================== BuildRoads ===========================
 	 *	Generates roads from already generated water bioms map
