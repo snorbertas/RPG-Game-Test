@@ -120,6 +120,11 @@ void NPC::HandleAI(Game* g) {
 	} else {
 		idle = true;
 	}
+
+	// Check if we can "kill" player
+	if (collide(CBox(), g->pl.CBox()) && g->game_over_timer == -1) {
+		GameOver(g);
+	}
 }
 
 void NPC::UpdateMovementSprite() {
@@ -256,6 +261,17 @@ void NPC::HandleMovementLogic() {
 		// Update the animation
 		UpdateMovementSprite();
 		ticks_left_anim = ticks_to_anim;
+	}
+}
+
+void SpawnNPC(Game* g, NPC::Type npc_type, int x, int y) {
+	// Push back NPC object onto vector
+	g->npc.push_back(NPC(npc_type, x, y, g->npc.size()));
+	g->npc[g->npc.size() - 1].facing = Player::Facing::FacingDown;
+
+	// Perhaps add some animation here like dark smoke? Random example here:
+	for (int i = 0; i < 10; ++i) {
+		g->gfx_dirt.push_back(DirtParticle(x + (rand() % g->pl.w), y + (rand() % g->pl.h)));
 	}
 }
 

@@ -69,6 +69,11 @@ public:
 	Path path;
 	Node PickRandomDestination(Map& map);
 
+	// Collision
+	CollisionBox CBox() {
+		return CollisionBox(x, y, w, h);
+	}
+
 	// Handles the AI for NPC
 	void HandleAI(Game* g);
 	void HandleMovementLogic();
@@ -76,5 +81,8 @@ public:
 	void UpdateMovementSprite();
 	bool PlayerInRange(Player& p);
 };
+
+// Spawns an NPC
+void SpawnNPC(Game* g, NPC::Type npc_type, int x, int y);
 
 int RegisterNPCEvents(TimerEventFunction* t, MouseEventFunction* c, KeyboardEventFunction* p);

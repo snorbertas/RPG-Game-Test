@@ -62,6 +62,11 @@ public:
 	int w = 64;
 	int h = 64;
 
+	// Collision
+	CollisionBox CBox() {
+		return CollisionBox(x, y, w, h);
+	}
+
 	/* Physics */
 	// Bases
 	int base_velocity = 3;			// Base velocity

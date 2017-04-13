@@ -93,6 +93,9 @@
 		float opacity = 1.0;					// Transperency
 	};
 
+// Game mode
+	enum GameMode {GM_None = -1, GM_BoneHunt, GM_Bonesweeper, GM_Surival };
+
 /* =============================== Game Class =============================
  *		The big, main, scary Game class. Used as the primary object.
  *		This whole game code is orientated around the Game class.
@@ -145,9 +148,10 @@
 			int window_mode;					// Window mode
 			const char* server_ip = DE_CONFIG_IP;	// Server IP address
 			int server_port = 25565;			// Server port
-			bool gameover = false;				// If true, the game is over, different handling
+			int game_over_timer = -1;			// Game-over timer
+			bool game_over = false;				// If true, the game is over, different handling
 			bool allow_input = true;			// Wether input is allowed or not
-			int game_mode = 0;					// Current game mode
+			GameMode game_mode = GameMode::GM_None; // Current game mode
 			int level = 1;						// Current level
 			GameDuration game_duration;			// Game duration object
 			Chat chat;							// Chat object

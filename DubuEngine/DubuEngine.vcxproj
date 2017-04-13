@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DubuEngineServer\DEProtocol.cpp" />
+    <ClCompile Include="BoneHunt.cpp" />
     <ClCompile Include="Butterfly.cpp" />
     <ClCompile Include="Camera.cpp">
       <SubType>Code</SubType>

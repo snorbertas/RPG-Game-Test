@@ -164,6 +164,10 @@ void LoadInterfaces(Game* g){
 	// Interface 30 - Scoreboard
 	NewInterface(&g->Interfaces[INTERFACE_SCORE], NO_SPRITE, (g->BWIDTH / 2) - 210, (g->BHEIGHT / 2) - 300);
 
+	// Interface 40 - Game Over
+	NewInterface(&g->Interfaces[INTERFACE_GAME_OVER], NO_SPRITE, 0, 0);
+	NewButton(&g->Buttons[31], SPRITE_BUTTON_DONE, (g->BWIDTH / 2) - 71, (g->BHEIGHT / 2) - 35, 142, 35, INTERFACE_GAME_OVER);
+
 	// Interface 99 (on-top)
 	temp_x = g->BWIDTH / 2 - 250;
 	temp_y = g->BHEIGHT / 2 - 84;
@@ -277,6 +281,10 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				int w = g->welcome_interface.Width();
 				int h = g->welcome_interface.Height();
 				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, w, h, 0.9);
+			}
+
+			if (i == INTERFACE_GAME_OVER) {
+				DrawRectangle(g, 0, 0, g->BWIDTH, g->BHEIGHT, 55, 0, 0, 0.2);
 			}
 
 			// Loop trough all buttons
@@ -398,16 +406,16 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 						// Calculate dots
 						x += 60;
 						if (g->menu.loading_timer > SecondsToTicks(0.75)) {
-							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map");
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Building Island");
 						}
 						else if (g->menu.loading_timer > SecondsToTicks(0.5)) {
-							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map.");
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Building Island.");
 						}
 						else if (g->menu.loading_timer > SecondsToTicks(0.25)) {
-							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map..");
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Building Island..");
 						}
 						else {
-							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Generating Map...");
+							DrawText(font[0], 255, 255, 255, x, y + 15, ALLEGRO_ALIGN_LEFT, "Building Island...");
 						}
 
 						// Tips
@@ -954,9 +962,12 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 							}
 						}
 					}
-				}
 					break;
-				case 99:
+				}
+				case INTERFACE_GAME_OVER:
+					DrawText(font[7], 0, 0, 0, g->BWIDTH / 2, 220, ALLEGRO_ALIGN_CENTER, "Game Over");
+					break;
+				case INTERFACE_MESSAGE:
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 20, ALLEGRO_ALIGN_CENTER, g->Message1);
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 52, ALLEGRO_ALIGN_CENTER, g->Message2);
 					break;

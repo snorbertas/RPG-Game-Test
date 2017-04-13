@@ -353,7 +353,7 @@ void MainLoop() {
 					g.BHEIGHT += 9 * 4;
 				}
 			}
-		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+		} else if (ev.type == ALLEGRO_EVENT_KEY_DOWN && !g.game_over) {
 			for (int i = 0; i < MAX_EVENT_FUNCTIONS; i++) {
 				if (KeyboardEvents[i] != NULL && g.allow_input == true) {
 					KeyboardEvents[i](&g, ev.keyboard.keycode, false, sample_sfx);
@@ -361,7 +361,7 @@ void MainLoop() {
 			}
 			if(g.allow_input == true) KeyboardFunction(&g, ev.keyboard.keycode, false, sample_sfx, font);
 			g.allow_input = true;
-		} else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
+		} else if (ev.type == ALLEGRO_EVENT_KEY_UP && !g.game_over) {
 			KeyboardFunction(&g, ev.keyboard.keycode, true, sample_sfx);
 		} else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			g.done = true;

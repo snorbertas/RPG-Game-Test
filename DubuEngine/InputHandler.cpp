@@ -217,6 +217,13 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									}
 									done = true;
 									break;
+								case 31: // Done (from game over)
+									g->game_over = false;
+									HideAllInterfaces(g, INTERFACE_MAIN_MENU);
+									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									g->scene = 0;
+									done = true;
+									break;
 								case 39:
 									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
 									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
@@ -343,7 +350,7 @@ void RightClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 	if(!release){
 		if (g->Interfaces[4].visible) g->Interfaces[4].visible = false;
 		if (g->Interfaces[5].visible) g->Interfaces[5].visible = false;
-		if (g->scene == 1) g->mouse_pathing = true; 
+		if (g->scene == 1 && !g->game_over) g->mouse_pathing = true; 
 	} else {
 		g->mouse_pathing = false;
 	}
@@ -761,7 +768,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->map.PopulateButterflies(50);
 
 	// Set everything up
-
+	g->game_mode = GameMode::GM_BoneHunt;
 	NewGame(g);
 	g->weather = Weather(Weather::CloudMode::MODE_GAME);
 	g->pl.x = 3200;

@@ -107,3 +107,19 @@
  */
 	int AddPacketToQueue(Game* g,			// Game pointer
 		Packet* p);							// Packet to add
+
+
+/* ================================ GameOver =============================
+ *		Starts the game-over transition.
+ *
+ *		Used when desired.
+ */
+	void GameOver(Game* g);
+
+
+/* ============================ HandleGameOver ==========================
+ *		Handles game-over timers, etc.
+ *
+ *		Called from HandleGame() function.
+ */
+	void HandleGameOver(Game* g);

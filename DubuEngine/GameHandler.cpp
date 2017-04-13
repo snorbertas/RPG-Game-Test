@@ -9,6 +9,8 @@
 #include "Collision.h"
 #include "Digging.h"
 #include "Peeing.h"
+#include "BoneHunt.h"
+#include "Interfaces.h"
 
 void NewGame(Game* g){
 	g->scene = 1;
@@ -26,6 +28,8 @@ void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
 	HandleMultiplayerMisc(g);
 	HandleButterflies(g);
 	HandleDirtParticles(g);
+	HandleGameOver(g);
+	if (g->game_mode == GameMode::GM_BoneHunt) HandleBoneHunt(g, sample_sfx);
 }
 
 void HandleGamePackets(Game* g) {
@@ -66,7 +70,6 @@ void HandleGameDuration(Game* g) {
 			g->game_duration.seconds = g->game_duration.seconds_start - g->game_duration.seconds;
 			if (g->game_duration.seconds < 0) g->game_duration.seconds = 0;
 		}
-
 
 		// Give 1 minutes for each 60 seconds
 		while (g->game_duration.seconds > 59) {
@@ -131,4 +134,27 @@ int AddPacketToQueue(Game* g, Packet* p) {
 	// Queue is full
 	cout << "Can't keep up with sending packets!\n";
 	return -1;
+}
+
+void GameOver(Game* g) {
+	g->game_over = true;
+	g->mouse_pathing = false;
+	g->keys.left = false;
+	g->keys.right = false;
+	g->keys.up = false;
+	g->keys.down = false;
+	g->keys.sprint = false;
+	HideAllInterfaces(g, INTERFACE_GAME_OVER);
+	g->Interfaces[INTERFACE_GAME_OVER].visible = true;
+	g->Buttons[31].visible = false;
+	g->game_over_timer = SecondsToTicks(1.0);
+}
+
+void HandleGameOver(Game* g) {
+	if (g->game_over_timer > 0) g->game_over_timer--;
+
+	if (g->game_over_timer == 0) {
+		// Enable buttons
+		g->Buttons[31].visible = true;
+	}
 }
