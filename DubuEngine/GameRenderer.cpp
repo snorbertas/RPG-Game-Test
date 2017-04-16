@@ -17,6 +17,7 @@
 #include "Peeing.h"
 #include "Drinking.h"
 #include "Weather.h"
+#include "BoneSweeper.h"
 
 void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render parallax
@@ -41,6 +42,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Sort and render objects
 	g->map.SortPlayerObjects(g);
 	g->map.RenderObjects(g, sprites);
+
+	// Render bonesweeper info
+	RenderKnownBoneSweeperInfo(g, sprites, font);
 
 	// Render butterflies
 	g->map.RenderButterflies(g, sprites);

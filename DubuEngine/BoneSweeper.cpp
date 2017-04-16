@@ -1,11 +1,13 @@
 #include "Game.h"
 #include "BoneSweeper.h"
+#include "ScaledDraw.h"
 
 void SpawnRandomMines(Game* g, int mines, int x, int y, int w, int h) {
 	for (int i = 0; i < mines; ++i) {
 		int spawn_x = x + rand() % w;
 		int spawn_y = y + rand() % h;
 		g->map.zone[spawn_x][spawn_y].BoneSweeperReal = Zone::BoneSweeper::Mine;
+		g->map.zone[spawn_x][spawn_y].BoneSweeperKnown = Zone::BoneSweeper::Mine;
 	}
 }
 
@@ -37,6 +39,62 @@ void CalculateRealBoneSweeper(Game* g) {
 
 				// Mark it
 				g->map.zone[x][y].BoneSweeperReal = (Zone::BoneSweeper)mines;
+				g->map.zone[x][y].BoneSweeperKnown = (Zone::BoneSweeper)mines;
+			}
+		}
+	}
+}
+
+void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
+	for (int x = 0; x < Map::MAP_SIZE_X; ++x) {
+		for (int y = 0; y < Map::MAP_SIZE_Y; ++y) {
+
+			// x/y
+			int draw_x = x * Map::TILE_SIZE;
+			int draw_y = y * Map::TILE_SIZE;
+
+			// Make sure square is within our camera (maybe better to adjust loop size instead)
+			if (draw_x + Map::TILE_SIZE > -g->camera.x && draw_x < -g->camera.x + g->BWIDTH + Map::TILE_SIZE &&
+				draw_y + Map::TILE_SIZE > -g->camera.y && draw_y < -g->camera.y + g->BHEIGHT + Map::TILE_SIZE) {
+
+				// Check this known square
+				Zone::BoneSweeper known = g->map.zone[x][y].BoneSweeperKnown;
+				if (known != Zone::BoneSweeper::None) {
+
+					// Text scale ratios
+					float r_x = (float)g->s_x / (float)g->BWIDTH;
+					float r_y = (float)g->s_y / (float)g->BHEIGHT;
+
+					// Render it
+					if (known == Zone::BoneSweeper::Mine) {
+						// Mine
+						DrawImage(g, sprites->img_interface[SPRITE_FLAG_RED],
+							draw_x + g->camera.x, draw_y + g->camera.y,
+							0, 0.75);
+
+					} else if (known == Zone::BoneSweeper::Maybe) {
+						// Not sure
+						DrawImage(g, sprites->img_interface[SPRITE_FLAG_ORANGE],
+							draw_x + g->camera.x,
+							draw_y + g->camera.y,
+							0, 0.75);
+
+					} else if (known == Zone::BoneSweeper::Tunnel) {
+						// Tunnel (0)
+						DrawText(font[2], 255, 255, 255,
+							draw_x + (Map::TILE_SIZE / 2) + g->camera.x,
+							draw_y + (Map::TILE_SIZE / 2) + g->camera.y - 10,
+							ALLEGRO_ALIGN_CENTER, ".");
+
+					} else {
+						// Touching
+						DrawText(font[2], 255, 255, 255,
+							draw_x + (Map::TILE_SIZE / 2) + g->camera.x,
+							draw_y + (Map::TILE_SIZE / 2) + g->camera.y - 10,
+							ALLEGRO_ALIGN_CENTER, "%i", (int)known);
+
+					}
+				}
 			}
 		}
 	}

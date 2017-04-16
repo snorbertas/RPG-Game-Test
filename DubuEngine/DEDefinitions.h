@@ -38,6 +38,8 @@
 	#define SPRITE_ZONE_MINE 26
 	#define SPRITE_ZONE_FOREIGN 27
 	#define SPRITE_ZONE_FRIENDLY 28
+	#define SPRITE_FLAG_RED 29
+	#define SPRITE_FLAG_ORANGE 30
 
 	//Button Sprites
 	#define SPRITE_BUTTON_STORY 2

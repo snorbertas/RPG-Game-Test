@@ -8,3 +8,5 @@ void SpawnRandomMines(Game* g,
 	int w = 100, int h = 100);
 
 void CalculateRealBoneSweeper(Game* g);
+
+void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font);
