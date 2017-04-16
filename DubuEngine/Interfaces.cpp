@@ -1231,12 +1231,14 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Spawned butterfly");
 		} else if (type == "/sunlight") {
 			g->weather.cycle.sunlight.active = !g->weather.cycle.sunlight.active;
-		} else if (type == "/timer") {
+		}
+		else if (type == "/timer") {
 			args >> g->game_duration.seconds_start;
 			g->game_duration.ticks = 0;
 			if (g->game_duration.seconds_start == 0) {
 				g->game_duration.inverted = false;
-			} else {
+			}
+			else {
 				g->game_duration.inverted = true;
 			}
 		} else if (type == "/megamap") {

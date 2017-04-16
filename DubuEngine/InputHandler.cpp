@@ -18,6 +18,7 @@
 #include "Peeing.h"
 #include "Drinking.h"
 #include "BoneHunt.h"
+#include "BoneSweeper.h"
 
 using namespace std;
 
@@ -81,13 +82,6 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									//Fade(g, 0);
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
 									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
-									/*NewGame(g);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
-									g->Interfaces[INTERFACE_CHAT].visible = true;
-									g->Interfaces[INTERFACE_RADAR].visible = true;
-									g->Interfaces[INTERFACE_STATS].visible = true;
-									g->Interfaces[INTERFACE_SCORE].visible = true;
-									g->Interfaces[INTERFACE_MINI_MAP].visible = true;*/
 									done = true;
 									break;
 								case 1: // Options (Main Menu)
@@ -107,6 +101,9 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 4: // Play bonesweeper
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
+									g->game_mode = GameMode::GM_Bonesweeper;
+									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 									break;
 								case 5: // Resolution drop-down
@@ -183,10 +180,6 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								case 15: // Okay
 									HideAllInterfaces(g, 0);
 									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
-									/*g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
-									g->Interfaces[INTERFACE_OPTIONS].visible = false;
-									g->Interfaces[4].visible = false;
-									g->Interfaces[5].visible = false;*/
 									done = true;
 									break;
 								case 16: // Okay (Message Interface)
@@ -331,6 +324,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								int clicked_level = j - 39;
 								if (clicked_level >= 1 && clicked_level <= 30) {
 									g->level = clicked_level;
+									g->game_mode = GameMode::GM_BoneHunt;
 									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
 									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
@@ -741,8 +735,14 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	double current_time = al_get_time();
 
 	// Generate map
-	g->map.seed = BoneHuntSeedAndTrim(g->level).first;
-	g->map.SetTrim(BoneHuntSeedAndTrim(g->level).second);
+	if (g->game_mode == GameMode::GM_BoneHunt) {
+		g->map.seed = BoneHuntSeedAndTrim(g->level).first;
+		g->map.SetTrim(BoneHuntSeedAndTrim(g->level).second);
+	} else if (g->game_mode == GameMode::GM_Bonesweeper){
+		g->map.seed = rand() % ((2 ^ 32) - 1);
+		SpawnRandomMines(g, 2500);
+		CalculateRealBoneSweeper(g);
+	}
 	g->map.ChangeForestMode(1);
 	g->map.Generate(1);
 
@@ -768,7 +768,6 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->map.PopulateButterflies(50);
 
 	// Set everything up
-	g->game_mode = GameMode::GM_BoneHunt;
 	NewGame(g);
 	g->weather = Weather(Weather::CloudMode::MODE_GAME);
 	g->pl.x = 3200;

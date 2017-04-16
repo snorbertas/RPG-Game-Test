@@ -18,9 +18,9 @@ public:
 	// -2 = None, -1 = Local Player, 0 and higher are indexes for multiplayer
 	int Owner = -2;
 
-	// For bone sweeper
-	enum BoneSweeper { None, Tunnel, Mine,
-		TouchingOne, TouchingTwo, TouchingThree, TouchingFour, TouchingFive, TouchingSix, TouchingSeven, TouchingEight };
+	// For bone sweeper (really important that Tunnel = 0, TouchingOne = 1 up to TouchingEight = 8)
+	enum BoneSweeper { None = -2, Mine, Tunnel = 0,
+		TouchingOne = 1, TouchingTwo, TouchingThree, TouchingFour, TouchingFive, TouchingSix, TouchingSeven, TouchingEight };
 
 	// Real value for this zone
 	BoneSweeper BoneSweeperReal = None;

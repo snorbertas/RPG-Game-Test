@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\DubuEngineServer\DEProtocol.cpp" />
     <ClCompile Include="BoneHunt.cpp" />
+    <ClCompile Include="BoneSweeper.cpp" />
     <ClCompile Include="Butterfly.cpp" />
     <ClCompile Include="Camera.cpp">
       <SubType>Code</SubType>
@@ -64,6 +65,7 @@
   <ItemGroup>
     <ClInclude Include="..\DubuEngineServer\DEProtocol.h" />
     <ClInclude Include="BoneHunt.h" />
+    <ClInclude Include="BoneSweeper.h" />
     <ClInclude Include="Butterfly.h" />
     <ClInclude Include="Camera.h">
       <SubType>Header</SubType>
