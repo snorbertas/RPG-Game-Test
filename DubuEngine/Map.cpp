@@ -1422,22 +1422,32 @@ void Map::MarkTerritory(int cx, int cy, int owner, int radius) {
 	int size_w = (radius * 2) + 1;
 	int size_h = (radius * 2) + 1;
 
-	for (int x = 0; x < size_w; x++) {
-		for (int y = 0; y < size_h + 1; y++) {
-			// Decide if we need to mark this zone
-			int x_space = (size_w - ((y * 2) + 1)) / 2;
-			if (y > radius) x_space *= -1;
+	if (radius > 0) {
+		for (int x = 0; x < size_w; x++) {
+			for (int y = 0; y < size_h + 1; y++) {
+				// Decide if we need to mark this zone
+				int x_space = (size_w - ((y * 2) + 1)) / 2;
+				if (y > radius) x_space *= -1;
 
-			if (x >= x_space && x < size_w - x_space) {
-				// Check if it's a valid zone
-				int x_real = cx - radius + x;
-				int y_real = cy - radius + y;
-				if (x_real >= 0 && x_real < Map::MAP_SIZE_X) {
-					if (y_real >= 0 && y_real < Map::MAP_SIZE_Y) {
-						// Mark it
-						zone[x_real][y_real].Mark(owner);
+				if (x >= x_space && x < size_w - x_space) {
+					// Check if it's a valid zone
+					int x_real = cx - radius + x;
+					int y_real = cy - radius + y;
+					if (x_real >= 0 && x_real < Map::MAP_SIZE_X) {
+						if (y_real >= 0 && y_real < Map::MAP_SIZE_Y) {
+							// Mark it
+							zone[x_real][y_real].Mark(owner);
+						}
 					}
 				}
+			}
+		}
+	} else {
+		// Check if it's a valid zone
+		if (cx >= 0 && cx < Map::MAP_SIZE_X) {
+			if (cy >= 0 && cy < Map::MAP_SIZE_Y) {
+				// Mark it
+				zone[cx][cy].Mark(owner);
 			}
 		}
 	}
@@ -1445,7 +1455,7 @@ void Map::MarkTerritory(int cx, int cy, int owner, int radius) {
 	// Recalculate territory
 	bool found_territory = false;
 	for (size_t i = 0; i < territory.size(); i++) {
-		if (territory[i].owner = owner) {
+		if (territory[i].owner == owner) {
 			// Found a matching territory
 			found_territory = true;
 			territory[i].Recalculate(this, owner);

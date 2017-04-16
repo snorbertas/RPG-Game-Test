@@ -192,7 +192,7 @@ public:
 	/* ========================= MarkTerritory ==========================
 	 *	Marks zone blocks withing a radius around x/y center for the correct owner
 	 */
-		void MarkTerritory(int cx, int cy, int owner, int radius);
+		void MarkTerritory(int cx, int cy, int owner, int radius = 0);
 
 	/* ========================= IsPlayerHome ===========================
 	 *	Checks whether the specified player is in his own zone

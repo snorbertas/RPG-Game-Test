@@ -6,12 +6,30 @@
 void StartPeeing(Game* g, Player* p) {
 	// Local player
 	if (p->pID == -1) {
-		p->peeing = true;
-		p->pee_timer = p->pee_duration;
-		--p->pee_ammo;
+		if (g->game_mode == GameMode::GM_BoneHunt) {
+			p->peeing = true;
+			p->pee_timer = p->pee_duration;
+			--p->pee_ammo;
 
-		// Queue packet to server
-		QueueActionsPacket(g);
+			// Queue packet to server
+			QueueActionsPacket(g);
+		} else if(g->game_mode == GameMode::GM_Bonesweeper){
+			int x = round(p->x / Map::TILE_SIZE);
+			int y = round(p->y / Map::TILE_SIZE);
+
+			if (g->map.zone[x][y].BoneSweeperKnown == Zone::BoneSweeper::None) {
+				// Mark as red flag
+				g->map.zone[x][y].BoneSweeperKnown = Zone::BoneSweeper::Mine;
+
+			} else if (g->map.zone[x][y].BoneSweeperKnown == Zone::BoneSweeper::Mine) {
+				// Mark as yellow flag
+				g->map.zone[x][y].BoneSweeperKnown = Zone::BoneSweeper::Maybe;
+
+			} else if (g->map.zone[x][y].BoneSweeperKnown == Zone::BoneSweeper::Maybe) {
+				// Delete the flag
+				g->map.zone[x][y].BoneSweeperKnown = Zone::BoneSweeper::None;
+			}
+		}
 	}
 }
 

@@ -7,7 +7,6 @@ void SpawnRandomMines(Game* g, int mines, int x, int y, int w, int h) {
 		int spawn_x = x + rand() % w;
 		int spawn_y = y + rand() % h;
 		g->map.zone[spawn_x][spawn_y].BoneSweeperReal = Zone::BoneSweeper::Mine;
-		g->map.zone[spawn_x][spawn_y].BoneSweeperKnown = Zone::BoneSweeper::Mine;
 	}
 }
 
@@ -39,7 +38,6 @@ void CalculateRealBoneSweeper(Game* g) {
 
 				// Mark it
 				g->map.zone[x][y].BoneSweeperReal = (Zone::BoneSweeper)mines;
-				g->map.zone[x][y].BoneSweeperKnown = (Zone::BoneSweeper)mines;
 			}
 		}
 	}
@@ -74,7 +72,7 @@ void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** f
 
 					} else if (known == Zone::BoneSweeper::Maybe) {
 						// Not sure
-						DrawImage(g, sprites->img_interface[SPRITE_FLAG_ORANGE],
+						DrawImage(g, sprites->img_interface[SPRITE_FLAG_YELLOW],
 							draw_x + g->camera.x,
 							draw_y + g->camera.y,
 							0, 0.75);
@@ -98,4 +96,20 @@ void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** f
 			}
 		}
 	}
+
+	// Also render an outline for square on which player is standing
+	int square_x = round(g->pl.x / Map::TILE_SIZE) * Map::TILE_SIZE;
+	int square_y = round(g->pl.y / Map::TILE_SIZE) * Map::TILE_SIZE;
+	DrawOutline(g,
+		square_x + g->camera.x, square_y + g->camera.y,
+		Map::TILE_SIZE, Map::TILE_SIZE,
+		0, 64, 0, 2.0, 0.2);
+
+	// Plus for mouse cursor (just an idea, more use later)
+	square_x = round((-g->camera.x + g->pos_x) / Map::TILE_SIZE) * Map::TILE_SIZE;
+	square_y = round((-g->camera.y + g->pos_y) / Map::TILE_SIZE) * Map::TILE_SIZE;
+	DrawOutline(g,
+		square_x + g->camera.x, square_y + g->camera.y,
+		Map::TILE_SIZE, Map::TILE_SIZE,
+		64, 0, 0, 2.0, 0.2);
 }
