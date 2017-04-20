@@ -4,9 +4,10 @@
 #include "GameHandler.h"
 #include "PacketHandler.h"
 #include "Map.h"
+#include "BoneSweeper.h"
 
 void StartDigging(Game* g, Player* p) {
-	if (g->map.PlayerIsHome(p)) {
+	if (g->map.PlayerIsHome(p) || g->game_mode == GameMode::GM_BoneSweeper) {
 		// Local player
 		if (p->pID == -1) {
 			p->digging = true;
@@ -44,6 +45,11 @@ void HandleDigging(Game * g, Player* p) {
 						break;
 					}
 				}
+			}
+
+			// If bonesweeper
+			if (g->game_mode == GameMode::GM_BoneSweeper) {
+				DigBoneSweeper(g, g->pl.MapX(), g->pl.MapY());
 			}
 		}
 	}

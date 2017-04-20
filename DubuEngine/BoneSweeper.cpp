@@ -1,12 +1,15 @@
 #include "Game.h"
 #include "BoneSweeper.h"
 #include "ScaledDraw.h"
+#include "GameHandler.h"
 
 void SpawnRandomMines(Game* g, int mines, int x, int y, int w, int h) {
 	for (int i = 0; i < mines; ++i) {
 		int spawn_x = x + rand() % w;
 		int spawn_y = y + rand() % h;
-		g->map.zone[spawn_x][spawn_y].BoneSweeperReal = Zone::BoneSweeper::Mine;
+		if (!TileIsWater(g->map.tile[spawn_x][spawn_y])) {
+			g->map.zone[spawn_x][spawn_y].BoneSweeperReal = Zone::BoneSweeper::Mine;
+		}
 	}
 }
 
@@ -15,8 +18,9 @@ void CalculateRealBoneSweeper(Game* g) {
 	for (int x = 0; x < Map::MAP_SIZE_X; ++x) {
 		for (int y = 0; y < Map::MAP_SIZE_Y; ++y) {
 
-			// Make sure its not a mine
-			if (g->map.zone[x][y].BoneSweeperReal != Zone::BoneSweeper::Mine) {
+			// Make sure its not a mine and not water
+			if (g->map.zone[x][y].BoneSweeperReal != Zone::BoneSweeper::Mine &&
+				!TileIsWater(g->map.tile[x][y])) {
 
 				// Count the mines
 				int mines = 0;
@@ -46,7 +50,6 @@ void CalculateRealBoneSweeper(Game* g) {
 void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	for (int x = 0; x < Map::MAP_SIZE_X; ++x) {
 		for (int y = 0; y < Map::MAP_SIZE_Y; ++y) {
-
 			// x/y
 			int draw_x = x * Map::TILE_SIZE;
 			int draw_y = y * Map::TILE_SIZE;
@@ -112,4 +115,121 @@ void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** f
 		square_x + g->camera.x, square_y + g->camera.y,
 		Map::TILE_SIZE, Map::TILE_SIZE,
 		64, 0, 0, 2.0, 0.2);
+}
+
+bool IsBoneSweeperKnownTypeThis(Game* g, Zone::BoneSweeper type, int x, int y) {
+	// I use this function so I dont need to continously check whether x/y are in bound range
+	if (x > 0 && y > 0 && x < Map::MAP_SIZE_X && y < Map::MAP_SIZE_Y) {
+		if (g->map.zone[x][y].BoneSweeperKnown == type) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return false;
+}
+
+void ClearBoneSweeper(Game* g) {
+	for (int x = 0; x < Map::MAP_SIZE_X; x++) {
+		for (int y = 0; y < Map::MAP_SIZE_Y; y++) {
+			g->map.zone[x][y].BoneSweeperReal = Zone::BoneSweeper::None;
+			g->map.zone[x][y].BoneSweeperKnown = Zone::BoneSweeper::None;
+		}
+	}
+}
+
+void RevealBoneSweeperSquare(Game* g, int x, int y) {
+	// I use this function so I dont need to continously check whether x/y are in bound range
+	if (x > 0 && y > 0 && x < Map::MAP_SIZE_X && y < Map::MAP_SIZE_Y) {
+		g->map.zone[x][y].BoneSweeperKnown = g->map.zone[x][y].BoneSweeperReal;
+	}
+}
+
+void DigBoneSweeper(Game* g, int tx, int ty) {
+	auto dig_target = g->map.zone[tx][ty].BoneSweeperReal;
+	if (dig_target == Zone::BoneSweeper::Tunnel) {
+		// Store the coordinates of squares to proccess
+		std::vector<pair<int, int>> targets;
+
+		// Add this starting square to the vector
+		targets.push_back(make_pair(tx, ty));
+
+		// Reveal this part of tunnel
+		RevealBoneSweeperSquare(g, tx, ty);
+
+		// Wether the while loop should continue filling squares
+		bool keep_filling = true;
+		while (keep_filling) {
+			std::vector<pair<int, int>> next_targets;
+			for (size_t i = 0; i < targets.size(); ++i) {
+				// x/y from this target
+				int x = targets[i].first;
+				int y = targets[i].second;
+
+				// Up
+				if (IsBoneSweeperKnownTypeThis(g, Zone::BoneSweeper::None, x, y - 1)) {
+					auto working_zone = g->map.zone[x][y - 1].BoneSweeperReal;
+					if (working_zone == Zone::BoneSweeper::Tunnel) {
+
+						// Reveal this real value
+						RevealBoneSweeperSquare(g, x, y - 1);
+
+						// Add it to vector for further filling
+						next_targets.push_back(make_pair(x, y - 1));
+					} else if(working_zone > Zone::BoneSweeper::Tunnel) {
+						// Reveal this number
+						RevealBoneSweeperSquare(g, x, y - 1);
+					}
+				}
+
+				// Down
+				if (IsBoneSweeperKnownTypeThis(g, Zone::BoneSweeper::None, x, y + 1)) {
+					auto working_zone = g->map.zone[x][y + 1].BoneSweeperReal;
+					if (working_zone == Zone::BoneSweeper::Tunnel) {
+						RevealBoneSweeperSquare(g, x, y + 1);
+						next_targets.push_back(make_pair(x, y + 1));
+					} else if (working_zone > Zone::BoneSweeper::Tunnel) {
+						RevealBoneSweeperSquare(g, x, y + 1);
+					}
+				}
+
+				// Left
+				if (IsBoneSweeperKnownTypeThis(g, Zone::BoneSweeper::None, x - 1, y)) {
+					auto working_zone = g->map.zone[x - 1][y].BoneSweeperReal;
+					if (working_zone == Zone::BoneSweeper::Tunnel) {
+						RevealBoneSweeperSquare(g, x - 1, y);
+						next_targets.push_back(make_pair(x - 1, y));
+					} else if (working_zone > Zone::BoneSweeper::Tunnel) {
+						RevealBoneSweeperSquare(g, x - 1, y);
+					}
+				}
+
+				// Right
+				if (IsBoneSweeperKnownTypeThis(g, Zone::BoneSweeper::None, x + 1, y)) {
+					auto working_zone = g->map.zone[x + 1][y].BoneSweeperReal;
+					if (working_zone == Zone::BoneSweeper::Tunnel) {
+						RevealBoneSweeperSquare(g, x + 1, y);
+						next_targets.push_back(make_pair(x + 1, y));
+					} else if (working_zone > Zone::BoneSweeper::Tunnel) {
+						RevealBoneSweeperSquare(g, x + 1, y);
+					}
+				}
+			}
+
+			// Decide wether we continue loop
+			if (next_targets.size() > 0) {
+				targets = next_targets;
+			} else {
+				keep_filling = false;
+			}
+		}
+
+	} else if(dig_target == Zone::BoneSweeper::Mine) {
+		// Game over + explosion and whatever else
+		ClearBoneSweeper(g);
+		GameOver(g);
+	} else {
+		// Reveal this number
+		RevealBoneSweeperSquare(g, tx, ty);
+	}
 }

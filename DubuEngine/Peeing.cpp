@@ -13,7 +13,7 @@ void StartPeeing(Game* g, Player* p) {
 
 			// Queue packet to server
 			QueueActionsPacket(g);
-		} else if(g->game_mode == GameMode::GM_Bonesweeper){
+		} else if(g->game_mode == GameMode::GM_BoneSweeper){
 			int x = round(p->x / Map::TILE_SIZE);
 			int y = round(p->y / Map::TILE_SIZE);
 

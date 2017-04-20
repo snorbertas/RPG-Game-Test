@@ -94,7 +94,7 @@
 	};
 
 // Game mode
-	enum GameMode {GM_None = -1, GM_BoneHunt, GM_Bonesweeper, GM_Surival };
+	enum GameMode {GM_None = -1, GM_BoneHunt, GM_BoneSweeper, GM_Surival };
 
 /* =============================== Game Class =============================
  *		The big, main, scary Game class. Used as the primary object.

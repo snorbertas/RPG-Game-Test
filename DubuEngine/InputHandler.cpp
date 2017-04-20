@@ -102,7 +102,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									break;
 								case 4: // Play bonesweeper
 									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
-									g->game_mode = GameMode::GM_Bonesweeper;
+									g->game_mode = GameMode::GM_BoneSweeper;
 									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 									break;
@@ -738,13 +738,17 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	if (g->game_mode == GameMode::GM_BoneHunt) {
 		g->map.seed = BoneHuntSeedAndTrim(g->level).first;
 		g->map.SetTrim(BoneHuntSeedAndTrim(g->level).second);
-	} else if (g->game_mode == GameMode::GM_Bonesweeper){
+	} else if (g->game_mode == GameMode::GM_BoneSweeper){
 		g->map.seed = rand() % ((2 ^ 32) - 1);
-		SpawnRandomMines(g, 2500);
-		CalculateRealBoneSweeper(g);
 	}
 	g->map.ChangeForestMode(1);
 	g->map.Generate(1);
+
+	// Bonesweeper
+	if (g->game_mode == GameMode::GM_BoneSweeper) {
+		SpawnRandomMines(g, 500);
+		CalculateRealBoneSweeper(g);
+	}
 
 	// Record new time
 	double new_time = al_get_time();
@@ -788,7 +792,11 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	// Welcome interface
 	g->welcome_interface.ResetInterface(g);
 	g->welcome_interface.SetDimensions((g->BWIDTH / 2) - 400, (g->BHEIGHT / 2) - 250, 800, 500);
-	g->welcome_interface.LoadTextFromFile("dec/BoneHunt.dec");
+	if (g->game_mode == GameMode::GM_BoneHunt) {
+		g->welcome_interface.LoadTextFromFile("dec/BoneHunt.dec");
+	} else if(g->game_mode == GameMode::GM_BoneSweeper) {
+		g->welcome_interface.LoadTextFromFile("dec/BoneSweeper.dec");
+	}
 	g->welcome_interface.InterpretAllRawText();
 	g->Interfaces[INTERFACE_WELCOME].visible = true;
 
