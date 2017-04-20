@@ -18,6 +18,7 @@ void NewGame(Game* g){
 	g->Interfaces[INTERFACE_LOGIN].visible = false;
 	g->Interfaces[INTERFACE_CHAT].visible = true;
 	g->logini.logging_in = false;
+	g->game_over = false;
 }
 
 void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
