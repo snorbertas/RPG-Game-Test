@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "ScaledDraw.h"
+#include "GameHandler.h"
 
 void DirtParticle::Draw(Game* g) {
 	DrawFilledCircle(g, x + g->camera.x, y + g->camera.y, size, 120, 70, 50, opacity);
