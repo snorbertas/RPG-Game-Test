@@ -52,6 +52,9 @@ void RenderGame(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font) {
 	// Render grid
 	g->map.RenderGrid(g, sprites);
 
+	// Render game-over animations, etc.
+	RenderGameOver(g, sprites);
+
 	// Render zone info (debug/temp)
 	if (g->debug.grid) {
 		for (int x = 0; x < Map::MAP_SIZE_X; x++) {
@@ -146,4 +149,30 @@ void RenderParallaxBackground(Game* g, SpriteStruct* sprites) {
 	if (y > 0) y = 0;
 	DrawImage(g, sprites->img_background[BACKGROUND_SKY], x - 1800, y, 0);
 	DrawImage(g, sprites->img_background[BACKGROUND_SKY], x, y, 0);
+}
+
+void RenderGameOver(Game* g, SpriteStruct* sprites) {
+	// Explosion on bonesweeper
+	if (g->game_over && g->game_over_timer > 0) {
+		if (g->game_mode == GameMode::GM_BoneSweeper) {
+			int first_frame_time = SecondsToTicks(1.0);
+
+			// Check which frame to draw
+			for (int i = 0; i < 8; ++i) {
+				// Frame timer bounds
+				int frame_up_bound = first_frame_time - (i * 4);
+				int frame_low_bound = frame_up_bound - 3;
+
+				// If correct frame, draw it
+				if (g->game_over_timer >= frame_low_bound &&
+					g->game_over_timer <= frame_up_bound) {
+					DrawImage(g, sprites->img_gfx[26 + i],
+						g->pl.x + g->camera.x - 280,
+						g->pl.y + g->camera.y - 260,
+						0, 0.5);
+					break;
+				}
+			}
+		}
+	}
 }

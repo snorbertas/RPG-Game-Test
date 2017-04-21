@@ -149,6 +149,27 @@ void GameOver(Game* g) {
 	g->Interfaces[INTERFACE_GAME_OVER].visible = true;
 	g->Buttons[31].visible = false;
 	g->game_over_timer = SecondsToTicks(1.0);
+
+	// Explosion
+	if (g->game_mode == GameMode::GM_BoneSweeper) {
+		// Kill grass
+		int count = 0;
+		for (int x = g->pl.MapX() - 2; x < g->pl.MapX() + 3; ++x) {
+			for (int y = g->pl.MapY() - 2; y < g->pl.MapY() + 3; ++y) {
+				// Check if index is valid and correct shape
+				if (x > 0 && x < Map::MAP_SIZE_X &&
+					y > 0 && y < Map::MAP_SIZE_Y &&
+					count != 0 && count != 4 && count != 20 && count != 25) {
+					// If not water, replace with dirt
+					if (!TileIsWater(g->map.tile[x][y])) {
+						// TODO: Pick correct dirt sprite according to neigbhours
+						g->map.tile[x][y] = 19;
+					}
+				}
+				count++;
+			}
+		}
+	}
 }
 
 void HandleGameOver(Game* g) {

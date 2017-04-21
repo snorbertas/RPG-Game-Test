@@ -51,3 +51,12 @@
  *		Called once per tick from the RenderGame() function.
  */
 	void RenderParallaxBackground(Game* g, SpriteStruct* sprites);
+
+
+
+/* ============================ RenderGameOver ============================
+ *		Renders everything related to game-over animations, explosions, etc.
+ *
+ *		Called once per tick from the RenderGame() function.
+ */
+	void RenderGameOver(Game* g, SpriteStruct* sprites);
