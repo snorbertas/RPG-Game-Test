@@ -1,2 +1,71 @@
+// Shadows
+[center][font=8][text=Bone Sweeper][color=#222200][x=398][y=12]
+[center][color=#222222][text=How To Play?][y=102][x=398]
+[center][x=149][font=2][text=Dig to reveal tunnels][color=#222200][y=111]
+[center][x=149][font=2][text=and hints.][color=#222200][y=131]
+[center][x=649][font=2][text=Mark with flags where you.][color=#222200][y=111]
+[center][x=649][font=2][text=think there are mines.][color=#222200][y=131]
+[center][x=149][font=2][text=Use hints to solve where][color=#222200][y=331]
+[center][x=149][font=2][text=mines are hidden.][color=#222200][y=351]
+[center][x=149][font=2][text=Each number represents how][color=#222200][y=381]
+[center][x=149][font=2][text=many bombs are around it.][color=#222200][y=401]
+[center][x=399][font=2][text=Move around to explore][color=#222200][y=151]
+[center][x=399][font=2][text=the forest and find mines!][color=#222200][y=171]
+
+// Text
+[center][font=8][text=Bone Sweeper][color=#FFBC0A]
+[center][color=#FFFFFF][text=How To Play?][y=100]
+[center][x=150][font=2][text=Dig to reveal tunnels][color=#FFFF88][y=110]
+[center][x=150][font=2][text=and hints.][color=#FFFF88][y=130]
+[center][x=650][font=2][text=Mark with flags where you.][color=#FFFF88][y=110]
+[center][x=650][font=2][text=think there are mines.][color=#FFFF88][y=130]
+[center][x=150][font=2][text=Use hints to solve where][color=#FFFF88][y=330]
+[center][x=150][font=2][text=mines are hidden.][color=#FFFF88][y=350]
+[center][x=150][font=2][text=Each number represents how][color=#FFFF88][y=380]
+[center][x=150][font=2][text=many bombs are around it.][color=#FFFF88][y=400]
+[center][x=400][font=2][text=Move around to explore][color=#FFFF88][y=150]
+[center][x=400][font=2][text=the forest and find mines!][color=#FFFF88][y=170]
+
+
+// For digging
+[x=85][y=155][img=Tile:10]
+[x=149][y=155][img=Tile:19]
+[x=85][y=219][img=Tile:19]
+[x=149][y=219][img=Tile:19]
+[x=115][y=160][img=GFX:1]
+[x=120][y=180][img=Body:14]
+[x=125][y=190][img=GFX:3]
+
+// For marking territory
+[x=580][y=155][img=Tile:4]
+[x=644][y=155][img=Tile:4]
+[x=580][y=219][img=Tile:4]
+[x=644][y=219][img=Tile:4]
+[x=613][y=185][img=Body:0]
+[x=613][y=155][img=Interface:29]
+
+// Explore
+[x=336][y=200][img=Tile:4]
+[x=400][y=200][img=Tile:4]
+[x=336][y=264][img=Tile:4]
+[x=400][y=264][img=Tile:15]
+[x=370][y=227][img=Body:0]
+[x=340][y=238][img=Object:2]
+
 // Play button
 [button=0][x=329][y=440]
+
+// Sniff tip
+[//misc=0][x=90][y=218]
+
+// Mark tip
+[misc=2][x=585][y=238]
+
+// Explore
+[misc=3][x=383][y=190]
+[misc=4][x=383][y=295]
+[misc=5][x=331][y=240]
+[misc=6][x=435][y=240]
+
+// Dig tip
+[misc=0][x=90][y=238]

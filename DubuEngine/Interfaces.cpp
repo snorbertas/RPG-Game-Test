@@ -344,7 +344,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 					// Bonesweeper
 					x += 220;
-					DrawText(font[0], 255, 188, 10, x + 100, y + 10, ALLEGRO_ALIGN_CENTER, "BoneSweeper");
+					DrawText(font[0], 255, 188, 10, x + 100, y + 10, ALLEGRO_ALIGN_CENTER, "Bone Sweeper");
 					DrawText(font[9], 255, 255, 255, x + 100, y + 180, ALLEGRO_ALIGN_CENTER, "Find all the bones, but be");
 					DrawText(font[9], 255, 255, 255, x + 100, y + 195, ALLEGRO_ALIGN_CENTER, "careful. The island is full");
 					DrawText(font[9], 255, 255, 255, x + 100, y + 210, ALLEGRO_ALIGN_CENTER, "of bombs! Dig with caution");

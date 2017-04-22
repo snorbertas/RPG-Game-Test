@@ -1,69 +1,48 @@
 // Shadows
-[center][font=8][text=Bone Hunt][color=#002200][x=398][y=12]
+[center][font=8][text=Bone Sweeper][color=#222200][x=398][y=12]
 [center][color=#222222][text=How To Play?][y=102][x=398]
-[center][x=149][font=2][text=Sniff to locate bones.][color=#222200][y=111]
-[center][x=649][font=2][text=Mark your territory by peeing.][color=#222200][y=111]
-[center][x=149][font=2][text=Dig in your territory to][color=#222200][y=291]
-[center][x=149][font=2][text=claim bones.][color=#222200][y=311]
-[center][x=649][font=2][text=Drink from any water source to][color=#222200][y=291]
-[center][x=649][font=2][text=to refill your bladder.][color=#222200][y=311]
-[center][x=399][font=2][text=You have 5 minutes of][color=#220000][y=351]
-[center][x=399][font=2][text=daylight. Once the night comes,][color=#220000][y=371]
-[center][x=399][font=2][text=monsters will try eat you!][color=#220000][y=391]
+[center][x=149][font=2][text=Dig to reveal tunnels][color=#222200][y=111]
+[center][x=149][font=2][text=and hints.][color=#222200][y=131]
+[center][x=649][font=2][text=Mark with flags where you.][color=#222200][y=111]
+[center][x=649][font=2][text=think there are mines.][color=#222200][y=131]
+[center][x=149][font=2][text=Use hints to solve where][color=#222200][y=331]
+[center][x=149][font=2][text=mines are hidden.][color=#222200][y=351]
+[center][x=149][font=2][text=Each number represents how][color=#222200][y=381]
+[center][x=149][font=2][text=many bombs are around it.][color=#222200][y=401]
 [center][x=399][font=2][text=Move around to explore][color=#222200][y=151]
-[center][x=399][font=2][text=the forest and find bones!][color=#222200][y=171]
+[center][x=399][font=2][text=the forest and find mines!][color=#222200][y=171]
 
 // Text
-[center][font=8][text=Bone Hunt][color=#00FF00]
+[center][font=8][text=Bone Sweeper][color=#FFBC0A]
 [center][color=#FFFFFF][text=How To Play?][y=100]
-[center][x=150][font=2][text=Sniff to locate bones.][color=#FFFF88][y=110]
-[center][x=650][font=2][text=Mark your territory by peeing.][color=#FFFF88][y=110]
-[center][x=150][font=2][text=Dig in your territory to][color=#FFFF88][y=290]
-[center][x=150][font=2][text=claim bones.][color=#FFFF88][y=310]
-[center][x=650][font=2][text=Drink from any water source to][color=#FFFF88][y=290]
-[center][x=650][font=2][text=to refill your bladder.][color=#FFFF88][y=310]
-[center][x=400][font=2][text=You have 5 minutes of][color=#FF4444][y=350]
-[center][x=400][font=2][text=daylight. Once the night comes,][color=#FF4444][y=370]
-[center][x=400][font=2][text=monsters will try eat you!][color=#FF4444][y=390]
+[center][x=150][font=2][text=Dig to reveal tunnels][color=#FFFF88][y=110]
+[center][x=150][font=2][text=and hints.][color=#FFFF88][y=130]
+[center][x=650][font=2][text=Mark with flags where you.][color=#FFFF88][y=110]
+[center][x=650][font=2][text=think there are mines.][color=#FFFF88][y=130]
+[center][x=150][font=2][text=Use hints to solve where][color=#FFFF88][y=330]
+[center][x=150][font=2][text=mines are hidden.][color=#FFFF88][y=350]
+[center][x=150][font=2][text=Each number represents how][color=#FFFF88][y=380]
+[center][x=150][font=2][text=many bombs are around it.][color=#FFFF88][y=400]
 [center][x=400][font=2][text=Move around to explore][color=#FFFF88][y=150]
-[center][x=400][font=2][text=the forest and find bones!][color=#FFFF88][y=170]
+[center][x=400][font=2][text=the forest and find mines!][color=#FFFF88][y=170]
 
-// For sniffing
-[x=85][y=135][img=Tile:4]
-[x=149][y=135][img=Tile:4]
-[x=85][y=199][img=Tile:4]
-[x=149][y=199][img=Tile:4]
-[x=117][y=137][img=Interface:5]
-[x=138][y=160][img=Interface:6]
-[x=120][y=195][img=Body:13]
-
-// For marking territory
-[x=580][y=135][img=Tile:4]
-[x=644][y=135][img=Tile:4]
-[x=580][y=199][img=Tile:4]
-[x=644][y=199][img=Tile:4]
-[x=600][y=174][img=Object:8]
-[x=600][y=110][img=Object:9]
-[x=630][y=175][img=GFX:5]
-[x=630][y=175][img=Body:12]
-
-// For drinking water
-[x=548][y=335][img=Tile:38]
-[x=612][y=335][img=Tile:33]
-[x=676][y=335][img=Tile:4]
-[x=548][y=399][img=Tile:40]
-[x=612][y=399][img=Tile:33]
-[x=676][y=399][img=Tile:4]
-[x=650][y=350][img=Body:15]
 
 // For digging
-[x=85][y=335][img=Tile:10]
-[x=149][y=335][img=Tile:19]
-[x=85][y=399][img=Tile:19]
-[x=149][y=399][img=Tile:19]
-[x=115][y=340][img=GFX:1]
-[x=120][y=360][img=Body:14]
-[x=125][y=370][img=GFX:3]
+[x=85][y=155][img=Tile:10]
+[x=149][y=155][img=Tile:19]
+[x=85][y=219][img=Tile:19]
+[x=149][y=219][img=Tile:19]
+[x=115][y=160][img=GFX:1]
+[x=120][y=180][img=Body:14]
+[x=125][y=190][img=GFX:3]
+
+// For marking territory
+[x=580][y=155][img=Tile:4]
+[x=644][y=155][img=Tile:4]
+[x=580][y=219][img=Tile:4]
+[x=644][y=219][img=Tile:4]
+[x=613][y=185][img=Body:0]
+[x=613][y=155][img=Interface:29]
 
 // Explore
 [x=336][y=200][img=Tile:4]
@@ -80,7 +59,7 @@
 [//misc=0][x=90][y=218]
 
 // Mark tip
-[misc=2][x=585][y=218]
+[misc=2][x=585][y=238]
 
 // Explore
 [misc=3][x=383][y=190]
@@ -89,7 +68,4 @@
 [misc=6][x=435][y=240]
 
 // Dig tip
-[misc=0][x=90][y=418]
-
-// Drink tip
-[misc=1][x=553][y=418]
+[misc=0][x=90][y=238]
