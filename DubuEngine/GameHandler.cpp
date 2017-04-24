@@ -131,7 +131,7 @@ int AddPacketToQueue(Game* g, Packet* p) {
 			return i;
 		}
 	}
-
+	delete(p);
 	// Queue is full
 	cout << "Can't keep up with sending packets!\n";
 	return -1;

@@ -157,12 +157,21 @@ void MapObjectInfo::MapObject::DrawShadow(Game* g, SpriteStruct* sprites) {
 				angle, ALLEGRO_FLIP_VERTICAL, opacity);
 		} else if (IsRock() || IsCosmeticRock()){
 			// Rocks
-			angle = 0;
+			// Different rocks have slight asymmetry in shadow
+			int x_offset = 32;
+			if (Type == MapObjectInfo::EMapObjectRock_0) x_offset += 2;
+			if (Type == MapObjectInfo::EMapObjectRock_1) x_offset += 8;
+			if (Type == MapObjectInfo::EMapObjectRock_2) x_offset += 8;
+			if (Type == MapObjectInfo::EMapObjectRock_3) x_offset += 2;
+			if (Type == MapObjectInfo::EMapObjectRock_4) x_offset += 9;
+			if (Type == MapObjectInfo::EMapObjectRock_5) x_offset += 9;
+
+			// Draw shadow
 			DrawRotatedShadow(g,
 				img_object[SpriteId],
-				x + 36 + g->camera.x,
-				y + 63 + g->camera.y,
-				angle, ALLEGRO_FLIP_VERTICAL, opacity);
+				x + x_offset + g->camera.x,
+				y + 64 + g->camera.y,
+				0, ALLEGRO_FLIP_VERTICAL, opacity);
 		} else if (!IsPlayer()) {
 			// Rendering immobile objects
 			if (!IsTree()) {

@@ -217,6 +217,12 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->scene = 0;
 									done = true;
 									break;
+								case 32: // Done (from level complete)
+									HideAllInterfaces(g, INTERFACE_MAIN_MENU);
+									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									g->scene = 0;
+									done = true;
+									break;
 								case 39:
 									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
 									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;

@@ -168,6 +168,10 @@ void LoadInterfaces(Game* g){
 	NewInterface(&g->Interfaces[INTERFACE_GAME_OVER], NO_SPRITE, 0, 0);
 	NewButton(&g->Buttons[31], SPRITE_BUTTON_DONE, (g->BWIDTH / 2) - 71, (g->BHEIGHT / 2) - 35, 142, 35, INTERFACE_GAME_OVER);
 
+	// Interface 41 - Level Complete
+	NewInterface(&g->Interfaces[INTERFACE_LEVEL_COMPLETE], NO_SPRITE, (g->BWIDTH / 2) - 200, (g->BHEIGHT / 2) - 130);
+	NewButton(&g->Buttons[32], SPRITE_BUTTON_DONE, 130, 215, 142, 35, INTERFACE_LEVEL_COMPLETE);
+
 	// Interface 99 (on-top)
 	temp_x = g->BWIDTH / 2 - 250;
 	temp_y = g->BHEIGHT / 2 - 84;
@@ -269,6 +273,14 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 				// Menu
 				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y + 320, 640, 80, 0.8);
+			}
+			if (i == INTERFACE_LEVEL_COMPLETE) {
+				// Initial x/y
+				int x = g->Interfaces[i].x;
+				int y = g->Interfaces[i].y;
+
+				// Box
+				DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN, x, y, 400, 260, 0.8);
 			}
 
 			if (i == INTERFACE_WELCOME) {
@@ -967,6 +979,16 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 				case INTERFACE_GAME_OVER:
 					DrawText(font[7], 0, 0, 0, g->BWIDTH / 2, 220, ALLEGRO_ALIGN_CENTER, "Game Over");
 					break;
+				case INTERFACE_LEVEL_COMPLETE:
+					DrawText(font[7], 0, 0, 0,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 200,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 5,
+						ALLEGRO_ALIGN_CENTER, "Level Complete!");
+					DrawText(font[0], 255, 255, 255,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 20,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 100,
+						ALLEGRO_ALIGN_LEFT, "Score: 0");
+					break;
 				case INTERFACE_MESSAGE:
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 20, ALLEGRO_ALIGN_CENTER, g->Message1);
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 52, ALLEGRO_ALIGN_CENTER, g->Message2);
@@ -1221,6 +1243,9 @@ void HandleCommand(Game* g, const char* msg) {
 			}
 		} else if (type == "/seed") {
 			args >> g->map.seed;
+		}
+		else if (type == "/k") {
+			g->Interfaces[INTERFACE_LEVEL_COMPLETE].visible = true;
 		} else if (type == "/npc") {
 			int npc_type;
 			args >> npc_type;
