@@ -14,9 +14,9 @@
 
 void NewGame(Game* g){
 	g->scene = 1;
-	g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
-	g->Interfaces[INTERFACE_LOGIN].visible = false;
-	g->Interfaces[INTERFACE_CHAT].visible = true;
+	g->Interfaces[INTERFACE_MAIN_MENU].Hide();
+	g->Interfaces[INTERFACE_LOGIN].Hide();
+	g->Interfaces[INTERFACE_CHAT].Show();
 	g->logini.logging_in = false;
 	g->game_over = false;
 }
@@ -108,7 +108,7 @@ int SecondsToTicks(float seconds) {
 void ShowMessage(Game* g, const char* msg1, const char* msg2) {
 	g->Message1 = msg1;
 	g->Message2 = msg2;
-	g->Interfaces[INTERFACE_MESSAGE].visible = true;
+	g->Interfaces[INTERFACE_MESSAGE].Show();
 }
 
 void Fade(Game* g, int oi) {
@@ -146,8 +146,8 @@ void GameOver(Game* g) {
 	g->keys.down = false;
 	g->keys.sprint = false;
 	HideAllInterfaces(g, INTERFACE_GAME_OVER);
-	g->Interfaces[INTERFACE_GAME_OVER].visible = true;
-	g->Buttons[31].visible = false;
+	g->Interfaces[INTERFACE_GAME_OVER].Show();
+	g->Buttons[31].Hide();
 	g->game_over_timer = SecondsToTicks(1.0);
 
 	// Explosion
@@ -177,6 +177,6 @@ void HandleGameOver(Game* g) {
 
 	if (g->game_over_timer == 0) {
 		// Enable buttons
-		g->Buttons[31].visible = true;
+		g->Buttons[31].Show();
 	}
 }

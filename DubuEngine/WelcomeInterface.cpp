@@ -8,7 +8,7 @@
 void WelcomeInterface::ResetSpecial(Game* g) {
 	// Hide the 10 buttons in the interface
 	for (int i = 0; i < 10; i++) {
-		g->Buttons[17 + i].visible = false;
+		g->Buttons[17 + i].Hide();
 	}
 }
 
@@ -19,7 +19,7 @@ void WelcomeInterface::InitSpecialElements(Game* g) {
 			int button_id = _button[i].id;
 			g->Buttons[17 + button_id].x = _button[i].x + _x;
 			g->Buttons[17 + button_id].y = _button[i].y + _y;
-			g->Buttons[17 + button_id].visible = true;
+			g->Buttons[17 + button_id].Show();
 			_button[i].init = true;
 		}
 	}

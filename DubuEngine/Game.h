@@ -15,6 +15,7 @@
 #include "Debug.h"
 #include "Radar.h"
 #include "Weather.h"
+#include "Interfaces.h"
 #include "WelcomeInterface.h"
 #include "GameDuration.h"
 #include "GFX.h"
@@ -71,26 +72,6 @@
 		bool done_loading = false;				// Wether generation loading finished or not
 		int ticks_since_done_loading = -1;		// Ticks since done generation loading (For animation)
 		int tip_id = 0;							// ID number for the tip during loading screen
-	};
-
-
-// Button structure
-	struct Button {
-		bool visible = true;					// If true, button is rendered and active
-		int sprite_id;							// Sprite ID for button (sprite_id + 1 is highlighted when mouse is colliding)
-		int w, h;								// Width and height for button (hitbox)
-		int interface_id;						// Interface ID the button belongs to
-		int x = -1;								// x position for button relative to interface
-		int y = -1;								// y position for button relative to interface
-		float opacity = 1;						// Button transperency (<1 is transperent)
-	};
-
-// Interface structure
-	struct Interface {
-		int sprite_id;							// Sprite ID for interface
-		int x, y;								// x, y coordinates
-		bool visible;							// If true, interface is visible and active
-		float opacity = 1.0;					// Transperency
 	};
 
 // Game mode
@@ -157,8 +138,8 @@
 			Chat chat;							// Chat object
 			ScoreBoard score;					// Scoreboard object
 			LoginInterface logini;				// Login Interface
-			Button* Buttons;					// Pointer to array of buttons
-			Interface* Interfaces;				// Pointer to array of interfaces
+			Button Buttons[MAX_BUTTONS];		// Array of buttons
+			Interface Interfaces[MAX_INTERFACES];	// Array of interfaces
 			Menu menu;							// Menu object
 			Keys keys;							// Keys struct, holds the information on some input
 			Player pl;							// Player

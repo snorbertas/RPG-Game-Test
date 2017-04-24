@@ -2,6 +2,34 @@
 #define MAX_INTERFACES 100
 #define MAX_BUTTONS 400
 
+
+// Button structure
+struct Button {
+	bool visible = true;					// If true, button is rendered and active
+	int sprite_id;							// Sprite ID for button (sprite_id + 1 is highlighted when mouse is colliding)
+	int w, h;								// Width and height for button (hitbox)
+	int interface_id;						// Interface ID the button belongs to
+	int x = -1;								// x position for button relative to interface
+	int y = -1;								// y position for button relative to interface
+	float opacity = 1;						// Button transperency (<1 is transperent)
+
+	// Visibility
+	void Show() { visible = true; }
+	void Hide() { visible = false; }
+};
+
+// Interface structure
+struct Interface {
+	int sprite_id;							// Sprite ID for interface
+	int x, y;								// x, y coordinates
+	bool visible;							// If true, interface is visible and active
+	float opacity = 1.0;					// Transperency
+
+	// Visibility
+	void Show() { visible = true; }
+	void Hide() { visible = false; }
+};
+
 /* ============================ LoadInterfaces ============================
  *		Function to load and initilizate all interfaces.
  *		Also initializes buttons for interfaces.

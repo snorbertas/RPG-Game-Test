@@ -35,10 +35,10 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 		
 		// Drop-down menu cancelation
 		if (g->Interfaces[4].visible && !MouseIsOn(g, g->Interfaces[4].x, g->Interfaces[4].y, 160, 80)) {
-			g->Interfaces[4].visible = false;
+			g->Interfaces[4].Hide();
 		}
 		if (g->Interfaces[5].visible && !MouseIsOn(g, g->Interfaces[5].x, g->Interfaces[5].y, 160, 60)) {
-			g->Interfaces[5].visible = false;
+			g->Interfaces[5].Hide();
 		}
 
 		// Volume adjustment engage
@@ -80,43 +80,43 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 							switch(j){
 								case 0: // New Game (Main Menu)
 									//Fade(g, 0);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
-									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Hide();
+									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].Show();
 									done = true;
 									break;
 								case 1: // Options (Main Menu)
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
-									g->Interfaces[INTERFACE_OPTIONS].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Hide();
+									g->Interfaces[INTERFACE_OPTIONS].Show();
 									done = true;
 									break;
 								case 2: // Quit (Main Menu)
 									Fade(g, 0);
 									g->menu.quitting = true;
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
+									g->Interfaces[INTERFACE_MAIN_MENU].Hide();
 									done = true;
 									break;
 								case 3: // Play bone hunt
-									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = false;
-									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = true;
+									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].Hide();
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Show();
 									done = true;
 									break;
 								case 4: // Play bonesweeper
-									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
 									g->game_mode = GameMode::GM_BoneSweeper;
 									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 									break;
 								case 5: // Resolution drop-down
 									if(!g->Interfaces[4].visible && !g->Interfaces[5].visible){
-										g->Interfaces[4].visible = true;
-										g->Interfaces[5].visible = false;
+										g->Interfaces[4].Show();
+										g->Interfaces[5].Hide();
 										done = true;
 									}
 									break;		
 								case 6: // Window mode drop-down
 									if(!g->Interfaces[4].visible && !g->Interfaces[5].visible){
-										g->Interfaces[5].visible = true;
-										g->Interfaces[4].visible = false;
+										g->Interfaces[5].Show();
+										g->Interfaces[4].Hide();
 										done = true;
 									}
 									break;
@@ -124,7 +124,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 8: // 1024x576
-									g->Interfaces[4].visible = false;
+									g->Interfaces[4].Hide();
 									g->s_x = 1024;
 									g->s_y = 576;
 									g->BWIDTH = 1280;
@@ -133,7 +133,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 9: // 1280x720
-									g->Interfaces[4].visible = false;
+									g->Interfaces[4].Hide();
 									g->s_x = 1280;
 									g->s_y = 720;
 									g->BWIDTH = 1280;
@@ -142,7 +142,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									done = true;
 									break;
 								case 10: // 1600x900
-									g->Interfaces[4].visible = false;
+									g->Interfaces[4].Hide();
 									g->s_x = 1600;
 									g->s_y = 900;
 									g->BWIDTH = 1600;
@@ -156,40 +156,40 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									g->BWIDTH = 1920;
 									g->BHEIGHT = 1080;
 									g->remake_display = true;
-									g->Interfaces[4].visible = false;
+									g->Interfaces[4].Hide();
 									done = true;
 									break;
 								case 12:
 									g->window_mode = ALLEGRO_WINDOWED;
 									g->remake_display = true;
-									g->Interfaces[5].visible = false;
+									g->Interfaces[5].Hide();
 									done = true;
 									break;
 								case 13:
 									g->window_mode = ALLEGRO_FULLSCREEN;
 									g->remake_display = true;
-									g->Interfaces[5].visible = false;
+									g->Interfaces[5].Hide();
 									done = true;
 									break;
 								case 14:
 									g->window_mode = ALLEGRO_FULLSCREEN_WINDOW;
 									g->remake_display = true;
-									g->Interfaces[5].visible = false;
+									g->Interfaces[5].Hide();
 									done = true;
 									break;
 								case 15: // Okay
 									HideAllInterfaces(g, 0);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Show();
 									done = true;
 									break;
 								case 16: // Okay (Message Interface)
-									g->Interfaces[INTERFACE_MESSAGE].visible = false;
+									g->Interfaces[INTERFACE_MESSAGE].Hide();
 									g->Buttons[16].sprite_id = SPRITE_BUTTON_OKAY;
 									g->binding_key = NULL;
 									done = true;
 									break;
 								case 17: // Button 0 for welcome interface (Play)
-									g->Interfaces[INTERFACE_WELCOME].visible = false;
+									g->Interfaces[INTERFACE_WELCOME].Hide();
 									g->game_duration.ticks = 0;
 									g->game_duration.seconds_start = 300;
 									g->game_duration.inverted = true;
@@ -203,57 +203,57 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								case 28: // Done (from options)
 									if (g->scene == 2) {
 										HideAllInterfaces(g, INTERFACE_PAUSE);
-										g->Interfaces[INTERFACE_PAUSE].visible = true;
+										g->Interfaces[INTERFACE_PAUSE].Show();
 									} else {
 										HideAllInterfaces(g, INTERFACE_MAIN_MENU);
-										g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+										g->Interfaces[INTERFACE_MAIN_MENU].Show();
 									}
 									done = true;
 									break;
 								case 31: // Done (from game over)
 									g->game_over = false;
 									HideAllInterfaces(g, INTERFACE_MAIN_MENU);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Show();
 									g->scene = 0;
 									done = true;
 									break;
 								case 32: // Done (from level complete)
 									HideAllInterfaces(g, INTERFACE_MAIN_MENU);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Show();
 									g->scene = 0;
 									done = true;
 									break;
 								case 39:
-									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].visible = true;
-									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
+									g->Interfaces[INTERFACE_SINGLE_MODE_CHOICE].Show();
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
 									done = true;
 									break;
 								case 241:
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
-									g->Interfaces[INTERFACE_LOGIN].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Hide();
+									g->Interfaces[INTERFACE_LOGIN].Show();
 									done = true;
 									break;
 								case 242:
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = false;
-									g->Interfaces[INTERFACE_CREDITS].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Hide();
+									g->Interfaces[INTERFACE_CREDITS].Show();
 									done = true;
 									break;
 								case 247:
 									if (g->logini.username_input != "" && g->logini.password_input != "") {
 										g->logini.logging_in = true;
-										g->Buttons[247].visible = false;
+										g->Buttons[247].Hide();
 										g->logini.try_login = true;
 									}
 									done = true;
 									break;
 								case 248:
 									HideAllInterfaces(g, 3);
-									g->Interfaces[INTERFACE_OPTIONS].visible = true;
+									g->Interfaces[INTERFACE_OPTIONS].Show();
 									done = true;
 									break;
 								case 249:
 									HideAllInterfaces(g, 9);
-									g->Interfaces[INTERFACE_KEYBOARD].visible = true;
+									g->Interfaces[INTERFACE_KEYBOARD].Show();
 									done = true;
 									break;
 								case 250:
@@ -286,25 +286,25 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 									break;
 								case 262:
 									HideAllInterfaces(g, INTERFACE_VERSION);
-									g->Interfaces[INTERFACE_CHAT].visible = true;
-									g->Interfaces[INTERFACE_RADAR].visible = true;
-									g->Interfaces[INTERFACE_STATS].visible = true;
-									g->Interfaces[INTERFACE_SCORE].visible = true;
-									g->Interfaces[INTERFACE_MINI_MAP].visible = true;
+									g->Interfaces[INTERFACE_CHAT].Show();
+									g->Interfaces[INTERFACE_RADAR].Show();
+									g->Interfaces[INTERFACE_STATS].Show();
+									g->Interfaces[INTERFACE_SCORE].Show();
+									g->Interfaces[INTERFACE_MINI_MAP].Show();
 									//
 									g->scene = 1;
 									done = true;
 									break;
 								case 263:
-									g->Interfaces[INTERFACE_PAUSE].visible = false;
-									g->Interfaces[INTERFACE_OPTIONS].visible = true;
+									g->Interfaces[INTERFACE_PAUSE].Hide();
+									g->Interfaces[INTERFACE_OPTIONS].Show();
 									done = true;
 									break;
 								case 264:
 									g->scene = 0;
 									HideAllInterfaces(g, 0);
-									g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
-									g->Interfaces[6].visible = true;
+									g->Interfaces[INTERFACE_MAIN_MENU].Show();
+									g->Interfaces[6].Show();
 									done = true;
 									break;
 								case 265:
@@ -331,7 +331,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								if (clicked_level >= 1 && clicked_level <= 30) {
 									g->level = clicked_level;
 									g->game_mode = GameMode::GM_BoneHunt;
-									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible = false;
+									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
 									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
 									done = true;
 								}
@@ -348,8 +348,8 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 
 void RightClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 	if(!release){
-		if (g->Interfaces[4].visible) g->Interfaces[4].visible = false;
-		if (g->Interfaces[5].visible) g->Interfaces[5].visible = false;
+		if (g->Interfaces[4].visible) g->Interfaces[4].Hide();
+		if (g->Interfaces[5].visible) g->Interfaces[5].Hide();
 		if (g->scene == 1 && !g->game_over) g->mouse_pathing = true; 
 	} else {
 		g->mouse_pathing = false;
@@ -365,7 +365,7 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 			} else {
 				int* fix_key = KeyIsBound(g, kid);
 				BindKey(g->binding_key, kid);
-				g->Interfaces[INTERFACE_MESSAGE].visible = false;
+				g->Interfaces[INTERFACE_MESSAGE].Hide();
 				g->Buttons[16].sprite_id = SPRITE_BUTTON_OKAY;
 				if (fix_key != NULL && fix_key != g->binding_key) *fix_key = -1;
 				g->binding_key = NULL;
@@ -534,20 +534,20 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				g->chat.show_chat = false;
 			} else if (g->Interfaces[INTERFACE_PAUSE].visible){
 				HideAllInterfaces(g, 4);
-				g->Interfaces[INTERFACE_CHAT].visible = true;
+				g->Interfaces[INTERFACE_CHAT].Show();
 				//
 				g->scene = 1;
 			} else if(g->scene == 1 || g->scene == 2){
 				g->scene = 2;
 				HideAllInterfaces(g, 10);
-				g->Interfaces[INTERFACE_PAUSE].visible = true;
-				g->Interfaces[6].visible = true;
+				g->Interfaces[INTERFACE_PAUSE].Show();
+				g->Interfaces[6].Show();
 				g->Interfaces[INTERFACE_CHAT].x = 0;
 				g->Interfaces[INTERFACE_CHAT].y = g->BHEIGHT - 496;
 			} else {
 				g->scene = 0;
 				HideAllInterfaces(g, 0);
-				g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+				g->Interfaces[INTERFACE_MAIN_MENU].Show();
 			}
 		}
 	}
@@ -733,7 +733,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 
 	// Start loading screen
 	HideAllInterfaces(g, INTERFACE_GENERATING);
-	g->Interfaces[INTERFACE_GENERATING].visible = true;
+	g->Interfaces[INTERFACE_GENERATING].Show();
 	srand(al_get_time() * 1000);
 	g->menu.tip_id = rand() % 2;
 
@@ -783,12 +783,12 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->pl.x = 3200;
 	g->pl.y = 3200;
 	HideAllInterfaces(g, INTERFACE_CHAT);
-	g->Interfaces[INTERFACE_VERSION].visible = true;
-	g->Interfaces[INTERFACE_CHAT].visible = true;
-	g->Interfaces[INTERFACE_RADAR].visible = true;
-	g->Interfaces[INTERFACE_STATS].visible = true;
-	g->Interfaces[INTERFACE_SCORE].visible = true;
-	g->Interfaces[INTERFACE_MINI_MAP].visible = true;
+	g->Interfaces[INTERFACE_VERSION].Show();
+	g->Interfaces[INTERFACE_CHAT].Show();
+	g->Interfaces[INTERFACE_RADAR].Show();
+	g->Interfaces[INTERFACE_STATS].Show();
+	g->Interfaces[INTERFACE_SCORE].Show();
+	g->Interfaces[INTERFACE_MINI_MAP].Show();
 	g->game_duration.ticking = false;
 	g->game_duration.ticks = 0;
 	g->game_duration.minutes = 5;
@@ -804,7 +804,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 		g->welcome_interface.LoadTextFromFile("dec/BoneSweeper.dec");
 	}
 	g->welcome_interface.InterpretAllRawText();
-	g->Interfaces[INTERFACE_WELCOME].visible = true;
+	g->Interfaces[INTERFACE_WELCOME].Show();
 
 
 	// Reset, fade and done :)

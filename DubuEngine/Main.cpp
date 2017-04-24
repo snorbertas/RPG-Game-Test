@@ -591,7 +591,7 @@ unsigned int __stdcall ClientThread(void *data) {
 		cout << "Failed to connect: " << WSAGetLastError() << "\n";
 		ShowMessage(g, "Failed to connect to server.", "");
 		g->logini.logging_in = false;
-		g->Buttons[247].visible = true;
+		g->Buttons[247].Show();
 		g->connected = false;
 		g->scene = 0;
 		return 0;
@@ -721,8 +721,8 @@ unsigned int __stdcall ClientThread(void *data) {
 						ShowMessage(g, "Lost connection to server.", "");
 						g->scene = 0;
 						HideAllInterfaces(g, INTERFACE_MESSAGE);
-						g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
-						g->Buttons[247].visible = true;
+						g->Interfaces[INTERFACE_MAIN_MENU].Show();
+						g->Buttons[247].Show();
 						g->connected = false;
 
 						//Re-innitiate the socket

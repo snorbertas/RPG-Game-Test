@@ -21,11 +21,9 @@ inline const char * const BoolToString(bool b)
 }
 
 void LoadInterfaces(Game* g){
-	g->Interfaces = new Interface[MAX_INTERFACES];
-	g->Buttons = new Button[MAX_BUTTONS];
 	for (int i = 0; i < MAX_INTERFACES; i++) {
 		g->Interfaces[i].sprite_id = -1;
-		g->Interfaces[i].visible = false;
+		g->Interfaces[i].Hide();
 		g->Interfaces[i].x = g->BWIDTH;
 		g->Interfaces[i].y = g->BHEIGHT;
 	}
@@ -40,7 +38,7 @@ void LoadInterfaces(Game* g){
 	int temp_x, temp_y;
 
 	// Interface 0 (Main Menu)
-	g->Interfaces[INTERFACE_MAIN_MENU].visible = true;
+	g->Interfaces[INTERFACE_MAIN_MENU].Show();
 	NewInterface(&g->Interfaces[INTERFACE_MAIN_MENU], NO_SPRITE, (g->BWIDTH/2)-(270/2), 210);
 	NewButton(&g->Buttons[0], SPRITE_BUTTON_STORY, 0, 0, 270, 50, INTERFACE_MAIN_MENU, 0);			// Singleplayer
 	NewButton(&g->Buttons[241], SPRITE_BUTTON_MULTIPLAYER, 0, 55, 270, 50, INTERFACE_MAIN_MENU, 0); // Multiplayer
@@ -91,7 +89,7 @@ void LoadInterfaces(Game* g){
 	NewButton(&g->Buttons[14], SPRITE_BUTTON_RES, 0, 40, 160, 20, 5);
 	
 	// Interface 6
-	g->Interfaces[INTERFACE_VERSION].visible = true;
+	g->Interfaces[INTERFACE_VERSION].Show();
 	NewInterface(&g->Interfaces[INTERFACE_VERSION], NO_SPRITE, 0, 0);
 
 	// Interface 7
@@ -379,7 +377,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 					//DrawRectangle(g, x + 8, y + 8, 200 - 16, 300 - 16, 0, 0, 0, 0.9);
 					//DrawText(font[0], 128, 0, 0, x + 100, y + 130, ALLEGRO_ALIGN_CENTER, "Coming Soon!");
-					//g->Buttons[4].visible = false;
+					//g->Buttons[4].Hide();
 
 					// Surival
 					x += 220;
@@ -390,7 +388,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[9], 255, 255, 255, x + 100, y + 225, ALLEGRO_ALIGN_CENTER, "to become the alpha dog!");
 					//DrawRectangle(g, x + 8, y + 8, 200 - 16, 300 - 16, 0, 0, 0, 0.9);
 					//DrawText(font[0], 128, 0, 0, x + 100, y + 130, ALLEGRO_ALIGN_CENTER, "Coming Soon!");
-					//g->Buttons[7].visible = false;
+					//g->Buttons[7].Hide();
 					
 					// Thumbnail
 					for (int xi = 0; xi < 2; xi++) {
@@ -1042,7 +1040,7 @@ bool InterfaceIsOnTop(Game* g, int id) {
 
 void HideAllInterfaces(Game* g, int except) {
 	for (int i = 0; i < MAX_INTERFACES; i++) {
-		if(i != except) g->Interfaces[i].visible = false;
+		if(i != except) g->Interfaces[i].Hide();
 	}
 }
 
@@ -1245,7 +1243,7 @@ void HandleCommand(Game* g, const char* msg) {
 			args >> g->map.seed;
 		}
 		else if (type == "/k") {
-			g->Interfaces[INTERFACE_LEVEL_COMPLETE].visible = true;
+			g->Interfaces[INTERFACE_LEVEL_COMPLETE].Show();
 		} else if (type == "/npc") {
 			int npc_type;
 			args >> npc_type;
@@ -1285,7 +1283,7 @@ void HandleCommand(Game* g, const char* msg) {
 			g->welcome_interface.SetDimensions((g->BWIDTH / 2) - 400, (g->BHEIGHT / 2) - 250, 800, 500);
 			g->welcome_interface.LoadTextFromFile("dec/TEST.dec");
 			g->welcome_interface.InterpretAllRawText();
-			g->Interfaces[INTERFACE_WELCOME].visible = true;
+			g->Interfaces[INTERFACE_WELCOME].Show();
 		} else {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, ("Unrecognized command: " + type).c_str());
 		}
