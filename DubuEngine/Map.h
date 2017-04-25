@@ -199,6 +199,11 @@ public:
 	 */
 		bool PlayerIsHome(Player* p);
 
+	/* =========================== SpawnBone ============================
+	 *	Spawns a bone on the map on x/y
+	 */
+		void SpawnBone(int x, int y);
+
 private:
 	/* ===================== RenderObjectsOnBlockY ======================
 	 *	Renders all objects corresponding to block y (fauna, players, etc.)

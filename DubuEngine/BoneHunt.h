@@ -1,13 +1,63 @@
 #pragma once
 #include <utility>
+#include <vector>
 #include <allegro5/allegro_audio.h>
+#include "Pathing.h"
 
 class Game;
 
 void HandleBoneHunt(Game* g, ALLEGRO_SAMPLE** sample_sfx);
 
-static const std::pair<int, int> BoneHuntSeedAndTrim(int level) {
-	// Seed, Trim
-	if (level == 1) return std::make_pair(6, 40);
-	return std::make_pair(0, 46);
+class BoneHuntLevelSetting {
+public:
+	// Spawns
+	Node player_spawn = Node(50, 50);
+	std::vector<Node> monster_spawn;
+	std::vector<Node> bone_spawn;
+
+	// Time limit (in seconds)
+	int time_limit = 60;
+
+	// Map settings
+	int seed = 0;
+	int trim = 46;
+
+	// Medals (WIP still)
+	int gold_standard = 3;
+	int silver_standard = 2;
+	int bronze_standard = 1;
+
+	// Constructors
+	// Default
+	BoneHuntLevelSetting() {}
+
+	// Full
+	BoneHuntLevelSetting(int Seed, int Trim,
+		int TimeLimit,
+		int Gold, int Silver, int Bronze,
+		Node PlayerSpawn) : seed(Seed), trim(Trim),
+		time_limit(TimeLimit),
+		gold_standard(Gold), silver_standard(Silver), bronze_standard(Bronze),
+		player_spawn(PlayerSpawn) {}
+
+	// Functions
+	void AddBone(int x, int y) { bone_spawn.push_back(Node(x, y)); }
+	void AddMonster(int x, int y) { monster_spawn.push_back(Node(x, y)); }
+};
+
+static const BoneHuntLevelSetting GetBoneHuntLevelSetting(int level) {
+	// Create a setting
+	BoneHuntLevelSetting setting;
+
+	// Level 1
+	if (level == 1) {
+		setting = BoneHuntLevelSetting(6, 40, 120, 0, 0, 0, Node(50, 50));
+		setting.AddBone(46, 46);
+		setting.AddBone(54, 54);
+		setting.AddBone(46, 54);
+		setting.AddBone(54, 46);
+	}
+
+	// Return setting
+	return setting;
 }

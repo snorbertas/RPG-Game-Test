@@ -19,6 +19,7 @@ void NewGame(Game* g){
 	g->Interfaces[INTERFACE_CHAT].Show();
 	g->logini.logging_in = false;
 	g->game_over = false;
+	g->level_complete = false;
 }
 
 void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
@@ -146,12 +147,16 @@ void GameOver(Game* g) {
 	g->keys.down = false;
 	g->keys.sprint = false;
 	HideAllInterfaces(g, INTERFACE_GAME_OVER);
-	g->Interfaces[INTERFACE_GAME_OVER].Show();
-	g->Buttons[31].Hide();
-	g->game_over_timer = SecondsToTicks(1.0);
+	if (!g->level_complete) {
+		g->Interfaces[INTERFACE_GAME_OVER].Show();
+		g->Buttons[31].Hide();
+		g->game_over_timer = SecondsToTicks(1.0);
+	} else {
+		g->Interfaces[INTERFACE_LEVEL_COMPLETE].Show();
+	}
 
 	// Explosion
-	if (g->game_mode == GameMode::GM_BoneSweeper) {
+	if (g->game_mode == GameMode::GM_BoneSweeper && !g->level_complete) {
 		// Kill grass
 		int count = 0;
 		for (int x = g->pl.MapX() - 2; x < g->pl.MapX() + 3; ++x) {

@@ -570,6 +570,10 @@ void Map::PopulateButterflies(int amount) {
 	}
 }
 
+void Map::SpawnBone(int x, int y) {
+	Bones.push_back(MapObjectInfo::GenerateBone(x * TILE_SIZE, y * TILE_SIZE));
+}
+
 void Map::PopulateRandomObjects() {
 	// First reset the vector
 	Objects.clear();

@@ -138,7 +138,7 @@ void HandlePlayerIdle(Game* g) {
 	// Animation
 	if (g->pl.ticks_left_anim <= 0) {
 		// Update the animation
-		if (g->game_over) {
+		if (g->game_over && !g->level_complete) {
 			g->pl.sprite_frame = Player::FrameDrinkHor;
 		} else if (g->pl.digging) {
 			if (g->pl.sprite_frame != Player::FrameDig_0) {

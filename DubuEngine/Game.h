@@ -21,6 +21,7 @@
 #include "GFX.h"
 #include "ProgressData.h"
 #include "NPC.h"
+#include "BoneHunt.h"
 #include <allegro5/allegro.h>
 #include <iostream>
 
@@ -131,6 +132,7 @@
 			int server_port = 25565;			// Server port
 			int game_over_timer = -1;			// Game-over timer
 			bool game_over = false;				// If true, the game is over, different handling
+			bool level_complete = false;		// If true, the level is complete (game must be over)
 			bool allow_input = true;			// Wether input is allowed or not
 			GameMode game_mode = GameMode::GM_None; // Current game mode
 			int level = 1;						// Current level
@@ -152,4 +154,5 @@
 			vector<NPC> npc;					// Vector for all npcs
 			ProgressData progress;				// Progress data
 			bool mouse_pathing = false;			// True if we're using mouse input to path player's movements
+			BoneHuntLevelSetting lv_settings;	// Level settings for BoneHunt game mode
 	};

@@ -742,8 +742,15 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 
 	// Generate map
 	if (g->game_mode == GameMode::GM_BoneHunt) {
-		g->map.seed = BoneHuntSeedAndTrim(g->level).first;
-		g->map.SetTrim(BoneHuntSeedAndTrim(g->level).second);
+		// Settings
+		g->lv_settings = GetBoneHuntLevelSetting(g->level);
+		g->map.seed = g->lv_settings.seed;
+		g->map.SetTrim(g->lv_settings.trim);
+
+		// Spawn bones
+		for (size_t i = 0; i < g->lv_settings.bone_spawn.size(); ++i) {
+			g->map.SpawnBone(g->lv_settings.bone_spawn[i].x, g->lv_settings.bone_spawn[i].y);
+		}
 	} else if (g->game_mode == GameMode::GM_BoneSweeper){
 		g->map.seed = rand() % ((2 ^ 32) - 1);
 	}
