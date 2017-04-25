@@ -477,13 +477,15 @@ void LoadSettings(){
 	ifstream file("settings.ini");
 
 	while (!file.eof() && file.is_open()) {
-		string meme;
-		getline(file, meme);
-		SubStrings setting = SplitString(meme, '=');
+		string line;
+		getline(file, line);
+		size_t separator = line.find(" = ", 0);
+		if (separator != string::npos) {
+			string setting_type = line.substr(0, separator);
+			string setting_value = line.substr(separator + 3, line.length() - (separator + 3));
+			int s_val = atoi(setting_value.c_str());
 
-		if (setting.items == 3) {
-			string setting_type = setting.s[0];
-			int s_val = atoi(trim(setting.s[2]).c_str());
+			// Update setting
 			if (setting_type == "BASE_WIDTH") g.BWIDTH = s_val;
 			if (setting_type == "BASE_HEIGHT") g.BHEIGHT = s_val;
 			if (setting_type == "WINDOW_WIDTH") g.s_x = s_val;
@@ -492,17 +494,17 @@ void LoadSettings(){
 			if (setting_type == "RENDER_SHADOWS") g.weather.cycle.sunlight.active = (bool)s_val;
 			if (setting_type == "MUSIC_VOLUME") g.music_volume = s_val;
 			if (setting_type == "SOUND_VOLUME") g.sound_volume = s_val;
-			if (setting_type == ("KEY_LEFT")) g.keys.left_bind = s_val;
-			if (setting_type == ("KEY_RIGHT")) g.keys.right_bind = s_val;
-			if (setting_type == ("KEY_UP")) g.keys.up_bind = s_val;
-			if (setting_type == ("KEY_DOWN")) g.keys.down_bind = s_val;
-			if (setting_type == ("KEY_CAMERA")) g.keys.camera_bind = s_val;
-			if (setting_type == ("KEY_DIG")) g.keys.dig_bind = s_val;
-			if (setting_type == ("KEY_SNIFF")) g.keys.sniff_bind = s_val;
-			if (setting_type == ("KEY_CHAT")) g.keys.chat_bind = s_val;
-			if (setting_type == ("KEY_PEE")) g.keys.pee_bind = s_val;
-			if (setting_type == ("KEY_DRINK")) g.keys.drink_bind = s_val;
-			if (setting_type == ("KEY_SPRINT")) g.keys.sprint_bind = s_val;
+			if (setting_type == "KEY_LEFT") g.keys.left_bind = s_val;
+			if (setting_type == "KEY_RIGHT") g.keys.right_bind = s_val;
+			if (setting_type == "KEY_UP") g.keys.up_bind = s_val;
+			if (setting_type == "KEY_DOWN") g.keys.down_bind = s_val;
+			if (setting_type == "KEY_CAMERA") g.keys.camera_bind = s_val;
+			if (setting_type == "KEY_DIG") g.keys.dig_bind = s_val;
+			if (setting_type == "KEY_SNIFF") g.keys.sniff_bind = s_val;
+			if (setting_type == "KEY_CHAT") g.keys.chat_bind = s_val;
+			if (setting_type == "KEY_PEE") g.keys.pee_bind = s_val;
+			if (setting_type == "KEY_DRINK") g.keys.drink_bind = s_val;
+			if (setting_type == "KEY_SPRINT") g.keys.sprint_bind = s_val;
 		}
 	}
 	file.close();
@@ -513,7 +515,7 @@ void LoadSettings(){
 	if (g.sound_volume < 0) g.sound_volume = 0;
 	if (g.sound_volume > 100) g.sound_volume = 100;
 
-	// Correct graphics
+	// Correct resolution
 	if (g.s_x > 1920 || g.s_x < 640) {
 		g.s_x = g.BHEIGHT;
 		g.s_y = g.BWIDTH;
