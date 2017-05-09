@@ -115,6 +115,15 @@ void RenderKnownBoneSweeperInfo(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** f
 		square_x + g->camera.x, square_y + g->camera.y,
 		Map::TILE_SIZE, Map::TILE_SIZE,
 		64, 0, 0, 2.0, 0.2);
+
+	// Draw x/y coordinate (for debug)
+	float r_x = (float)g->s_x / (float)g->BWIDTH;
+	float r_y = (float)g->s_y / (float)g->BHEIGHT;
+	int cx = square_x / Map::TILE_SIZE;
+	int cy = square_y / Map::TILE_SIZE;
+	DrawText(font[0], 255, 255, 255,
+		square_x + g->camera.x + 32, square_y + g->camera.y + 18,
+		ALLEGRO_ALIGN_CENTER, "%i,%i", cx, cy);
 }
 
 bool IsBoneSweeperKnownTypeThis(Game* g, Zone::BoneSweeper type, int x, int y) {

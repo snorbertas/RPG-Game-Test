@@ -1228,6 +1228,22 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/butterfly");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/sunlight");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/npc <i>");
+			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/bh <seed> <trim>");
+		} else if(type == "/bh"){
+			int seed = -1;
+			int trim = -1;
+			args >> seed;
+			args >> trim;
+			if (seed != -1 && trim != -1) {
+				// Generate map
+				g->map.seed = seed;
+				g->map.SetTrim(trim);
+				g->map.ChangeForestMode(1);
+				g->map.Generate(1);
+				AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "BoneHunt island generated!");
+			} else {
+				AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "Seed or trim value is invalid!");
+			}
 		} else if (type == "/object") {
 			int object_type = -1;
 			args >> object_type;

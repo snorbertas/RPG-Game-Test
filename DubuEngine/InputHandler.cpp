@@ -191,7 +191,7 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								case 17: // Button 0 for welcome interface (Play)
 									g->Interfaces[INTERFACE_WELCOME].Hide();
 									g->game_duration.ticks = 0;
-									g->game_duration.seconds_start = 300;
+									g->game_duration.seconds_start = g->lv_settings.time_limit;
 									g->game_duration.inverted = true;
 									g->game_duration.ticking = true;
 									done = true;
