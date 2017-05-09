@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <utility>
 #include <vector>
 #include <allegro5/allegro_audio.h>
@@ -45,19 +46,4 @@ public:
 	void AddMonster(int x, int y) { monster_spawn.push_back(Node(x, y)); }
 };
 
-static const BoneHuntLevelSetting GetBoneHuntLevelSetting(int level) {
-	// Create a setting
-	BoneHuntLevelSetting setting;
-
-	// Level 1
-	if (level == 1) {
-		setting = BoneHuntLevelSetting(6, 40, 120, 0, 0, 0, Node(50, 50));
-		setting.AddBone(46, 46);
-		setting.AddBone(54, 54);
-		setting.AddBone(46, 54);
-		setting.AddBone(54, 46);
-	}
-
-	// Return setting
-	return setting;
-}
+BoneHuntLevelSetting GetBoneHuntLevelSetting(Game* g, int level);

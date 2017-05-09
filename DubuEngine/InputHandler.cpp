@@ -743,7 +743,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	// Generate map
 	if (g->game_mode == GameMode::GM_BoneHunt) {
 		// Settings
-		g->lv_settings = GetBoneHuntLevelSetting(g->level);
+		g->lv_settings = GetBoneHuntLevelSetting(g, g->level);
 		g->map.seed = g->lv_settings.seed;
 		g->map.SetTrim(g->lv_settings.trim);
 
