@@ -139,6 +139,7 @@
 			GameDuration game_duration;			// Game duration object
 			Chat chat;							// Chat object
 			ScoreBoard score;					// Scoreboard object
+			ScoreInfo score_singleplayer;		// Score info for singleplayer
 			LoginInterface logini;				// Login Interface
 			Button Buttons[MAX_BUTTONS];		// Array of buttons
 			Interface Interfaces[MAX_INTERFACES];	// Array of interfaces

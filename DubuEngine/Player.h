@@ -32,9 +32,6 @@ public:
 	int stamina_max = 100;
 	int stamina_left = 100;
 
-	// Score
-	int bones_found = 0;
-
 	// Bladder & Pee
 	int pee_max = 10;
 	int pee_ammo = pee_max;

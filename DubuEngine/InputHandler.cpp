@@ -329,10 +329,14 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 							if (g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible == true) {
 								int clicked_level = j - 39;
 								if (clicked_level >= 1 && clicked_level <= 30) {
-									g->level = clicked_level;
-									g->game_mode = GameMode::GM_BoneHunt;
-									g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
-									_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
+									if (clicked_level > 1) {
+										if (g->progress.BoneHunt.Level[clicked_level - 2].Complete) {
+											g->level = clicked_level;
+											g->game_mode = GameMode::GM_BoneHunt;
+											g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
+											_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
+										}
+									}
 									done = true;
 								}
 							}
@@ -730,7 +734,6 @@ int* KeyIsBound(Game* g, int key_id) {
 
 unsigned int __stdcall MapGenerationThread(void *data) {
 	Game* g = (Game*)data;
-
 	// Start loading screen
 	HideAllInterfaces(g, INTERFACE_GENERATING);
 	g->Interfaces[INTERFACE_GENERATING].Show();
@@ -746,21 +749,41 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 		g->lv_settings = GetBoneHuntLevelSetting(g, g->level);
 		g->map.seed = g->lv_settings.seed;
 		g->map.SetTrim(g->lv_settings.trim);
-
-		// Spawn bones
-		for (size_t i = 0; i < g->lv_settings.bone_spawn.size(); ++i) {
-			g->map.SpawnBone(g->lv_settings.bone_spawn[i].x, g->lv_settings.bone_spawn[i].y);
-		}
 	} else if (g->game_mode == GameMode::GM_BoneSweeper){
 		g->map.seed = rand() % ((2 ^ 32) - 1);
 	}
 	g->map.ChangeForestMode(1);
 	g->map.Generate(1);
 
+	// Reload settings according to generated map
+	if (g->game_mode == GameMode::GM_BoneHunt) {
+		g->lv_settings = GetBoneHuntLevelSetting(g, g->level);
+
+		// Spawn bones
+		for (size_t i = 0; i < g->lv_settings.bone_spawn.size(); ++i) {
+			g->map.SpawnBone(g->lv_settings.bone_spawn[i].x, g->lv_settings.bone_spawn[i].y);
+		}
+
+		// Set player spawn
+		g->pl.x = g->lv_settings.player_spawn.x * Map::TILE_SIZE;
+		g->pl.y = g->lv_settings.player_spawn.y * Map::TILE_SIZE;
+	}
+
 	// Bonesweeper
 	if (g->game_mode == GameMode::GM_BoneSweeper) {
 		SpawnRandomMines(g, 500);
 		CalculateRealBoneSweeper(g);
+
+		// TODO: Correct spawn
+		Node spawn(50, 50);
+		while (!TileIsPathable(g->map.tile[spawn.x][spawn.y])) {
+			int x = rand() % 100;
+			int y = rand() % 100;
+			spawn.x = x;
+			spawn.y = y;
+		}
+		g->pl.x = spawn.x * Map::TILE_SIZE;
+		g->pl.y = spawn.y * Map::TILE_SIZE;
 	}
 
 	// Record new time
@@ -787,8 +810,6 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	// Set everything up
 	NewGame(g);
 	g->weather = Weather(Weather::CloudMode::MODE_GAME);
-	g->pl.x = 3200;
-	g->pl.y = 3200;
 	HideAllInterfaces(g, INTERFACE_CHAT);
 	g->Interfaces[INTERFACE_VERSION].Show();
 	g->Interfaces[INTERFACE_CHAT].Show();
@@ -796,7 +817,6 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->Interfaces[INTERFACE_STATS].Show();
 	g->Interfaces[INTERFACE_SCORE].Show();
 	g->Interfaces[INTERFACE_MINI_MAP].Show();
-	g->game_duration.ticking = false;
 	g->game_duration.ticks = 0;
 	g->game_duration.minutes = 5;
 	g->game_duration.seconds = 0;

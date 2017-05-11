@@ -748,7 +748,7 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 
 					// Bones found
 					y += 6;
-					DrawText(font[2], 255, 255, 255, x, y + 22, ALLEGRO_ALIGN_LEFT, "Bones Found: %i", g->pl.bones_found);
+					DrawText(font[2], 255, 255, 255, x, y + 22, ALLEGRO_ALIGN_LEFT, "Bones Found: %i", g->score_singleplayer.bones);
 
 					// Bladder
 					float bladder_fraction = ((float)g->pl.pee_ammo / (float)g->pl.pee_max);
@@ -978,15 +978,60 @@ void RenderInterfaces(Game* g, SpriteStruct* sprites, ALLEGRO_FONT** font){
 					DrawText(font[7], 0, 0, 0, g->BWIDTH / 2, 220, ALLEGRO_ALIGN_CENTER, "Game Over");
 					break;
 				case INTERFACE_LEVEL_COMPLETE:
+				{
 					DrawText(font[7], 0, 0, 0,
 						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 200,
 						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 5,
 						ALLEGRO_ALIGN_CENTER, "Level Complete!");
-					DrawText(font[0], 255, 255, 255,
+
+
+					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 13,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 74, 210, 100);
+
+					DrawText(font[1], 0, 0, 0,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 20,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 80,
+						ALLEGRO_ALIGN_LEFT, "Bones found: %i", g->score_singleplayer.bones);
+					DrawText(font[1], 0, 0, 0,
 						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 20,
 						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 100,
-						ALLEGRO_ALIGN_LEFT, "Score: 0");
+						ALLEGRO_ALIGN_LEFT, "Territory marked: %i", g->score_singleplayer.territory);
+					DrawText(font[1], 0, 0, 0,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 20,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 120,
+						ALLEGRO_ALIGN_LEFT, "Time left: %i:%i", g->game_duration.minutes, g->game_duration.seconds);
+					DrawText(font[1], 255, 255, 255,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 20,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 142,
+						ALLEGRO_ALIGN_LEFT, "Total Score: %i", g->score_singleplayer.score);
+
+					// Choose medal
+					int medal_sprite = SPRITE_MEDAL_BRONZE;
+					std::string medal_msg = "Bronze";
+					if(g->progress.BoneHunt.Level[g->level - 1].Medal == ProgressData::MEDAL_GOLD){
+						medal_sprite = SPRITE_MEDAL_GOLD;
+						medal_msg = "Gold";
+					} else if (g->progress.BoneHunt.Level[g->level - 1].Medal == ProgressData::MEDAL_SILVER) {
+						medal_sprite = SPRITE_MEDAL_SILVER;
+						medal_msg = "Silver";
+					}
+
+					// Draw medal
+					DrawInterfaceBox(g, sprites, InterfaceBoxType::BROWN,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 260,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 95, 70, 70);
+					DrawImage(g, sprites->img_icon[medal_sprite],
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 285,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 100, 0);
+
+					DrawText(font[1], 255, 255, 255,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].x + 295,
+						g->Interfaces[INTERFACE_LEVEL_COMPLETE].y + 140,
+						ALLEGRO_ALIGN_CENTER, medal_msg.c_str());
+
 					break;
+				}
 				case INTERFACE_MESSAGE:
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 20, ALLEGRO_ALIGN_CENTER, g->Message1);
 					DrawText(font[0], 0, 0, 0, g->Interfaces[i].x + 250, g->Interfaces[i].y + 52, ALLEGRO_ALIGN_CENTER, g->Message2);

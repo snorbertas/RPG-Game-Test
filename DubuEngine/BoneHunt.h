@@ -47,3 +47,5 @@ public:
 };
 
 BoneHuntLevelSetting GetBoneHuntLevelSetting(Game* g, int level);
+
+void CalculateBoneHuntScore(Game* g);

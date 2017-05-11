@@ -41,10 +41,10 @@ void HandleDigging(Game * g, Player* p) {
 					if (collide(col_player, col_bone)) {
 						g->map.Bones[i] = g->map.Bones.back();
 						g->map.Bones.pop_back();
-						g->pl.bones_found++;
+						g->score_singleplayer.bones++;
 
 						// Check if we completed level
-						if (g->pl.bones_found == g->lv_settings.bone_spawn.size()) {
+						if (g->score_singleplayer.bones == g->lv_settings.bone_spawn.size()) {
 							g->level_complete = true;
 							GameOver(g);
 						}
