@@ -1100,8 +1100,8 @@ void Map::RenderButterflies(Game* g, SpriteStruct* sprites) {
 }
 
 void Map::RenderObjects(Game* g, SpriteStruct* sprites) {
-	std::pair<int, int> blockMin = BlockForPoint(-g->camera.x - TILE_SIZE, -g->camera.y - TILE_SIZE);
-	std::pair<int, int> blockMax = BlockForPoint(-g->camera.x + g->BWIDTH + TILE_SIZE, -g->camera.y + g->BHEIGHT + TILE_SIZE);
+	std::pair<int, int> blockMin = BlockForPoint(-g->camera.x - TILE_SIZE * 2, -g->camera.y - TILE_SIZE * 2);
+	std::pair<int, int> blockMax = BlockForPoint(-g->camera.x + g->BWIDTH + TILE_SIZE * 2, -g->camera.y + g->BHEIGHT + TILE_SIZE * 2);
 
 	size_t playerIndex = 0;
 	for (int y = blockMin.second; y <= blockMax.second; ++y) {
