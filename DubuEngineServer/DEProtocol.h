@@ -11,6 +11,7 @@
 #define PACKET_TYPE_PLAYER_ACTION 105
 #define PACKET_TYPE_SCORE 106
 #define PACKET_TYPE_PLAYER_DISCONNECT 107
+#define PACKET_TYPE_GAME_INFO 108
 
 #include <iostream>
 #include <string.h>
@@ -26,6 +27,8 @@ using namespace std;
 #define DEP_DERIV_PSTATE 5
 #define DEP_DERIV_PACTION 6
 #define DEP_DERIV_SCORE 7
+#define DEP_DERIV_GINFO 8
+#define DEP_DERIV_MAP 9
 
 // The base packet class, contains no information except the type and deriv
 class Packet {
@@ -122,6 +125,41 @@ public:
 
 	// Score info
 	ScoreInfo score;
+};
+
+// Packet derivative for game info
+class PacketGInfo : public Packet {
+public:
+	PacketGInfo(uint16_t type) : Packet(type, DEP_DERIV_GINFO) {}
+	// Game mode
+	uint8_t game_mode = 0;
+
+	// Map
+	int seed = 0;
+	int trim = 0;
+	bool rebuild = false;
+
+	// Game time
+	int ticks = 0;
+	uint8_t seconds = 0;
+	uint8_t minutes = 0;
+	bool inverted = false;
+	bool ticking = false;
+};
+
+// Packet derivative for map
+class PacketMap : public Packet {
+public:
+	PacketMap(uint16_t type) : Packet(type, DEP_DERIV_MAP) {}
+
+	struct MapData {
+		bool object;
+		uint8_t type;
+		uint16_t x;
+		uint16_t y;
+	};
+
+	MapData chunk[100];
 };
 
 int GetPacketSize(uint16_t deriv_id);

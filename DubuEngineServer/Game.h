@@ -16,6 +16,8 @@ public:
 	bool ready = false;					// Wether the server finished initializing/loading
 	bool done = false;					// Wether the server is done running
 	ScoreBoard score;					// Scoreboard
+	int seed = 22;						// Seed for the map
+	int map_trim = 40;					// Map trim
 
 	// Timers
 	int ticks_since_last_score_update = 0;

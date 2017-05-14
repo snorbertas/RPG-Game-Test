@@ -52,6 +52,12 @@ void HandlePacket(Game* g, int pID, Packet* p) {
 					- Player coordinates
 					- More?
 			*/
+			PacketGInfo* ginfo = new PacketGInfo(PACKET_TYPE_GAME_INFO);
+			ginfo->seed = g->seed;
+			ginfo->trim = g->map_trim;
+			ginfo->rebuild = true;
+			AddPacketToQueue(&g->players[pID], ginfo);
+
 			break;
 		}
 		case PACKET_TYPE_CHAT_MESSAGE:

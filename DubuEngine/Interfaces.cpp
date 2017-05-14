@@ -1274,6 +1274,8 @@ void HandleCommand(Game* g, const char* msg) {
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/sunlight");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/npc <i>");
 			AddChatMessage(g->chat, "__SYSTEM__", SYSTEM_COLOUR, "/bh <seed> <trim>");
+		} else if(type == "/setip"){
+			args >> g->server_ip;
 		} else if(type == "/bh"){
 			int seed = -1;
 			int trim = -1;

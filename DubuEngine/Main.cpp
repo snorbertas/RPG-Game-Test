@@ -586,7 +586,7 @@ unsigned int __stdcall ClientThread(void *data) {
 	sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(g->server_port);
-	addr.sin_addr.S_un.S_addr = inet_addr(g->server_ip);
+	addr.sin_addr.S_un.S_addr = inet_addr(g->server_ip.c_str());
 
 	int iResult = connect(sock, (SOCKADDR*)&addr, sizeof(sockaddr_in));
 	if (iResult) {
@@ -675,6 +675,18 @@ unsigned int __stdcall ClientThread(void *data) {
 				}
 			case DEP_DERIV_SCORE: {
 					PacketScore p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
+			case DEP_DERIV_GINFO: {
+					PacketGInfo p(DEP_EMPTY);
+					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
+					HandlePacket(g, &p);
+					break;
+				}
+			case DEP_DERIV_MAP: {
+					PacketMap p(DEP_EMPTY);
 					nReadBytes = recv_s(sock, &p, GetPacketSize(rec_packet_deriv), 0);
 					HandlePacket(g, &p);
 					break;

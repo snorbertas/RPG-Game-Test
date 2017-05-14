@@ -44,6 +44,7 @@
     <ClCompile Include="MenuHandler.cpp" />
     <ClCompile Include="MenuRenderer.cpp" />
     <ClCompile Include="MiniMap.cpp" />
+    <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="Pathing.cpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="MiniMap.h" />
+    <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Pathing.h" />
     <ClInclude Include="Peeing.h" />

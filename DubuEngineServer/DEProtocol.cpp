@@ -36,5 +36,7 @@ int GetPacketSize(uint16_t deriv_id) {
 	if (deriv_id == DEP_DERIV_PSTATE) return sizeof(PacketPlayerState);
 	if (deriv_id == DEP_DERIV_PACTION) return sizeof(PacketPlayerAction);
 	if (deriv_id == DEP_DERIV_SCORE) return sizeof(PacketScore);
+	if (deriv_id == DEP_DERIV_GINFO) return sizeof(PacketGInfo);
+	if (deriv_id == DEP_DERIV_MAP) return sizeof(PacketMap);
 	return 0;
 }

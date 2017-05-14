@@ -2,6 +2,7 @@
 #include "PacketHandler.h"
 #include "GameHandler.h"
 #include "Game.h"
+#include "Multiplayer.h"
 #include <sstream>
 
 /* I use these macros in HandlePacket function
@@ -14,6 +15,7 @@
 #define pps ((PacketPlayerState*)p)
 #define ppa ((PacketPlayerAction*)p)
 #define ps ((PacketScore*)p)
+#define pgi ((PacketGInfo*)p)
 
 void HandlePacket(Game* g, Packet* p) {
 	int deriv = p->deriv();
@@ -46,7 +48,6 @@ void HandlePacket(Game* g, Packet* p) {
 			break;
 		case PACKET_TYPE_AUTHENTICATE:
 			g->pl.name = g->logini.username_input;
-			NewGame(g);
 			g->connected = true;
 
 			// Send our info
@@ -85,6 +86,18 @@ void HandlePacket(Game* g, Packet* p) {
 	} else if (deriv == DEP_DERIV_SCORE) {
 		// Update score
 		g->score.score_info[ps->p_id] = ps->score;
+	} else if (deriv == DEP_DERIV_GINFO) {
+		// Update game info
+		g->game_mode = (GameMode)pgi->game_mode;
+		g->game_duration.minutes = pgi->minutes;
+		g->game_duration.seconds = pgi->seconds;
+		g->game_duration.ticking = pgi->ticking;
+		g->game_duration.inverted = pgi->inverted;
+		g->map.seed = pgi->seed;
+		g->map.SetTrim(pgi->trim);
+		if(pgi->rebuild) LoadMultiplayer(g);
+	} else if (deriv == DEP_DERIV_MAP) {
+		// Update map structure
 	}
 }
 

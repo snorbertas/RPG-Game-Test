@@ -128,7 +128,7 @@
 			const char* Message2 = "Line2";		// Bottom (second) line message
 			int* binding_key = NULL;			// Pointer to current key being binded
 			int window_mode;					// Window mode
-			const char* server_ip = DE_CONFIG_IP;	// Server IP address
+			string server_ip = DE_CONFIG_IP;	// Server IP address
 			int server_port = 25565;			// Server port
 			int game_over_timer = -1;			// Game-over timer
 			bool game_over = false;				// If true, the game is over, different handling
