@@ -22,6 +22,7 @@
     <ProjectGuid>{83487031-F313-489F-81B1-EF0D421AE7D1}</ProjectGuid>
     <RootNamespace>DubuEngineServer</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>BoneIslandServer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

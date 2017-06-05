@@ -326,16 +326,27 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 							}
 
 							// For buttons that don't have switch cases
-							if (g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible == true) {
+							if (g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].visible == true && !done) {
 								int clicked_level = j - 39;
 								if (clicked_level >= 1 && clicked_level <= 30) {
+									bool can_play_this_level = false;
 									if (clicked_level > 1) {
 										if (g->progress.BoneHunt.Level[clicked_level - 2].Complete) {
-											g->level = clicked_level;
-											g->game_mode = GameMode::GM_BoneHunt;
-											g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
-											_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
+											// Level is unlocked
+											can_play_this_level = true;
 										}
+									} else {
+										// We can start level 1 without a requirement
+										can_play_this_level = true;
+									}
+									if (can_play_this_level) {
+										// Level is unlocked and available
+										g->level = clicked_level;
+										g->game_mode = GameMode::GM_BoneHunt;
+										g->Interfaces[INTERFACE_BONEHUNT_LEVEL_CHOICE].Hide();
+										_beginthreadex(0, 0, MapGenerationThread, g, 0, 0);
+									} else {
+										ShowMessage(g, "Sorry, this level is locked!", "Beat the previous levels to unlock it!");
 									}
 									done = true;
 								}

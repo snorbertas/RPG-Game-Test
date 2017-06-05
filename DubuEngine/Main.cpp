@@ -20,7 +20,7 @@
 #include <allegro5/allegro_acodec.h>
 #include <string.h>
 #include <iostream>
-//#include "bass.h"
+#include "bass.h"
 #include "DEEvents.h"
 #include "Main.h"
 #include "Game.h"
@@ -43,12 +43,12 @@ int main(){
 	}
 
 	// Initiate BASS
-	/*if (BASS_Init(-1, 44100, 0, 0, NULL)) {
+	if (BASS_Init(-1, 44100, 0, 0, NULL)) {
 		menu_theme = BASS_SampleLoad(false, "music/theme_0.mp3", 0, 0, 1, BASS_SAMPLE_LOOP);
 		main_channel = BASS_SampleGetChannel(menu_theme, false);
 	} else {
 		al_show_native_message_box(NULL, NULL, NULL, "failed to initialize Bass", NULL, NULL);
-	}*/
+	}
 
 	// Load settings
 	LoadSettings();
@@ -129,7 +129,7 @@ int main(){
 	g.progress.Save("data/Progress.sav");
 
 	// Free memory once loop ends
-	/*BASS_Free();*/
+	BASS_Free();
 	DestroyBitmaps();
 	DestroySamples();
 	DestroyFonts();
@@ -242,9 +242,24 @@ void RecreateDisplay() {
 	}
 }
 
+void UpdateVolume() {
+	// Check if volume changes
+	static int last_volume;
+	if (last_volume != g.music_volume) {
+		// Change the volume in music channel
+		BASS_ChannelSetAttribute(main_channel, BASS_ATTRIB_VOL, (g.music_volume / 100.0));
+	}
+
+	// Remember last volume
+	last_volume = g.music_volume;
+}
+
 void MainLoop() {
 	// Loading sprites, etc.
 	LoadGame();
+
+	// Start the music
+	BASS_ChannelPlay(main_channel, true);
 	
 	// Start timer
 	al_start_timer(timer);
@@ -305,6 +320,9 @@ void MainLoop() {
 				al_flip_display();
 				al_clear_to_color(al_map_rgb(10, 10, 10));
 			}
+
+			// Try update music volume
+			UpdateVolume();
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
 			for (int i = 0; i < MAX_EVENT_FUNCTIONS; i++) {
 				if (MouseEvents[i] != NULL && g.allow_input == true) {
@@ -514,6 +532,9 @@ void LoadSettings(){
 	if (g.music_volume > 100) g.music_volume = 100;
 	if (g.sound_volume < 0) g.sound_volume = 0;
 	if (g.sound_volume > 100) g.sound_volume = 100;
+
+	// Set initial music volume
+	BASS_ChannelSetAttribute(main_channel, BASS_ATTRIB_VOL, (g.music_volume / 100.0));
 
 	// Correct resolution
 	if (g.s_x > 1920 || g.s_x < 640) {

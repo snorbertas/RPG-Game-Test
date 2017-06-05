@@ -6,7 +6,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 // Name of the game
-#define DE_CONFIG_GAME		"RPG Game Test Client (v0.1)"
+#define DE_CONFIG_GAME		"Bone Island (Alpha)"
 
 // Icon sprite ID
 #define DE_CONFIG_ICON		2

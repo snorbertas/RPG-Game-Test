@@ -38,15 +38,17 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 	if (!release && !g->chat.type_chat) {
 		if (g->debug.renderChange) {
 			g->debug.renderChange = false;
-			if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
+			if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9 && g->scene == 1) {
 				g->map.ChangeRenderMode(kid - ALLEGRO_KEY_PAD_0);
+				g->allow_input = false;
 				return ;
 			}
 		}
 		if (g->debug.forestChange) {
 			g->debug.forestChange = false;
-			if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
+			if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9 && g->scene == 1) {
 				g->map.ChangeForestMode(kid - ALLEGRO_KEY_PAD_0);
+				g->allow_input = false;
 				return ;
 			}
 		}
@@ -56,21 +58,26 @@ static void Press(Game* g, int kid, bool release, ALLEGRO_SAMPLE** sample_sfx) {
 			g->BHEIGHT = 720;
 			g->camera.x = 0;
 			g->camera.y = 0;
+			g->allow_input = false;
 		}
 		if (kid == ALLEGRO_KEY_F2) {
 			// Skip cinematics
 			NewGame(g);
-
+			g->allow_input = false;
 		}
-		if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9) {
+		if (kid >= ALLEGRO_KEY_PAD_0 && kid <= ALLEGRO_KEY_PAD_9 && g->scene == 1) {
 			g->map.seed = kid - ALLEGRO_KEY_PAD_0;
-		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_D) {
+			g->allow_input = false;
+		} else if (kid >= ALLEGRO_KEY_A && kid <= ALLEGRO_KEY_D && g->scene == 1) {
 			g->map.Generate(kid - ALLEGRO_KEY_A);
 			g->weather = Weather();
-		} else if (kid == ALLEGRO_KEY_R) {
+			g->allow_input = false;
+		} else if (kid == ALLEGRO_KEY_R && g->scene == 1) {
 			g->debug.renderChange = true;
-		} else if (kid == ALLEGRO_KEY_F) {
+			g->allow_input = false;
+		} else if (kid == ALLEGRO_KEY_F && g->scene == 1) {
 			g->debug.forestChange = true;
+			g->allow_input = false;
 		} else if (kid == ALLEGRO_KEY_F5) {
 			g->pl.ticks_to_move--;
 		} else if (kid == ALLEGRO_KEY_F6) {
