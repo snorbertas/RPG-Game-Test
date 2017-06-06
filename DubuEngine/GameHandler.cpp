@@ -23,15 +23,6 @@ void NewGame(Game* g){
 	g->game_duration.ticking = false;
 	g->score_singleplayer.bones = 0;
 	g->pl.pee_ammo = g->pl.pee_max;
-
-	// Clear territories
-	for (int x = 0; x < Map::MAP_SIZE_X; ++x) {
-		for (int y = 0; y < Map::MAP_SIZE_Y; ++y) {
-			
-			g->map.zone[x][y] = Zone();
-		}
-	}
-	g->map.territory.clear();
 }
 
 void HandleGame(Game* g, ALLEGRO_SAMPLE** sample_sfx) {
