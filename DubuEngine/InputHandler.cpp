@@ -352,6 +352,11 @@ void LeftClick(Game* g, bool release, ALLEGRO_SAMPLE** sample_sfx){
 								}
 							}
 
+							// If we clicked any button, play sound
+							if (done) {
+								al_play_sample(sample_sfx[SAMPLE_CLICK], g->SoundVolume(), 0.0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+							}
+
 							// End of click
 						}
 					}
@@ -383,7 +388,7 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				g->Interfaces[INTERFACE_MESSAGE].Hide();
 				g->Buttons[16].sprite_id = SPRITE_BUTTON_OKAY;
 				if (fix_key != NULL && fix_key != g->binding_key) *fix_key = -1;
-				g->binding_key = NULL;
+				g->binding_key = NULL;;
 			}
 		} else if (g->Interfaces[INTERFACE_LOGIN].visible == true && !g->logini.logging_in) {
 			// Login interface typing
@@ -552,6 +557,8 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				g->Interfaces[INTERFACE_CHAT].Show();
 				//
 				g->scene = 1;
+				al_play_sample(sample_sfx[SAMPLE_BACK],
+					g->SoundVolume(), 0.0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 			} else if(g->scene == 1 || g->scene == 2){
 				g->scene = 2;
 				HideAllInterfaces(g, 10);
@@ -559,6 +566,8 @@ void KeyboardFunction(Game* g, int kid, bool release,  ALLEGRO_SAMPLE** sample_s
 				g->Interfaces[6].Show();
 				g->Interfaces[INTERFACE_CHAT].x = 0;
 				g->Interfaces[INTERFACE_CHAT].y = g->BHEIGHT - 496;
+				al_play_sample(sample_sfx[SAMPLE_BACK],
+					g->SoundVolume(), 0.0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 			} else {
 				g->scene = 0;
 				HideAllInterfaces(g, 0);

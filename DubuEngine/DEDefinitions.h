@@ -114,3 +114,12 @@
 	#define INTERFACE_GAME_OVER 40
 	#define INTERFACE_LEVEL_COMPLETE 41
 	#define INTERFACE_MESSAGE 99
+
+
+
+/*=========================*/
+/*=== SAMPLE DEFINITIONS ==*/
+	/*=========================*/
+	#define SAMPLE_RADAR 0
+	#define SAMPLE_BACK 1
+	#define SAMPLE_CLICK 2

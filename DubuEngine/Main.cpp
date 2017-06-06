@@ -247,7 +247,7 @@ void UpdateVolume() {
 	static int last_volume;
 	if (last_volume != g.music_volume) {
 		// Change the volume in music channel
-		BASS_ChannelSetAttribute(main_channel, BASS_ATTRIB_VOL, (g.music_volume / 100.0));
+		BASS_ChannelSetAttribute(main_channel, BASS_ATTRIB_VOL, g.MusicVolume());
 	}
 
 	// Remember last volume
