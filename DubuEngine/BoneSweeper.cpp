@@ -4,15 +4,6 @@
 #include "GameHandler.h"
 
 void SpawnRandomMines(Game* g, int mines, int x, int y, int w, int h) {
-	// First clear the zones
-	for (int x = 0; x < Map::MAP_SIZE_X; ++x) {
-		for (int y = 0; y < Map::MAP_SIZE_Y; ++y) {
-
-			g->map.zone[x][y] = Zone();
-		}
-	}
-	g->map.territory.clear();
-
 	// Then spawn mines
 	for (int i = 0; i < mines; ++i) {
 		int spawn_x = x + rand() % w;

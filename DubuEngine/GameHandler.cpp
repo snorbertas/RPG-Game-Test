@@ -12,6 +12,17 @@
 #include "BoneHunt.h"
 #include "Interfaces.h"
 
+void ClearZones(Game* g) {
+	// First clear the zones
+	for (int x = 0; x < Map::MAP_SIZE_X; ++x) {
+		for (int y = 0; y < Map::MAP_SIZE_Y; ++y) {
+
+			g->map.zone[x][y] = Zone();
+		}
+	}
+	g->map.territory.clear();
+}
+
 void NewGame(Game* g){
 	g->scene = 1;
 	g->Interfaces[INTERFACE_MAIN_MENU].Hide();

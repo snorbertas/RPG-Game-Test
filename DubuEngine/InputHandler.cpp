@@ -791,6 +791,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 
 	// Bonesweeper
 	if (g->game_mode == GameMode::GM_BoneSweeper) {
+		ClearZones(g);
 		SpawnRandomMines(g, 500);
 		CalculateRealBoneSweeper(g);
 
@@ -828,6 +829,7 @@ unsigned int __stdcall MapGenerationThread(void *data) {
 	g->map.PopulateButterflies(50);
 
 	// Set everything up
+	if(g->game_mode == GameMode::GM_BoneHunt) ClearZones(g);
 	NewGame(g);
 	g->weather = Weather(Weather::CloudMode::MODE_GAME);
 	HideAllInterfaces(g, INTERFACE_CHAT);

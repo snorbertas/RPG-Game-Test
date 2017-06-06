@@ -123,3 +123,8 @@
  *		Called from HandleGame() function.
  */
 	void HandleGameOver(Game* g);
+
+/* ============================== ClearZones ============================
+ *		Clears all territories and zones
+ */
+	void ClearZones(Game* g);
